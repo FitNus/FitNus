@@ -21,16 +21,9 @@ spring:
         format_sql: true
         use_sql_comments: true
 
-
-cloud:
-  aws:
-    s3:
-      bucket: rednotice-sample
-    credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
-    region:
-      static: eu-north-1
-      auto: true
-    stack:
-      auto: false
+---
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379

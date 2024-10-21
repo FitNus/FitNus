@@ -7,17 +7,5 @@ jwt:
     key: ${JWT_SECRET_KEY}
 
 
-cloud:
-  aws:
-    s3:
-      bucket: rednotice-sample
-    credentials:
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
-    region:
-      static: eu-north-1
-      auto: false
-    stack:
-      auto: false
-
+#--- 슬랙이나 s3는 여기에 넣어주세요.
 
