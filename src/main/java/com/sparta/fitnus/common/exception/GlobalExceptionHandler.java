@@ -52,5 +52,9 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
+    @ExceptionHandler(WrongAdminTokenException.class)
+    public ApiResponse<?> handleWrongAdminTokenException(WrongAdminTokenException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 }
 

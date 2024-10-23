@@ -1,6 +1,5 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.common.exception.DuplicateEmailException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.common.exception.WrongAdminTokenException;
@@ -25,7 +24,7 @@ public class UserService {
     private String ADMIN_TOKEN;
 
     @Transactional
-    public ApiResponse<UserResponse> signup(@Valid UserRequest userRequest) {
+    public UserResponse signup(@Valid UserRequest userRequest) {
         //이메일 중복검증
         validateDuplicateEmail(userRequest.getEmail());
 
@@ -34,7 +33,7 @@ public class UserService {
         role = validateAdminToken(userRequest, role);
         User user = User.of(userRequest, role);
         User savedUser = userRepository.save(user);
-        return ApiResponse.createSuccess(new UserResponse(savedUser));
+        return new UserResponse(savedUser);
     }
 
     public User getUser(Long userId) {
