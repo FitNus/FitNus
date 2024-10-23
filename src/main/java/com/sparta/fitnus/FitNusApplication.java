@@ -6,13 +6,13 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 
-//@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableJpaAuditing
-@SpringBootApplication
+//@SpringBootApplication
 public class FitNusApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FitNusApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FitNusApplication.class, args);
+    }
 
 }
