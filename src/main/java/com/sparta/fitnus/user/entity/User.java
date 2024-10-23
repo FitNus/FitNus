@@ -2,7 +2,6 @@ package com.sparta.fitnus.user.entity;
 
 
 import com.sparta.fitnus.calender.entity.Calender;
-import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.request.UserRequest;
@@ -43,9 +42,6 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Club> clubList = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "caleander_id")
