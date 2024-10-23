@@ -46,6 +46,22 @@ public class ClubService {
         return new ClubResponse(club);
     }
 
+    /**
+     * 모임 단건 조회
+     *
+     * @param id : 조회할 모임 ID
+     * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
+     */
+    public ClubResponse getClub(long id) {
+        return new ClubResponse(isValidClub(id));
+    }
+
+    /**
+     * 모임ID가 유효한지 확인
+     *
+     * @param id : 모임 id
+     * @return Club : 모임 Entity 객체
+     */
     private Club isValidClub(long id) {
         return clubRepository.findById(id).orElseThrow(ClubNotFoundException::new);
     }

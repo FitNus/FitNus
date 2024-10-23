@@ -23,4 +23,9 @@ public class ClubController {
     public ApiResponse<ClubResponse> updateClub(@RequestBody ClubRequest request, @PathVariable long id) {
         return ApiResponse.createSuccess(clubService.updateClub(request, id));
     }
+
+    @GetMapping("/v1/clubs/{id}")
+    public ApiResponse<ClubResponse> getClub(@PathVariable long id) {
+        return ApiResponse.createSuccess(clubService.getClub(id));
+    }
 }
