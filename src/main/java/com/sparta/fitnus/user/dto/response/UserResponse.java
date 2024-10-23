@@ -1,4 +1,4 @@
-package com.sparta.fitnus.user.response;
+package com.sparta.fitnus.user.dto.response;
 
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
@@ -17,7 +17,7 @@ public class UserResponse {
     private UserStatus status;
 
     public UserResponse(User user) {
-        this.id = user.getUser_id();
+        this.id = user.getId();
         this.email = user.getEmail();
         this.createAt = user.getCreatedAt();
         this.modifiedAt = user.getModifiedAt();

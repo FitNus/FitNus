@@ -1,4 +1,4 @@
-package com.sparta.common;
+package com.sparta.fitnus.common;
 
 import jakarta.persistence.*;
 import lombok.Getter;

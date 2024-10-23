@@ -1,8 +1,8 @@
 package com.sparta.fitnus.user.controller;
 
-import com.sparta.common.ApiResponse;
-import com.sparta.fitnus.user.request.UserRequest;
-import com.sparta.fitnus.user.response.UserResponse;
+import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.user.dto.request.UserRequest;
+import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

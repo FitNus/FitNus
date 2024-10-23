@@ -2,14 +2,11 @@ package com.sparta.fitnus.timeslot.entity;
 
 import com.sparta.fitnus.calender.entity.Calender;
 import com.sparta.fitnus.center.entity.Center;
-import com.sparta.fitnus.user.entity.User;
-import com.sparta.fitnus.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Entity
@@ -18,10 +15,10 @@ import java.util.List;
 public class TimeSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long timeslot_id;
+    private Long id;
 
     @Column(length = 30)
-    private String fitness_name;
+    private String fitnessName;
 
     private int price;
     //시작시간
@@ -30,8 +27,8 @@ public class TimeSlot {
 
     //삭제여부
 
-    private String max_capacity;
-    private String available_capacity;
+    private String maxCapacity;
+    private String availableCapacity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "calender_id", nullable = false)
