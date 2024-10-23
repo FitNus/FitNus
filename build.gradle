@@ -13,6 +13,10 @@ java {
 	}
 }
 
+bootBuildImage {
+	imageName = 'fitnus:0.0.1-SNAPSHOT'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
