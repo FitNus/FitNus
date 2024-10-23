@@ -1,6 +1,6 @@
 package com.sparta.fitnus.club.entity;
 
-import com.sparta.fitnus.common.Timestamped;
+import com.sparta.common.Timestamped;
 import com.sparta.fitnus.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;

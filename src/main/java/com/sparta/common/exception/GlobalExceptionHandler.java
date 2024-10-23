@@ -1,7 +1,7 @@
-package com.sparta.fitnus.common.exception;
+package com.sparta.common.exception;
 
 
-import com.sparta.fitnus.common.ApiResponse;
+import com.sparta.common.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

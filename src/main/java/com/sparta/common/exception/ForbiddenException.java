@@ -1,4 +1,4 @@
-package com.sparta.fitnus.common.exception;
+package com.sparta.common.exception;
 
 public class ForbiddenException extends RuntimeException {
     public ForbiddenException(String message){

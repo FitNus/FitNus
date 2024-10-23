@@ -1,6 +1,6 @@
 package com.sparta.fitnus.user.repository;
 
-import com.sparta.fitnus.common.exception.NotFoundException;
+import com.sparta.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

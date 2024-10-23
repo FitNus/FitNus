@@ -1,6 +1,6 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.exception.NotFoundException;
+import com.sparta.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

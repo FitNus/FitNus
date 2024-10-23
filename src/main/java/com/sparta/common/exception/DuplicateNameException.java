@@ -1,4 +1,4 @@
-package com.sparta.fitnus.common.exception;
+package com.sparta.common.exception;
 
 public class DuplicateNameException extends RuntimeException {
     public DuplicateNameException() {

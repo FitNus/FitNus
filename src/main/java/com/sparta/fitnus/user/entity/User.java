@@ -3,7 +3,7 @@ package com.sparta.fitnus.user.entity;
 
 import com.sparta.fitnus.calender.entity.Calender;
 import com.sparta.fitnus.club.entity.Club;
-import com.sparta.fitnus.common.Timestamped;
+import com.sparta.common.Timestamped;
 import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
@@ -54,12 +54,16 @@ public class User extends Timestamped {
     private List<ProfileReview> profileReviewList = new ArrayList<>();
 
 
-    public User(UserRequest request) {
+    // 정팩매~~
+    private User(UserRequest request){
         this.email = request.getEmail();
         this.userRole = UserRole.valueOf(request.getUserRole());
         this.password = request.getPassword();
         this.nickname = request.getNickname();
+    }
 
+    public static User of(UserRequest request) {
+        return new User(request);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.sparta.fitnus.common;
+package com.sparta.common;
 
 import lombok.Getter;
 

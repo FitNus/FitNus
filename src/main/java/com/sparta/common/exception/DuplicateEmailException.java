@@ -1,4 +1,4 @@
-package com.sparta.fitnus.common.exception;
+package com.sparta.common.exception;
 
 public class DuplicateEmailException extends RuntimeException {
     public DuplicateEmailException() {
