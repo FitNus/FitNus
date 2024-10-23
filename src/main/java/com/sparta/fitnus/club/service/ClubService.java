@@ -15,11 +15,17 @@ public class ClubService {
 
     private final ClubRepository clubRepository;
 
+    /**
+     * 모임 생성(추후에 멤버장 추가해야함)
+     *
+     * @param request : clubName, clubInfo, place, date가 담긴 DTO 객체
+     * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
+     */
+    @Transactional
     public ClubResponse createClub(ClubRequest request) {
         Club newClub = Club.of(request);
         Club savedClub = clubRepository.save(newClub);
 
-//        return new ClubResponse(savedClub);
-        return null;
+        return new ClubResponse(savedClub);
     }
 }
