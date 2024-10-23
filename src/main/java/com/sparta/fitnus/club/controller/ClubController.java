@@ -28,4 +28,10 @@ public class ClubController {
     public ApiResponse<ClubResponse> getClub(@PathVariable long id) {
         return ApiResponse.createSuccess(clubService.getClub(id));
     }
+
+    @DeleteMapping("/v1/clubs/{id}")
+    public ApiResponse<String> deleteClub(@PathVariable long id) {
+        clubService.deleteClub(id);
+        return ApiResponse.createSuccess("모임이 정상적으로 삭제되었습니다.");
+    }
 }

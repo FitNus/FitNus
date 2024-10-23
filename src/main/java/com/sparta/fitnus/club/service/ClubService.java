@@ -57,6 +57,16 @@ public class ClubService {
     }
 
     /**
+     * 모임 삭제
+     *
+     * @param id : 삭제할 모임 ID
+     */
+    @Transactional
+    public void deleteClub(long id) {
+        clubRepository.delete(isValidClub(id));
+    }
+
+    /**
      * 모임ID가 유효한지 확인
      *
      * @param id : 모임 id
