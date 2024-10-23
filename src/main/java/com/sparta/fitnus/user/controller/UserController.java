@@ -19,7 +19,6 @@ public class UserController {
 
     @PostMapping("/v1/auth/signup")
     public ApiResponse<UserResponse> signup(@RequestBody UserRequest userRequest) {
-        ApiResponse<UserResponse> response = userService.signup(userRequest);
-        return response;
+        return ApiResponse.createSuccess(userService.signup(userRequest));
     }
 }
