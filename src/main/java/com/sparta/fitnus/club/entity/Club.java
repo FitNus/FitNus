@@ -40,5 +40,12 @@ public class Club extends Timestamped {
     public static Club of(ClubRequest request) {
         return new Club(request);
     }
+
+    public void update(ClubRequest request) {
+        this.clubName = request.getClubName();
+        this.clubInfo = request.getClubInfo();
+        this.place = request.getPlace();
+        this.date = request.getDate();
+    }
 }
 
