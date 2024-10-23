@@ -1,4 +1,4 @@
-package com.sparta.fitnus.user.request;
+package com.sparta.fitnus.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

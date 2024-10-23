@@ -1,13 +1,11 @@
-package com.sparta.common.exception;
+package com.sparta.fitnus.common.exception;
 
 
-import com.sparta.common.ApiResponse;
+import com.sparta.fitnus.common.apipayload.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-
 
 
 @RestControllerAdvice
@@ -43,6 +41,7 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleNullPointerException(NullPointerException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
     @ExceptionHandler(NotFoundException.class)
     public ApiResponse<?> handleNotFoundException(NotFoundException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
