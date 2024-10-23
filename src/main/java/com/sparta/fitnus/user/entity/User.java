@@ -4,8 +4,7 @@ package com.sparta.fitnus.user.entity;
 import com.sparta.fitnus.calender.entity.Calender;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.common.Timestamped;
-import com.sparta.fitnus.member.entity.Member;
-import com.sparta.fitnus.profilereview.entity.ProfileReview;
+import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
@@ -14,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Entity

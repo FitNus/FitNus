@@ -1,4 +1,4 @@
-package com.sparta.fitnus.clubreview.entity;
+package com.sparta.fitnus.review.club.entity;
 
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.user.entity.User;
