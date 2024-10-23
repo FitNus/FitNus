@@ -1,8 +1,8 @@
 package com.sparta.fitnus.user.controller;
 
-import com.sparta.common.ApiResponse;
-import com.sparta.fitnus.user.request.UserRequest;
-import com.sparta.fitnus.user.response.UserResponse;
+import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.user.dto.request.UserRequest;
+import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,6 @@ public class UserController {
 
     @PostMapping("/v1/auth/signup")
     public ApiResponse<UserResponse> signup(@RequestBody UserRequest userRequest) {
-        ApiResponse<UserResponse> response = userService.signup(userRequest);
-        return response;
+        return ApiResponse.createSuccess(userService.signup(userRequest));
     }
 }

@@ -1,4 +1,4 @@
-package com.sparta.common.exception;
+package com.sparta.fitnus.common.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

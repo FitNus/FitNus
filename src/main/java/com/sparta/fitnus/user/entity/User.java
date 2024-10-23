@@ -1,13 +1,12 @@
 package com.sparta.fitnus.user.entity;
 
 
-import com.sparta.common.Timestamped;
 import com.sparta.fitnus.calender.entity.Calender;
-import com.sparta.fitnus.club.entity.Club;
+import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.review.profile.entity.ProfileReview;
+import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
-import com.sparta.fitnus.user.request.UserRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class User extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -38,14 +37,11 @@ public class User extends Timestamped {
     private UserRole userRole;
 
     private String bio;
-    private String image_url;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Club> clubList = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "caleander_id")

@@ -1,14 +1,13 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.common.ApiResponse;
-import com.sparta.common.exception.DuplicateEmailException;
-import com.sparta.common.exception.NotFoundException;
-import com.sparta.common.exception.WrongAdminTokenException;
+import com.sparta.fitnus.common.exception.DuplicateEmailException;
+import com.sparta.fitnus.common.exception.NotFoundException;
+import com.sparta.fitnus.common.exception.WrongAdminTokenException;
+import com.sparta.fitnus.user.dto.request.UserRequest;
+import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.repository.UserRepository;
-import com.sparta.fitnus.user.request.UserRequest;
-import com.sparta.fitnus.user.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class UserService {
     private String ADMIN_TOKEN;
 
     @Transactional
-    public ApiResponse<UserResponse> signup(@Valid UserRequest userRequest) {
+    public UserResponse signup(@Valid UserRequest userRequest) {
         //이메일 중복검증
         validateDuplicateEmail(userRequest.getEmail());
 
@@ -34,7 +33,7 @@ public class UserService {
         role = validateAdminToken(userRequest, role);
         User user = User.of(userRequest, role);
         User savedUser = userRepository.save(user);
-        return ApiResponse.createSuccess("회원가입 성공", 201, new UserResponse(savedUser));
+        return new UserResponse(savedUser);
     }
 
     public User getUser(Long userId) {

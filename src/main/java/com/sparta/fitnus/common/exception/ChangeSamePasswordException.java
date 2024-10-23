@@ -1,4 +1,4 @@
-package com.sparta.common.exception;
+package com.sparta.fitnus.common.exception;
 
 public class ChangeSamePasswordException extends RuntimeException {
     public ChangeSamePasswordException() {
