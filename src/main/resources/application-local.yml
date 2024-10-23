@@ -27,3 +27,6 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+admin:
+  token: ${ADMIN_TOKEN}
