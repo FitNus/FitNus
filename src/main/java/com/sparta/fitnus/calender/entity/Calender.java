@@ -17,11 +17,6 @@ public class Calender {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long calender_id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User users;
-
-
     @ManyToMany(mappedBy = "calenders")
     private List<TimeSlot> timeSlots = new ArrayList<>();
 

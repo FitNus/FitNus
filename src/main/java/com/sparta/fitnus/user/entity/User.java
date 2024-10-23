@@ -48,8 +48,9 @@ public class User extends Timestamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Club> clubList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Calender> CalenderList = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "caleander_id")
+    private Calender calender;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<ProfileReview> profileReviewList = new ArrayList<>();
