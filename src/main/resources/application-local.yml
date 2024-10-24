@@ -32,3 +32,6 @@ spring:
 
 admin:
   token: ${ADMIN_TOKEN}
+
+owner:
+  token: ${OWNER_TOKEN}

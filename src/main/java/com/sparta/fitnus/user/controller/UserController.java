@@ -42,12 +42,14 @@ public class UserController {
         // 인증된 사용자의 정보에 접근 가능
         Long userId = authUser.getId();
         String email = authUser.getEmail();
+        String nickname = authUser.getNickname();
         Collection<? extends GrantedAuthority> authorities = authUser.getAuthorities();
 
         return ApiResponse.createSuccess(Map.of(
                 "userId", userId,
                 "email", email,
-                "authorities", authorities
+                "authorities", authorities,
+                "nickname", nickname
         ));
     }
 }

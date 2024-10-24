@@ -10,6 +10,7 @@ import java.util.Arrays;
 public enum UserRole {
 
     USER(Authority.USER),
+    OWNER(Authority.OWNER),
     ADMIN(Authority.ADMIN);
 
     private final String userRole;
@@ -24,6 +25,7 @@ public enum UserRole {
     public static class Authority {
         public static final String USER = "USER";
         public static final String ADMIN = "ADMIN";
+        public static final String OWNER = "OWNER";
     }
 }
 

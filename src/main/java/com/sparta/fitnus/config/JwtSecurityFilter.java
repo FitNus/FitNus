@@ -45,9 +45,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                     Long userId = Long.parseLong(claims.getSubject());
                     String userRole = claims.get("UserRole", String.class);
                     String email = claims.get("email", String.class);
+                    String nickname = claims.get("nickname", String.class);
 
                     // AuthUser 객체 생성
-                    AuthUser authUser = new AuthUser(userId, UserRole.valueOf(userRole), email);
+                    AuthUser authUser = new AuthUser(userId, UserRole.valueOf(userRole), email, nickname);
 
                     // SecurityContext에 AuthUser 설정
                     Authentication authentication = new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities());
@@ -65,6 +66,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 Long userId = Long.parseLong(claims.getSubject());
                 String email = claims.get("email", String.class);
                 String userRole = claims.get("UserRole", String.class);
+                String nickname = claims.get("nickname", String.class);
 
                 // Redis에서 Refresh Token 조회
                 String refreshToken = redisUserService.getRefreshToken(userId.toString());
@@ -74,7 +76,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                     log.info("Refresh token is valid. Issuing new access token.");
 
                     // 새로운 Access Token 생성
-                    String newAccessToken = jwtUtil.createAccessToken(userId, email, userRole);
+                    String newAccessToken = jwtUtil.createAccessToken(userId, email, userRole, nickname);
 
                     // Redis에 새로운 Access Token 저장 (필요시)
                     redisUserService.updateAccessToken(userId.toString(), newAccessToken);
@@ -83,7 +85,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                     jwtUtil.setTokenCookie(response, newAccessToken);
 
                     // AuthUser 객체 생성 및 SecurityContext에 설정
-                    AuthUser authUser = new AuthUser(userId, UserRole.valueOf(userRole), email);
+                    AuthUser authUser = new AuthUser(userId, UserRole.valueOf(userRole), email, nickname);
                     Authentication authentication = new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
