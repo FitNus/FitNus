@@ -71,5 +71,10 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleNotLeaderException(NotLeaderException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(SseNotWorkingException.class)
+    public ApiResponse<?> handleSseNotWorkingException(SseNotWorkingException e){
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 }
 
