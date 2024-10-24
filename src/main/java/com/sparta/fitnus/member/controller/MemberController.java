@@ -2,17 +2,15 @@ package com.sparta.fitnus.member.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
-import com.sparta.fitnus.member.dto.request.MemberApplyRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
+import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.service.MemberService;
 import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +22,7 @@ public class MemberController {
     @PostMapping("/v1/members/apply")
     public ApiResponse<String> applyMember(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody MemberApplyRequest request
+            @RequestBody MemberRequest request
     ) {
         return ApiResponse.createSuccess(memberService.applyMember(authUser, request));
     }
@@ -43,5 +41,13 @@ public class MemberController {
             @RequestBody MemberRejectRequest request
     ) {
         return ApiResponse.createSuccess(memberService.rejectMember(authUser, request));
+    }
+
+    @GetMapping("/v1/members")
+    public ApiResponse<Page<MemberResponse>> getMemberList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestBody MemberRequest request
+    ) {
+        return ApiResponse.createSuccess(memberService.getMemberList(page, request));
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberApplyRequest {
+public class MemberRequest {
 
     private Long clubId;
 }
