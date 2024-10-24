@@ -1,5 +1,6 @@
 package com.sparta.fitnus.center.entity;
 
+import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,4 +17,32 @@ public class Center {
     private Long id;
 
     //센터장 id
+    private Long ownerId;
+
+    private String nickName;
+
+    private String centerName;
+
+    private int price;
+
+    private Integer openTime;
+
+    private Integer closeTime;
+
+    private int maxCapacity;
+    private int availableCapacity;
+
+    public Center(CenterSaveRequest request) {
+        this.nickName = request.getNickName();
+        this.centerName = request.getCenterName();
+        this.price = request.getPrice();
+        this.openTime = request.getOpenTime();
+        this.closeTime = request.getCloseTime();
+        this.maxCapacity = request.getMaxCapacity();
+        this.availableCapacity = request.getAvailableCapacity();
+    }
+
+    public static Center of(CenterSaveRequest request) {
+        return new Center(request);
+    }
 }
