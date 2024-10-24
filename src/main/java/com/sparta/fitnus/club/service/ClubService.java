@@ -5,6 +5,7 @@ import com.sparta.fitnus.club.dto.response.ClubResponse;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.repository.ClubRepository;
 import com.sparta.fitnus.common.exception.ClubNotFoundException;
+import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class ClubService {
      * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
      */
     @Transactional
-    public ClubResponse createClub(ClubRequest request) {
-        User user = userService.getUser(1L);
+    public ClubResponse createClub(AuthUser authUser, ClubRequest request) {
+        User user = userService.getUser(authUser.getId());
         Club newClub = Club.of(request, user);
         Club savedClub = clubRepository.save(newClub);
 
