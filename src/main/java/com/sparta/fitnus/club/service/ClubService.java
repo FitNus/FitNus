@@ -5,6 +5,8 @@ import com.sparta.fitnus.club.dto.response.ClubResponse;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.repository.ClubRepository;
 import com.sparta.fitnus.common.exception.ClubNotFoundException;
+import com.sparta.fitnus.user.entity.User;
+import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClubService {
 
     private final ClubRepository clubRepository;
+    private final UserService userService;
 
     /**
-     * 모임 생성(추후에 멤버장 추가해야함)
+     * 모임 생성
      *
      * @param request : clubName, clubInfo, place, date가 담긴 DTO 객체
      * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
      */
     @Transactional
     public ClubResponse createClub(ClubRequest request) {
-        Club newClub = Club.of(request);
+        User user = userService.getUser(1L);
+        Club newClub = Club.of(request, user);
         Club savedClub = clubRepository.save(newClub);
 
         return new ClubResponse(savedClub);
@@ -72,7 +76,7 @@ public class ClubService {
      * @param id : 모임 id
      * @return Club : 모임 Entity 객체
      */
-    private Club isValidClub(long id) {
+    public Club isValidClub(long id) {
         return clubRepository.findById(id).orElseThrow(ClubNotFoundException::new);
     }
 }
