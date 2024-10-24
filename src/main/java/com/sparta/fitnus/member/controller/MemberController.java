@@ -1,8 +1,9 @@
 package com.sparta.fitnus.member.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import com.sparta.fitnus.member.applicant.dto.MemberApplicantResponse;
+import com.sparta.fitnus.member.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
+import com.sparta.fitnus.member.dto.request.MemberDeportRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
@@ -66,5 +67,13 @@ public class MemberController {
             @RequestBody MemberRequest request
     ) {
         return ApiResponse.createSuccess(memberService.withdrawMember(authUser, request));
+    }
+
+    @DeleteMapping("/v1/members/deport")
+    public ApiResponse<String> deportMember(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody MemberDeportRequest request
+    ) {
+        return ApiResponse.createSuccess(memberService.deportMember(authUser, request));
     }
 }
