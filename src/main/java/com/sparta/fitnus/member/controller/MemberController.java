@@ -3,6 +3,7 @@ package com.sparta.fitnus.member.controller;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
 import com.sparta.fitnus.member.dto.request.MemberApplyRequest;
+import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.service.MemberService;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -25,8 +26,7 @@ public class MemberController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberApplyRequest request
     ) {
-        memberService.applyMember(authUser, request);
-        return ApiResponse.createSuccess("모임 가입이 정상적으로 신청되었습니다.");
+        return ApiResponse.createSuccess(memberService.applyMember(authUser, request));
     }
 
     @PostMapping("/v1/members/accept")
@@ -35,5 +35,13 @@ public class MemberController {
             @RequestBody MemberAcceptRequest request
     ) {
         return ApiResponse.createSuccess(memberService.acceptMember(authUser, request));
+    }
+
+    @PostMapping("/v1/members/reject")
+    public ApiResponse<String> rejectMember(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody MemberRejectRequest request
+    ) {
+        return ApiResponse.createSuccess(memberService.rejectMember(authUser, request));
     }
 }
