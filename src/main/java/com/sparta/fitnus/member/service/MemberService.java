@@ -127,6 +127,22 @@ public class MemberService {
     }
 
     /**
+     * 멤버 탈퇴
+     *
+     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
+     * @param request  : 조회할 모임 ID를 담고 있는 DTO
+     * @return String : API 성공 응답메세지
+     */
+    @Transactional
+    public String withdrawMember(AuthUser authUser, MemberRequest request) {
+        Club club = clubService.isValidClub(request.getClubId());
+
+        memberRepository.deleteByClubAndUserId(club, authUser.getId());
+
+        return "모임에서 정상적으로 탈퇴되었습니다.";
+    }
+
+    /**
      * 모임의 리더인지 확인
      *
      * @param club   : 확인할 모임 Entity 객체
