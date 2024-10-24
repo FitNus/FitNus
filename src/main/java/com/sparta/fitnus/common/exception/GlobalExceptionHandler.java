@@ -61,5 +61,15 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleWrongOwnerTokenException(WrongOwnerTokenException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(ClubNotFoundException.class)
+    public ApiResponse<?> handleClubNotFoundException(ClubNotFoundException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.NOT_FOUND.value());
+    }
+
+    @ExceptionHandler(NotLeaderException.class)
+    public ApiResponse<?> handleNotLeaderException(NotLeaderException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 }
 
