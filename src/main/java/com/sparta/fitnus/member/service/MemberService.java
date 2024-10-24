@@ -3,10 +3,11 @@ package com.sparta.fitnus.member.service;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.service.ClubService;
 import com.sparta.fitnus.common.exception.NotLeaderException;
-import com.sparta.fitnus.member.applicant.dto.MemberApplicantResponse;
+import com.sparta.fitnus.member.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.member.applicant.repository.MemberApplicantsRepository;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
+import com.sparta.fitnus.member.dto.request.MemberDeportRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
@@ -140,6 +141,23 @@ public class MemberService {
         memberRepository.deleteByClubAndUserId(club, authUser.getId());
 
         return "모임에서 정상적으로 탈퇴되었습니다.";
+    }
+
+    /**
+     * 멤버 추방
+     *
+     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
+     * @param request  : 추방할 userId, 조회할 모임 ID를 담고 있는 DTO
+     * @return String : API 성공 응답메세지
+     */
+    @Transactional
+    public String deportMember(AuthUser authUser, MemberDeportRequest request) {
+        Club club = clubService.isValidClub(request.getClubId());
+        isLeaderOfClub(club, authUser.getId());
+
+        memberRepository.deleteByClubAndUserId(club, request.getUserId());
+
+        return "모임에서 정상적으로 추방되었습니다.";
     }
 
     /**

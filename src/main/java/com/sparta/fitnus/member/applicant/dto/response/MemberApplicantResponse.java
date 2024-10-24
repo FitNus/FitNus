@@ -1,4 +1,4 @@
-package com.sparta.fitnus.member.applicant.dto;
+package com.sparta.fitnus.member.applicant.dto.response;
 
 import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.user.dto.response.UserResponse;
