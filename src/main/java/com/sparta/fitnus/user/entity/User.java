@@ -7,12 +7,21 @@ import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
@@ -64,5 +73,12 @@ public class User extends Timestamped {
         return new User(request, role);
     }
 
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
 
