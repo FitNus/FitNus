@@ -3,6 +3,7 @@ package com.sparta.fitnus.member.service;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.service.ClubService;
 import com.sparta.fitnus.common.exception.NotLeaderException;
+import com.sparta.fitnus.member.applicant.dto.MemberApplicantResponse;
 import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.member.applicant.repository.MemberApplicantsRepository;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
@@ -106,6 +107,23 @@ public class MemberService {
 
         return memberPage.map(member -> new MemberResponse(
                 member, new UserResponse(userService.getUser(member.getUserId()))));
+    }
+
+    /**
+     * 멤버 신청목록 조회
+     *
+     * @param page    : 기본값이 1인 page 번호
+     * @param request : 조회할 모임 ID를 담고 있는 DTO
+     * @return Page<MemberApplicantResponse> : 모임의 멤버 신청목록을 페이지네이션 한 객체
+     */
+    public Page<MemberApplicantResponse> getMemberApplicantList(int page, MemberRequest request) {
+        Pageable pageable = PageRequest.of(page - 1, 5);
+        Club club = clubService.isValidClub(request.getClubId());
+
+        Page<MemberApplicant> memberApplicantPage = memberApplicantsRepository.findAllByClub(pageable, club);
+
+        return memberApplicantPage.map(memberApplicant -> new MemberApplicantResponse(
+                memberApplicant, new UserResponse(userService.getUser(memberApplicant.getUserId()))));
     }
 
     /**
