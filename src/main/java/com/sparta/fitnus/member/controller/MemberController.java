@@ -1,6 +1,7 @@
 package com.sparta.fitnus.member.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.member.applicant.dto.MemberApplicantResponse;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;
@@ -49,5 +50,13 @@ public class MemberController {
             @RequestBody MemberRequest request
     ) {
         return ApiResponse.createSuccess(memberService.getMemberList(page, request));
+    }
+
+    @GetMapping("/v1/members/applicants")
+    public ApiResponse<Page<MemberApplicantResponse>> getMemberApplicantList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestBody MemberRequest request
+    ) {
+        return ApiResponse.createSuccess(memberService.getMemberApplicantList(page, request));
     }
 }
