@@ -18,4 +18,8 @@ public class UserRequest {
     private boolean admin = false;
 
     private String adminToken = "";
+
+    public void setEncodedPassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
