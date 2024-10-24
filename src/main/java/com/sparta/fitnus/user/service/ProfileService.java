@@ -1,8 +1,10 @@
 package com.sparta.fitnus.user.service;
 
 import com.sparta.fitnus.user.dto.request.UserBioRequest;
+import com.sparta.fitnus.user.dto.request.UserNicknameRequest;
 import com.sparta.fitnus.user.dto.response.UserBioResponse;
 import com.sparta.fitnus.user.dto.response.UserGetResponse;
+import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,15 @@ public class ProfileService {
         user.updateBio(request.getBio());
 
         return UserBioResponse.entityToDto(user);
+    }
+
+    @Transactional
+    public UserNicknameResponse updateNickname(Long id, UserNicknameRequest request) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
+        user.updateNickname(request.getNickname());
+
+        return UserNicknameResponse.entityToDto(user);
     }
 }

@@ -2,12 +2,15 @@ package com.sparta.fitnus.user.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.user.dto.request.UserBioRequest;
+import com.sparta.fitnus.user.dto.request.UserNicknameRequest;
 import com.sparta.fitnus.user.dto.response.UserBioResponse;
 import com.sparta.fitnus.user.dto.response.UserGetResponse;
+import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
 import com.sparta.fitnus.user.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,4 +35,9 @@ public class ProfileController {
         return ApiResponse.createSuccess(profileBioService.updateBio(id, request));
     }
 
+    @PatchMapping("/v1/users/{id}/nickname")
+    public ApiResponse<UserNicknameResponse> updateNickname(@PathVariable Long id,
+            @Valid @RequestBody UserNicknameRequest request) {
+        return ApiResponse.createSuccess(profileBioService.updateNickname(id, request));
+    }
 }
