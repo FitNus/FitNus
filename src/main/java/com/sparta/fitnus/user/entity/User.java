@@ -64,5 +64,8 @@ public class User extends Timestamped {
         return new User(request, role);
     }
 
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
 
