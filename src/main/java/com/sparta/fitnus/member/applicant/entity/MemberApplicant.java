@@ -1,7 +1,6 @@
-package com.sparta.fitnus.member.entity;
+package com.sparta.fitnus.member.applicant.entity;
 
 import com.sparta.fitnus.club.entity.Club;
-import com.sparta.fitnus.member.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Member {
+public class MemberApplicant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private MemberRole memberRole;
 
     private Long userId;
 
@@ -23,5 +20,12 @@ public class Member {
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
 
-}
+    private MemberApplicant(Long userId, Club club) {
+        this.userId = userId;
+        this.club = club;
+    }
 
+    public static MemberApplicant of(Long userId, Club club) {
+        return new MemberApplicant(userId, club);
+    }
+}
