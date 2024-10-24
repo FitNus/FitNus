@@ -59,4 +59,12 @@ public class MemberController {
     ) {
         return ApiResponse.createSuccess(memberService.getMemberApplicantList(page, request));
     }
+
+    @DeleteMapping("/v1/members/withdraw")
+    public ApiResponse<String> withdrawMember(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody MemberRequest request
+    ) {
+        return ApiResponse.createSuccess(memberService.withdrawMember(authUser, request));
+    }
 }
