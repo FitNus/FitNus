@@ -24,7 +24,7 @@ public class JwtUtil {
     private final long REFRESH_TOKEN_EXPIRATION = 1 * 24 * 60 * 60 * 1000L; // 1일
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    @Value("${jwt.secret_key}")
+    @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
 
