@@ -28,6 +28,8 @@ public class UserService {
     private final UserRepository userRepository;
     @Value("${admin.token}")
     private String ADMIN_TOKEN;
+    @Value("${owner.token}")
+    private String OWNER_TOKEN;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUserService redisUserService;
@@ -41,6 +43,10 @@ public class UserService {
         UserRole role = UserRole.USER;
         //adminToken 검증
         role = validateAdminToken(userRequest, role);
+
+        //OwnerToken 검증
+        role = validateOwnerToken(userRequest, role);
+
         User user = User.of(userRequest, role);
         User savedUser = userRepository.save(user);
         return new UserResponse(savedUser);
@@ -53,10 +59,11 @@ public class UserService {
         // ACCESS_TOKEN와 REFRESH_TOKEN 생성
         Long userId = user.getId();  // 사용자 id
         String role = user.getUserRole().name();  // 역할
+        String nickname = user.getNickname();
 
 
         // Access Token과 Refresh Token 발급
-        String accessToken = jwtUtil.createAccessToken(userId, user.getEmail(), role);
+        String accessToken = jwtUtil.createAccessToken(userId, user.getEmail(), role, nickname);
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
         // Redis에 토큰 저장 (Access Token과 Refresh Token)
@@ -95,6 +102,16 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new NotFoundException("User with email " + email + " not found")
         );
+    }
+
+    private UserRole validateOwnerToken(UserRequest userRequest, UserRole role) {
+        if (userRequest.isOwner()) {
+            if (!OWNER_TOKEN.equals(userRequest.getOwnerToken())) {
+                throw new WrongAdminTokenException();
+            }
+            role = UserRole.OWNER;
+        }
+        return role;
     }
 
 

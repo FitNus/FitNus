@@ -36,12 +36,13 @@ public class JwtUtil {
     }
 
     // Access Token 생성 (Bearer prefix 없이 쿠키에 저장)
-    public String createAccessToken(Long userId, String email, String role) {
+    public String createAccessToken(Long userId, String email, String role, String nickname) {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(Long.toString(userId))  // 사용자 ID 설정
                 .claim("UserRole", role)  // 사용자 권한 추가
                 .claim("email", email)  // 이메일 추가
+                .claim("nickname", nickname)  // 닉네임 추가
                 .setIssuedAt(now)  // 발급 시간
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION))  // 만료 시간 설정
                 .signWith(key, signatureAlgorithm)  // 서명 알고리즘과 키로 서명
