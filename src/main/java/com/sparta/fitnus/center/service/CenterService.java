@@ -1,6 +1,7 @@
 package com.sparta.fitnus.center.service;
 
 import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
+import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.repository.CenterRepository;
@@ -44,6 +45,24 @@ public class CenterService {
         return new CenterResponse(savedCenter);
     }
 
+    /***
+     * CRUD-PATCH : updateCenter()의 기능입니다.
+     * @param authUser
+     * @param boardId
+     * @param updateRequest
+     * @return
+     */
+    @Transactional
+    public CenterResponse updateBoard(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
+        // 권한확인 == OWNER가 아닌경우, 바로 Exception 던지고 종료.
+        if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
+            throw new ForbiddenException("You do not have permission to update the board");
+        }
+        Center center = centerRepository.findCenterById(centerId);
+        center.update(updateRequest);
+
+        return new CenterResponse(center);
+    }
 
     /***
      * CRUD-DELETE : deleteCenter()의 기능입니다.

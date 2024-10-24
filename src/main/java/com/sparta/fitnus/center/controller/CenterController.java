@@ -1,10 +1,12 @@
 package com.sparta.fitnus.center.controller;
 
 import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
+import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.service.CenterService;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,12 @@ public class CenterController {
         return ApiResponse.createSuccess(response);
     }
 
+    @PatchMapping("/v1/{boardId}")
+    public ApiResponse<CenterResponse> updateBoard(@AuthenticationPrincipal AuthUser authUser,
+                                                   @PathVariable Long boardId,
+                                                   @Valid @RequestBody CenterUpdateRequest boardUpdateRequest) {
+        return ApiResponse.createSuccess(centerService.updateBoard(authUser, boardId, boardUpdateRequest));
+    }
 
     @DeleteMapping("/v1/centers/{id}")
     public ApiResponse<String> deleteCenter(@AuthenticationPrincipal AuthUser authUser,
