@@ -6,8 +6,8 @@ import com.sparta.fitnus.common.exception.NotLeaderException;
 import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.member.applicant.repository.MemberApplicantsRepository;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
-import com.sparta.fitnus.member.dto.request.MemberApplyRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
+import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.member.repository.MemberRepository;
@@ -16,6 +16,9 @@ import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +40,7 @@ public class MemberService {
      * @return String : API 성공 응답메세지
      */
     @Transactional
-    public String applyMember(AuthUser authUser, MemberApplyRequest request) {
+    public String applyMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
         MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
@@ -88,6 +91,29 @@ public class MemberService {
         return "모임 가입신청이 정상적으로 거절되었습니다.";
     }
 
+    /**
+     * 멤버 목록 조회
+     *
+     * @param page    : 기본값이 1인 page 번호
+     * @param request : 조회할 모임 ID를 담고 있는 DTO
+     * @return Page<MemberResponse> : 모임의 멤버 목록을 페이지네이션 한 객체
+     */
+    public Page<MemberResponse> getMemberList(int page, MemberRequest request) {
+        Pageable pageable = PageRequest.of(page - 1, 5);
+        Club club = clubService.isValidClub(request.getClubId());
+
+        Page<Member> memberPage = memberRepository.findAllByClub(pageable, club);
+
+        return memberPage.map(member -> new MemberResponse(
+                member, new UserResponse(userService.getUser(member.getUserId()))));
+    }
+
+    /**
+     * 모임의 리더인지 확인
+     *
+     * @param club   : 확인할 모임 Entity 객체
+     * @param userId : 리더인지 확인할 사용자의 ID
+     */
     private void isLeaderOfClub(Club club, long userId) {
         if (!club.getUser().getId().equals(userId)) {
             throw new NotLeaderException();
