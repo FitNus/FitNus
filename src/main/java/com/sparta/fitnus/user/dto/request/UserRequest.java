@@ -17,6 +17,10 @@ public class UserRequest {
 
     private boolean admin = false;
 
+    private boolean owner = false;
+
+    private String ownerToken = "";
+
     private String adminToken = "";
 
     public void setEncodedPassword(String encodedPassword) {
