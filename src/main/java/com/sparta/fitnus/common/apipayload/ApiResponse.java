@@ -25,7 +25,7 @@ public class ApiResponse<T> {
      * 성공 응답 생성
      */
     public static <T> ApiResponse<T> createSuccess(T data) {
-        return new ApiResponse<>(true, SuccessStatus._OK.getMessage(), SuccessStatus._OK.getStatusCode(), data);
+        return new ApiResponse<>(true, SuccessStatus.OK.getMessage(), SuccessStatus.OK.getStatusCode(), data);
     }
 
     /**

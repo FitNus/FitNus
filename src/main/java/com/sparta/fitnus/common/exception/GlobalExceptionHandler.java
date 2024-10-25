@@ -1,15 +1,21 @@
 package com.sparta.fitnus.common.exception;
 
 
+import com.sparta.fitnus.common.alert.slack.SlackErrorSender;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final SlackErrorSender slackErrorSender;
 
     @ExceptionHandler(ChangeSamePasswordException.class)
     public ApiResponse<?> handleChangeSamePasswordException(ChangeSamePasswordException e, HttpServletRequest request) {
@@ -70,6 +76,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLeaderException.class)
     public ApiResponse<?> handleNotLeaderException(NotLeaderException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ApiResponse<?> handleRuntimeException(
+            RuntimeException e,
+            HttpServletRequest request
+    ) {
+        final ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper(request);
+
+        slackErrorSender.execute(cachingRequest, e);
+        return ApiResponse.createError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 }
 

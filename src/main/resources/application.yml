@@ -8,4 +8,6 @@ jwt:
 
 
 #--- 슬랙이나 s3는 여기에 넣어주세요.
-
+slack:
+  webhook:
+    token: ${SLACK_WEBHOOK_TOKEN}
