@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SuccessStatus implements BaseCode {
 
-    _OK(HttpStatus.OK, 200, "OK");
+    OK(HttpStatus.OK, 200, "OK");
 
     private final HttpStatus httpStatus;
     private final Integer statusCode;
