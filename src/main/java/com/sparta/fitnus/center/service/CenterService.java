@@ -21,7 +21,7 @@ public class CenterService {
     private final CenterRepository centerRepository;
 
     /***
-     * CRUD-POST : getCenter()의 기능입니다.
+     * CRUD-Get : getCenter()의 기능입니다.
      * @param centerId
      * @return
      */

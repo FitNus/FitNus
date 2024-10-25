@@ -19,19 +19,11 @@ public class Fitness {
     private Center center;
 
     private String fitnessName;
-
-    private int price;
-
-    private int maxCapacity;
-
-    private int availableCapacity;
+    
 
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;
         this.fitnessName = request.getFitnessName();
-        this.price = center.getPrice();
-        this.maxCapacity = center.getMaxCapacity();
-        this.availableCapacity = center.getAvailableCapacity();
     }
 
     public static Fitness of(FitnessRequest request, Center center) {

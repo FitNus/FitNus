@@ -1,18 +1,21 @@
 package com.sparta.fitnus.fitness.controller;
 
-import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
-import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
+import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
+import com.sparta.fitnus.fitness.service.FitnessService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
 public class FitnessController {
+    private final FitnessService fitnessService;
 
-    @PostMapping("/v1/centers")
-    public ApiResponse<CenterResponse> addCenter(@RequestBody CenterSaveRequest request) {
-        CenterResponse response = FitnessService.addCenter(request);
+    @PostMapping("/v1/fitness/{id}")
+    public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request, @PathVariable Long id) {
+        FitnessResponse response = fitnessService.addFitness(request, id);
 
         return ApiResponse.createSuccess(response);
     }
