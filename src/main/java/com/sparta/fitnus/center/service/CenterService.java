@@ -55,9 +55,9 @@ public class CenterService {
     @Transactional
     public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
         // 권한확인 == OWNER가 아닌경우, 바로 Exception 던지고 종료.
-        if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
-            throw new ForbiddenException("센터를 수정할 권한이 없습니다.");
-        }
+//        if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
+//            throw new ForbiddenException("센터를 수정할 권한이 없습니다.");
+//        }
         Center center = centerRepository.findCenterById(centerId);
         center.update(updateRequest);
 

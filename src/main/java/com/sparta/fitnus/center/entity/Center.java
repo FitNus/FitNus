@@ -40,7 +40,7 @@ public class Center {
         this.openTime = request.getOpenTime();
         this.closeTime = request.getCloseTime();
         this.maxCapacity = request.getMaxCapacity();
-        this.availableCapacity = request.getAvailableCapacity();
+        this.availableCapacity = request.getMaxCapacity();
     }
 
     // 정팩메
