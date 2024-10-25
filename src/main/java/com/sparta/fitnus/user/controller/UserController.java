@@ -1,6 +1,7 @@
 package com.sparta.fitnus.user.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.user.dto.request.ChangePasswordRequest;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -34,6 +35,11 @@ public class UserController {
     @PostMapping("/v1/auth/logout")
     public ApiResponse<String> logout(@AuthenticationPrincipal AuthUser authUser, HttpServletResponse response) {
         return ApiResponse.createSuccess(userService.logout(authUser, response));
+    }
+
+    @PostMapping("/v1/auth/{user_id}/change-password")
+    public ApiResponse<String> changePassword(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long user_id, @RequestBody ChangePasswordRequest request) {
+        return ApiResponse.createSuccess(userService.changePassword(authUser, user_id, request));
     }
 
     // 현재 인증된 사용자 정보에 접근하는 예시

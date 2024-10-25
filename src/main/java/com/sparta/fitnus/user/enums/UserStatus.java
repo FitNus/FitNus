@@ -12,7 +12,7 @@ public enum UserStatus {
     ACTIVE(UserStatus.Authority.ACTIVE),
     BANNED(UserStatus.Authority.BANNED);
 
-    private final String userRole;
+    private final String userStatus;
 
     public static UserStatus of(String status) {
         return Arrays.stream(UserStatus.values())
