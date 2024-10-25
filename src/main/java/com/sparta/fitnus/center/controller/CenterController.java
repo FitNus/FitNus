@@ -25,11 +25,11 @@ public class CenterController {
         return ApiResponse.createSuccess(response);
     }
 
-    @PatchMapping("/v1/{boardId}")
-    public ApiResponse<CenterResponse> updateBoard(@AuthenticationPrincipal AuthUser authUser,
-                                                   @PathVariable Long boardId,
-                                                   @Valid @RequestBody CenterUpdateRequest boardUpdateRequest) {
-        return ApiResponse.createSuccess(centerService.updateBoard(authUser, boardId, boardUpdateRequest));
+    @PatchMapping("/v1/centers/{centerId}")
+    public ApiResponse<CenterResponse> updateCenter(@AuthenticationPrincipal AuthUser authUser,
+                                                    @PathVariable Long centerId,
+                                                    @Valid @RequestBody CenterUpdateRequest boardUpdateRequest) {
+        return ApiResponse.createSuccess(centerService.updateCenter(authUser, centerId, boardUpdateRequest));
     }
 
     @DeleteMapping("/v1/centers/{id}")

@@ -48,15 +48,15 @@ public class CenterService {
     /***
      * CRUD-PATCH : updateCenter()의 기능입니다.
      * @param authUser
-     * @param boardId
+     * @param centerId
      * @param updateRequest
      * @return
      */
     @Transactional
-    public CenterResponse updateBoard(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
+    public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
         // 권한확인 == OWNER가 아닌경우, 바로 Exception 던지고 종료.
         if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
-            throw new ForbiddenException("You do not have permission to update the board");
+            throw new ForbiddenException("센터를 수정할 권한이 없습니다.");
         }
         Center center = centerRepository.findCenterById(centerId);
         center.update(updateRequest);
@@ -79,4 +79,11 @@ public class CenterService {
 
 
     }
+
+    // CenterService.java
+    public Center getCenterId(Long id) {
+        return centerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Center with id " + id + " not found"));
+    }
+
 }
