@@ -1,10 +1,8 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.exception.DuplicateEmailException;
-import com.sparta.fitnus.common.exception.NotFoundException;
-import com.sparta.fitnus.common.exception.WrongAdminTokenException;
-import com.sparta.fitnus.common.exception.WrongPasswordException;
+import com.sparta.fitnus.common.exception.*;
 import com.sparta.fitnus.config.JwtUtil;
+import com.sparta.fitnus.user.dto.request.ChangePasswordRequest;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -86,6 +84,28 @@ public class UserService {
         // 쿠키에서 Access Token 삭제º
         jwtUtil.clearTokenCookie(response);
         return "로그아웃 완료";
+    }
+
+    @Transactional
+    public String changePassword(AuthUser authUser, Long user_id, ChangePasswordRequest request) {
+        User user = getUser(user_id);
+        //로그인한 유저와 비밀번호 교체 유저 일치 검증
+        validateUser(authUser, user_id);
+        //비밀번호 일치 검증
+        validatePassword(request.getOldPassword(), user.getPassword());
+
+        //비밀번호 변경
+        String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+        user.changePassword(encodedPassword);
+        //Db에 저장
+        userRepository.save(user);
+        return "비밀번호 변경 완료";
+    }
+
+    private void validateUser(AuthUser authUser, Long userId) {
+        if (!userId.equals(authUser.getId())) {
+            throw new WrongUserException();
+        }
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {

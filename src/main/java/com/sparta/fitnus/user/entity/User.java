@@ -64,5 +64,17 @@ public class User extends Timestamped {
         return new User(request, role);
     }
 
+
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
 

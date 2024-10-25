@@ -77,6 +77,11 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleNotLeaderException(NotLeaderException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+  
+    @ExceptionHandler(WrongUserException.class)
+    public ApiResponse<?> handleWrongUserException(WrongUserException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ApiResponse<?> handleRuntimeException(
@@ -89,4 +94,3 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 }
-
