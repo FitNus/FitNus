@@ -18,7 +18,8 @@ public class CenterSaveRequest {
     private Integer closeTime;
 
     private int maxCapacity;
-    private int availableCapacity;
+
+    //private int availableCapacity; // maxCapacity와 동일값으로 초반에는 자동설정됩니다.
 
 
 }
