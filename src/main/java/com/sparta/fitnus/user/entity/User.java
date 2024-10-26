@@ -64,13 +64,16 @@ public class User extends Timestamped {
         return new User(request, role);
     }
 
-
     public void updateBio(String bio) {
         this.bio = bio;
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void addFile(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void changePassword(String encodedPassword) {
