@@ -19,7 +19,8 @@ public class Fitness {
     private Center center;
 
     private String fitnessName;
-    
+
+    private int price;
 
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;

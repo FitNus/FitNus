@@ -2,6 +2,7 @@ package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.service.CenterService;
+import com.sparta.fitnus.common.exception.FitnessNotFoundException;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
@@ -25,4 +26,7 @@ public class FitnessService {
         return new FitnessResponse(savedfitness);
     }
 
+    public Fitness isValidFitness(long fitnessId) {
+        return fitnessRepository.findById(fitnessId).orElseThrow(FitnessNotFoundException::new);
+    }
 }
