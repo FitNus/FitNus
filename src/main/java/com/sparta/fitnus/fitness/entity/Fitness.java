@@ -20,7 +20,7 @@ public class Fitness {
 
     private String fitnessName;
 
-    private int price;
+    private Integer price;
 
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;
@@ -31,6 +31,4 @@ public class Fitness {
     public static Fitness of(FitnessRequest request, Center center) {
         return new Fitness(request, center);
     }
-
-
 }

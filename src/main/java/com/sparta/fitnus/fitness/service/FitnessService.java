@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FitnessService {
+
     private final FitnessRepository fitnessRepository;
     private final CenterService centerService;
 
@@ -28,7 +29,6 @@ public class FitnessService {
         Fitness savedfitness = fitnessRepository.save(fitness);
         return new FitnessResponse(savedfitness);
     }
-
 
 
     /***
@@ -43,6 +43,7 @@ public class FitnessService {
     }
 
 
+
     /***
      * CRUD - GET 다건조회
      */
@@ -51,8 +52,6 @@ public class FitnessService {
                 .map(FitnessResponse::new)
                 .collect(Collectors.toList());
     }
-
-    // 피트니스 유효성 검사하고, 피트니스 id 가저갈 수 있게 service에서 만들기
 
     public Fitness isValidFitness(Long fitnessId) {
         return fitnessRepository.findById(fitnessId).orElseThrow(() ->
