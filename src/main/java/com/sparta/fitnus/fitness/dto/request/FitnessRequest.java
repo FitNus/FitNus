@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FitnessRequest {
     private String fitnessName;
+    private int price;
 }

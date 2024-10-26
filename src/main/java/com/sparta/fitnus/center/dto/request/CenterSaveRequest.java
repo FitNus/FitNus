@@ -11,8 +11,6 @@ public class CenterSaveRequest {
 
     private String centerName;
 
-    private int price;
-
     private Integer openTime;
 
     private Integer closeTime;

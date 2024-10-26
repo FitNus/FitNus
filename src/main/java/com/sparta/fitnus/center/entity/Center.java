@@ -24,8 +24,6 @@ public class Center {
 
     private String centerName;
 
-    private int price;
-
     private Integer openTime;
 
     private Integer closeTime;
@@ -36,7 +34,6 @@ public class Center {
     public Center(CenterSaveRequest request) {
         this.nickName = request.getNickName();
         this.centerName = request.getCenterName();
-        this.price = request.getPrice();
         this.openTime = request.getOpenTime();
         this.closeTime = request.getCloseTime();
         this.maxCapacity = request.getMaxCapacity();
@@ -52,7 +49,6 @@ public class Center {
     public void update(CenterUpdateRequest request) {
         this.nickName = request.getNickName();
         this.centerName = request.getCenterName();
-        this.price = request.getPrice();
         this.openTime = request.getOpenTime();
         this.closeTime = request.getCloseTime();
         this.maxCapacity = request.getMaxCapacity();

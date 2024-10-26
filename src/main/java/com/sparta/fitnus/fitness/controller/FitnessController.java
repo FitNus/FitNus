@@ -19,4 +19,9 @@ public class FitnessController {
 
         return ApiResponse.createSuccess(response);
     }
+
+    @GetMapping("/v1/fitness/{id}")
+    public ApiResponse<FitnessResponse> getFitness(@PathVariable Long id) {
+        return ApiResponse.createSuccess(fitnessService.getFitness(id));
+    }
 }
