@@ -27,6 +27,7 @@ public class FitnessService {
     }
 
 
+
     /***
      * CRUD - GET Api연관 메소드 입니다.
      * @param id

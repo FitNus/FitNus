@@ -8,4 +8,15 @@ jwt:
 
 
 #--- 슬랙이나 s3는 여기에 넣어주세요.
-
+slack:
+  webhook:
+    token: ${SLACK_WEBHOOK_TOKEN}
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_BUCKET_NAME}

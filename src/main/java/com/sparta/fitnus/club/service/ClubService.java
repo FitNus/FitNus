@@ -39,12 +39,12 @@ public class ClubService {
      * 모임 수정
      *
      * @param request : clubName, clubInfo, place, date가 담긴 DTO 객체
-     * @param id      : 업데이트할 모임 ID
+     * @param clubId  : 업데이트할 모임 ID
      * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
      */
     @Transactional
-    public ClubResponse updateClub(ClubRequest request, long id) {
-        Club club = isValidClub(id);
+    public ClubResponse updateClub(ClubRequest request, long clubId) {
+        Club club = isValidClub(clubId);
 
         club.update(request);
 
@@ -54,30 +54,30 @@ public class ClubService {
     /**
      * 모임 단건 조회
      *
-     * @param id : 조회할 모임 ID
+     * @param clubId : 조회할 모임 ID
      * @return ClubResponse : id, clubName, clubInfo, place, date가 담긴 DTO 객체
      */
-    public ClubResponse getClub(long id) {
-        return new ClubResponse(isValidClub(id));
+    public ClubResponse getClub(long clubId) {
+        return new ClubResponse(isValidClub(clubId));
     }
 
     /**
      * 모임 삭제
      *
-     * @param id : 삭제할 모임 ID
+     * @param clubId : 삭제할 모임 ID
      */
     @Transactional
-    public void deleteClub(long id) {
-        clubRepository.delete(isValidClub(id));
+    public void deleteClub(long clubId) {
+        clubRepository.delete(isValidClub(clubId));
     }
 
     /**
      * 모임ID가 유효한지 확인
      *
-     * @param id : 모임 id
+     * @param clubId : 모임 id
      * @return Club : 모임 Entity 객체
      */
-    public Club isValidClub(long id) {
-        return clubRepository.findById(id).orElseThrow(ClubNotFoundException::new);
+    public Club isValidClub(long clubId) {
+        return clubRepository.findById(clubId).orElseThrow(ClubNotFoundException::new);
     }
 }

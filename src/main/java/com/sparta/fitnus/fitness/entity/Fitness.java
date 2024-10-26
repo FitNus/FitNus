@@ -22,7 +22,6 @@ public class Fitness {
 
     private int price;
 
-
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;
         this.fitnessName = request.getFitnessName();
