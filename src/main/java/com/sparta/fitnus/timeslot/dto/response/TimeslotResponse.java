@@ -1,6 +1,5 @@
 package com.sparta.fitnus.timeslot.dto.response;
 
-import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.timeslot.entity.Timeslot;
 import lombok.Getter;
 
@@ -10,14 +9,14 @@ import java.time.LocalDateTime;
 public class TimeslotResponse {
 
     private final Long id;
+    private final Long fitnessId;
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
-    private final Fitness fitness;
 
     public TimeslotResponse(Timeslot timeslot) {
         id = timeslot.getId();
+        fitnessId = timeslot.getFitness().getId();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
-        fitness = timeslot.getFitness();
     }
 }
