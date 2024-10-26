@@ -8,7 +8,6 @@ import lombok.Getter;
 public class CenterUpdateRequest {
     private String nickName;
     private String centerName;
-    private int price;
     private Integer openTime;
     private Integer closeTime;
     private int maxCapacity;
