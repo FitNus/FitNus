@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,7 +32,7 @@ public class FitnessService {
 
 
     /***
-     * CRUD - GET Api연관 메소드 입니다.
+     * CRUD - GET 단건조회 Api연관 메소드 입니다.
      * @param id
      * @return
      */
@@ -39,8 +42,20 @@ public class FitnessService {
                 .orElseThrow(() -> new NotFoundException("Fitness with id " + id + " not found"));
     }
 
+
+
+    /***
+     * CRUD - GET 다건조회
+     */
+    public List<FitnessResponse> serchFitness() {
+        return fitnessRepository.findAll().stream()
+                .map(FitnessResponse::new)
+                .collect(Collectors.toList());
+    }
+
     public Fitness isValidFitness(Long fitnessId) {
         return fitnessRepository.findById(fitnessId).orElseThrow(() ->
                 new NotFoundException("Fitness not found"));
     }
+
 }

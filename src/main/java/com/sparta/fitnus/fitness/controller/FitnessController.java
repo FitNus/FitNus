@@ -7,12 +7,15 @@ import com.sparta.fitnus.fitness.service.FitnessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class FitnessController {
     private final FitnessService fitnessService;
 
+    // 센터등록
     @PostMapping("/v1/fitness/{id}")
     public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request, @PathVariable Long id) {
         FitnessResponse response = fitnessService.addFitness(request, id);
@@ -20,8 +23,17 @@ public class FitnessController {
         return ApiResponse.createSuccess(response);
     }
 
+    // 단건조회
     @GetMapping("/v1/fitness/{id}")
     public ApiResponse<FitnessResponse> getFitness(@PathVariable Long id) {
         return ApiResponse.createSuccess(fitnessService.getFitness(id));
     }
+
+    // 다건조회
+    @GetMapping("/v1/fitness")
+    public ApiResponse<List<FitnessResponse>> serchFitness() {
+        return ApiResponse.createSuccess(fitnessService.serchFitness());
+    }
+
+    //
 }
