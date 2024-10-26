@@ -1,5 +1,6 @@
 package com.sparta.fitnus.timeslot.service;
 
+import com.sparta.fitnus.common.exception.NotFoundTimeslotException;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.service.FitnessService;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
@@ -18,6 +19,7 @@ public class TimeslotService {
     private final TimeslotRepository timeslotRepository;
     private final FitnessService fitnessService;
 
+    @Transactional
     public TimeslotResponse createTimeslot(TimeslotRequest request) {
         Fitness fitness = fitnessService.isValidFitness(request.getFitnessId());
         Timeslot newTimeslot = Timeslot.of(request, fitness);
@@ -25,5 +27,9 @@ public class TimeslotService {
         Timeslot savedTimeslot = timeslotRepository.save(newTimeslot);
 
         return new TimeslotResponse(savedTimeslot);
+    }
+
+    public Timeslot isValidTimeslot(long timeslotId) {
+        return timeslotRepository.findById(timeslotId).orElseThrow(NotFoundTimeslotException::new);
     }
 }

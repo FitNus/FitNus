@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FitnessService {
+
     private final FitnessRepository fitnessRepository;
     private final CenterService centerService;
 
@@ -25,7 +26,6 @@ public class FitnessService {
         Fitness savedfitness = fitnessRepository.save(fitness);
         return new FitnessResponse(savedfitness);
     }
-
 
 
     /***
@@ -39,4 +39,8 @@ public class FitnessService {
                 .orElseThrow(() -> new NotFoundException("Fitness with id " + id + " not found"));
     }
 
+    public Fitness isValidFitness(Long fitnessId) {
+        return fitnessRepository.findById(fitnessId).orElseThrow(() ->
+                new NotFoundException("Fitness not found"));
+    }
 }

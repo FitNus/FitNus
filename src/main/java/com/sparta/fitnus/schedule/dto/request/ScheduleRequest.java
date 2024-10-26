@@ -1,4 +1,4 @@
-package com.sparta.fitnus.fitness.dto.request;
+package com.sparta.fitnus.schedule.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FitnessRequest {
-    private String fitnessName;
-    private int price;
+public class ScheduleRequest {
+
+    private Long timeslotId;
 }
