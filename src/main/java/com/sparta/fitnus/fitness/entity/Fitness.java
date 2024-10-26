@@ -19,14 +19,19 @@ public class Fitness {
     private Center center;
 
     private String fitnessName;
-    
+
+    private int price;
+
 
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;
         this.fitnessName = request.getFitnessName();
+        this.price = request.getPrice();
     }
 
     public static Fitness of(FitnessRequest request, Center center) {
         return new Fitness(request, center);
     }
+
+
 }
