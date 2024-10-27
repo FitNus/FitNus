@@ -137,6 +137,8 @@ public class UserService {
         validateStatus(user.getStatus());
         //유저 deactivate
         user.deactivate();
+        // Redis에 해당 유저의 토큰이 남아있다면 Refresh Token 삭제
+        redisUserService.deleteTokens(userId.toString());
         //Db에 저장
         userRepository.save(user);
         return "유저 비활성화 완료";
