@@ -1,10 +1,7 @@
 package com.sparta.fitnus.schedule.entity;
 
 import com.sparta.fitnus.timeslot.entity.Timeslot;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +18,7 @@ public class Schedule {
 
     private Long userId;
 
+    @Column(unique = true)
     private Long timeslotId;
 
     private String fitnessName;

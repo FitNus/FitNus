@@ -35,6 +35,14 @@ public class ScheduleController {
         return ApiResponse.createSuccess(scheduleService.updateSchedule(authUser, id, scheduleRequest));
     }
 
+    @DeleteMapping("/v1/schedules/{id}")
+    public ApiResponse<String> deleteSchedule(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable long id
+    ) {
+        return ApiResponse.createSuccess(scheduleService.deleteSchedule(authUser, id));
+    }
+
     @GetMapping("/v1/schedules")
     public ApiResponse<List<ScheduleResponse>> getMonthlySchedule(
             @AuthenticationPrincipal AuthUser authUser,
