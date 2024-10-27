@@ -13,10 +13,13 @@ import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.member.repository.MemberRepository;
+import com.sparta.fitnus.ssenotification.dto.EventPayload;
+import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +36,7 @@ public class MemberService {
     private final MemberApplicantsRepository memberApplicantsRepository;
     private final ClubService clubService;
     private final UserService userService;
+    private final SseNotificationServiceImpl sseNotificationServiceImpl;
 
     /**
      * 멤버 가입신청
@@ -45,8 +49,18 @@ public class MemberService {
     public String applyMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
+        User leader = club.getUser();
+
         MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
         memberApplicantsRepository.save(memberApplicant);
+
+        // 모임 리더에게 가입 신청 알림 전송
+        EventPayload eventPayload = new EventPayload(
+            "가입 신청",
+            authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
+            LocalDate.now());
+
+        sseNotificationServiceImpl.broadcast(leader.getId(), eventPayload);  // 모임 리더에게 알림 전송
 
         return "모임 가입이 정상적으로 신청되었습니다.";
     }

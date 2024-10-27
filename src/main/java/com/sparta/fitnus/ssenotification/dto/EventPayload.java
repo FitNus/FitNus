@@ -1,11 +1,10 @@
 package com.sparta.fitnus.ssenotification.dto;
 
-import com.sparta.fitnus.common.Timestamped;
 import java.time.LocalDate;
 import lombok.Getter;
 
 @Getter
-public class EventPayload  extends Timestamped {
+public class EventPayload {
 
     private String eventype;
     private String message;
