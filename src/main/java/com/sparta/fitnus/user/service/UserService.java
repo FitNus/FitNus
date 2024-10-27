@@ -87,10 +87,10 @@ public class UserService {
     }
 
     @Transactional
-    public String changePassword(AuthUser authUser, Long user_id, ChangePasswordRequest request) {
-        User user = getUser(user_id);
+    public String changePassword(AuthUser authUser, Long userId, ChangePasswordRequest request) {
+        User user = getUser(userId);
         //로그인한 유저와 비밀번호 교체 유저 일치 검증
-        validateUser(authUser, user_id);
+        validateUser(authUser, userId);
         //비밀번호 일치 검증
         validatePassword(request.getOldPassword(), user.getPassword());
 
@@ -100,6 +100,19 @@ public class UserService {
         //Db에 저장
         userRepository.save(user);
         return "비밀번호 변경 완료";
+    }
+
+    @Transactional
+    public String deleteUser(AuthUser authUser, Long userId, UserRequest userRequest) {
+        User user = getUser(userId);
+        String password = userRequest.getPassword();
+        //로그인한 유저와 탈퇴 시도 유저 일치 검증
+        validateUser(authUser, userId);
+        //비밀번호 일치 검증
+        validatePassword(password, user.getPassword());
+        //Db에서 탈퇴
+        userRepository.delete(user);
+        return "탈퇴 완료";
     }
 
     private void validateUser(AuthUser authUser, Long userId) {

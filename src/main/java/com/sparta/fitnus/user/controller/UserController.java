@@ -37,10 +37,16 @@ public class UserController {
         return ApiResponse.createSuccess(userService.logout(authUser, response));
     }
 
-    @PostMapping("/v1/auth/{user_id}/change-password")
-    public ApiResponse<String> changePassword(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long user_id, @RequestBody ChangePasswordRequest request) {
-        return ApiResponse.createSuccess(userService.changePassword(authUser, user_id, request));
+    @PostMapping("/v1/user/{userId}/change-password")
+    public ApiResponse<String> changePassword(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long userId, @RequestBody ChangePasswordRequest request) {
+        return ApiResponse.createSuccess(userService.changePassword(authUser, userId, request));
     }
+
+    @DeleteMapping("/v1/user/{userId}/delete")
+    public ApiResponse<String> deleteUser(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long userId, @RequestBody UserRequest userRequest) {
+        return ApiResponse.createSuccess(userService.deleteUser(authUser, userId, userRequest));
+    }
+
 
     // 현재 인증된 사용자 정보에 접근하는 예시
     @GetMapping("/test")
