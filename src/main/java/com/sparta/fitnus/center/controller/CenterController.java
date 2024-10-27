@@ -28,8 +28,8 @@ public class CenterController {
     @PatchMapping("/v1/centers/{centerId}")
     public ApiResponse<CenterResponse> updateCenter(@AuthenticationPrincipal AuthUser authUser,
                                                     @PathVariable Long centerId,
-                                                    @Valid @RequestBody CenterUpdateRequest boardUpdateRequest) {
-        return ApiResponse.createSuccess(centerService.updateCenter(authUser, centerId, boardUpdateRequest));
+                                                    @Valid @RequestBody CenterUpdateRequest centerUpdateRequest) {
+        return ApiResponse.createSuccess(centerService.updateCenter(authUser, centerId, centerUpdateRequest));
     }
 
     @DeleteMapping("/v1/centers/{id}")
