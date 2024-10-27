@@ -83,6 +83,46 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
+    @ExceptionHandler(TimeslotAlreadyExistsException.class)
+    public ApiResponse<?> handleTimeslotAlreadyExistsException(TimeslotAlreadyExistsException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(FitnessNotFoundException.class)
+    public ApiResponse<?> handleFitnessNotFoundException(FitnessNotFoundException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(ScheduleNotFoundException.class)
+    public ApiResponse<?> handleScheduleNotFoundException(ScheduleNotFoundException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(NotScheduleOwnerException.class)
+    public ApiResponse<?> handleNotScheduleOwnerException(NotScheduleOwnerException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(TimeslotNotFoundException.class)
+    public ApiResponse<?> handleTimeslotNotFoundException(TimeslotNotFoundException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(SlackException.class)
+    public ApiResponse<?> handleSlackException(SlackException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(NotAvailableTimeslot.class)
+    public ApiResponse<?> NotAvailableTimeslot(NotAvailableTimeslot e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+//    @ExceptionHandler(TimeslotAlreadyExistsException.class)
+//    public ResponseEntity<ApiResponse<?>> handleTimeslotAlreadyExistsException(TimeslotAlreadyExistsException e) {
+//        return ResponseEntity.badRequest().body(ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+//    }
+
     @ExceptionHandler(RuntimeException.class)
     public ApiResponse<?> handleRuntimeException(
             RuntimeException e,

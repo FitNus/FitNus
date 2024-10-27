@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
+    boolean existsByUserIdAndTimeslotId(long userId, long timeslotId);
+
     @Query("SELECT e FROM Schedule e WHERE MONTH(e.startTime) = :month AND e.userId = :userId")
     List<Schedule> findAllByUserIdMonthly(@Param("month") int month, @Param("userId") long userId);
 }
