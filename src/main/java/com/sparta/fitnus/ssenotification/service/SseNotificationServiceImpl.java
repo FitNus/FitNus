@@ -1,13 +1,16 @@
 package com.sparta.fitnus.ssenotification.service;
 
 import com.sparta.fitnus.ssenotification.dto.EventPayload;
+import com.sparta.fitnus.ssenotification.entity.SseNotification;
 import com.sparta.fitnus.ssenotification.repository.EmitterRepository;
+import com.sparta.fitnus.ssenotification.repository.NotificationRepository;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
@@ -16,6 +19,7 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     private static final Long  DEFAULT_TIMEOUT = 30 * 1000 * 60L;
     private static final long RECONNECTION_TIMEOUT = 0L;
     private final EmitterRepository emitterRepository;
+    private final NotificationRepository notificationRepository;
 
     /**
      * 특정 사용자가 SSE를 통해 서버와 연결을 수립할 때 호출되는 메서드
@@ -57,6 +61,12 @@ public class SseNotificationServiceImpl implements SseNotificationService {
      * @param eventPayload 전송할 알림의 내용
      */
     public void broadcast(Long userId, EventPayload eventPayload) {
+        // 알림을 데이터베이스에 저장
+        SseNotification notification = new SseNotification(
+            userId, eventPayload.getEventype(), eventPayload.getMessage(), eventPayload.getTimestamp());
+        notificationRepository.save(notification);
+
+        // 기존 방식대로 SSE 전송
         sendToClient(userId, eventPayload);
     }
 
@@ -119,5 +129,21 @@ public class SseNotificationServiceImpl implements SseNotificationService {
             sseEmitter.complete(); // 연결 종료
             emitterRepository.deleteById(userId); // Emitter 삭제
         }
+    }
+
+    /**
+     * 알림을 읽음 상태로 업데이트하는 메서드
+     * @param notificationId 읽음 처리할 알림의 ID
+     */
+    @Transactional
+    public String markAsRead(Long notificationId) {
+
+        SseNotification notification = notificationRepository.findById(notificationId)
+            .orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
+
+        notification.markAsRead(); // 읽음 처리
+        notificationRepository.save(notification); // 업데이트된 상태로 저장
+
+        return("알림이 읽음 처리되었습니다.");
     }
 }
