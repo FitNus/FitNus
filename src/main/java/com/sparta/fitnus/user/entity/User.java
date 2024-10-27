@@ -1,5 +1,6 @@
 package com.sparta.fitnus.user.entity;
 
+
 import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.request.UserRequest;
