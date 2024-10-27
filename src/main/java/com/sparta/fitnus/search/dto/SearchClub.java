@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SearchClubDto {
+public class SearchClub {
 
     private final Long id;
     private final String clubName;
@@ -15,8 +15,8 @@ public class SearchClubDto {
     private final String place;
     private final LocalDateTime date;
 
-    public static SearchClubDto fromClub(Club club) {
-        return new SearchClubDto(
+    public static SearchClub fromClub(Club club) {
+        return new SearchClub(
                 club.getId(),
                 club.getClubName(),
                 club.getClubInfo(),
