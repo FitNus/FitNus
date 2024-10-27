@@ -11,6 +11,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     boolean existsByUserIdAndTimeslotId(long userId, long timeslotId);
 
-    @Query("SELECT e FROM Schedule e WHERE MONTH(e.startTime) = :month AND e.userId = :userId")
-    List<Schedule> findAllByUserIdMonthly(@Param("month") int month, @Param("userId") long userId);
+    @Query("SELECT e FROM Schedule e WHERE e.userId = :userId AND MONTH(e.startTime) = :month")
+    List<Schedule> findAllByUserIdAndMonth(@Param("userId") long userId, @Param("month") int month);
+
+    @Query("SELECT e FROM Schedule e WHERE e.userId = :userId AND MONTH(e.startTime) = :month AND DAY(e.startTime) = :day")
+    List<Schedule> findAllByUserIdAndMonthAndDay(@Param("userId") long userId, @Param("month") int month, @Param("day") int day);
 }
