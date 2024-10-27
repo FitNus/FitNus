@@ -1,8 +1,8 @@
 package com.sparta.fitnus.search.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import com.sparta.fitnus.search.dto.SearchCenter;
-import com.sparta.fitnus.search.dto.SearchClub;
+import com.sparta.fitnus.search.dto.response.SearchCenterResponse;
+import com.sparta.fitnus.search.dto.response.SearchClubResponse;
 import com.sparta.fitnus.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,14 +19,16 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/search/clubs")
-    public ApiResponse<Page<SearchClub>> getClubs(@RequestParam(defaultValue = "1") int page,
+    public ApiResponse<Page<SearchClubResponse>> getClubs(
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ApiResponse.createSuccess(searchService.getClubs(page, size));
     }
 
     @GetMapping("/search/centers")
-    public ApiResponse<Page<SearchCenter>> getCenters(@RequestParam(defaultValue = "1") int page,
+    public ApiResponse<Page<SearchCenterResponse>> getCenters(
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ApiResponse.createSuccess(searchService.getCenters(page, size));
