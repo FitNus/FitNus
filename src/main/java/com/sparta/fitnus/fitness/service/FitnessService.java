@@ -57,6 +57,10 @@ public class FitnessService {
 
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId, FitnessRequest fitnessRequest) {
+        if (!fitnessRepository.findById(fitnessId).isPresent()) {
+            throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
+        }
+
         if (authUser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
             Fitness fitness = isValidFitness(fitnessId);
             fitness.update(fitnessRequest);
@@ -76,8 +80,13 @@ public class FitnessService {
      */
     @Transactional
     public void deleteFitness(AuthUser authuser, Long fitnessId) {
+        if (!fitnessRepository.findById(fitnessId).isPresent()) {
+            throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
+        }
+
         if (authuser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
             fitnessRepository.deleteById(fitnessId);
+
         } else {
             throw new ForbiddenException("이 종목을 삭제할 권한이 없습니다.");
         }
