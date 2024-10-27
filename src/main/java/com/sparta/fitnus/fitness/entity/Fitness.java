@@ -31,4 +31,9 @@ public class Fitness {
     public static Fitness of(FitnessRequest request, Center center) {
         return new Fitness(request, center);
     }
+
+    public void update(FitnessRequest request) {
+        this.fitnessName = request.getFitnessName();
+        this.price = request.getPrice();
+    }
 }

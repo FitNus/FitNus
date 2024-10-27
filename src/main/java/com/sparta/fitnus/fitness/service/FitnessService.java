@@ -2,11 +2,14 @@ package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.service.CenterService;
+import com.sparta.fitnus.common.exception.ForbiddenException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
+import com.sparta.fitnus.user.entity.AuthUser;
+import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +46,6 @@ public class FitnessService {
     }
 
 
-
     /***
      * CRUD - GET 다건조회
      */
@@ -53,9 +55,39 @@ public class FitnessService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId, FitnessRequest fitnessRequest) {
+        if (authUser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
+            Fitness fitness = isValidFitness(fitnessId);
+            fitness.update(fitnessRequest);
+
+            return new FitnessResponse(fitness);
+        } else {
+            throw new ForbiddenException("이 종목을 수정할 권한이 없습니다.");
+        }
+
+
+    }
+
+    /***
+     * CRUD-DELETE : deleteCenter()의 기능입니다.
+     * @param authuser
+     * @param fitnessId
+     */
+    @Transactional
+    public void deleteFitness(AuthUser authuser, Long fitnessId) {
+        if (authuser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
+            fitnessRepository.deleteById(fitnessId);
+        } else {
+            throw new ForbiddenException("이 종목을 삭제할 권한이 없습니다.");
+        }
+    }
+
+
     public Fitness isValidFitness(Long fitnessId) {
         return fitnessRepository.findById(fitnessId).orElseThrow(() ->
                 new NotFoundException("Fitness not found"));
     }
-
 }
+
+

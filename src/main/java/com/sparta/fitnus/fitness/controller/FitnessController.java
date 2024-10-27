@@ -4,7 +4,10 @@ import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.service.FitnessService;
+import com.sparta.fitnus.user.entity.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +21,7 @@ public class FitnessController {
     // 센터등록
     @PostMapping("/v1/fitness/{id}")
     public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request, @PathVariable Long id) {
-        FitnessResponse response = fitnessService.addFitness(request, id);
-
-        return ApiResponse.createSuccess(response);
+        return ApiResponse.createSuccess(fitnessService.addFitness(request, id));
     }
 
     // 단건조회
@@ -35,5 +36,19 @@ public class FitnessController {
         return ApiResponse.createSuccess(fitnessService.serchFitness());
     }
 
-    //
+    // 업데이트
+    @PatchMapping("/v1/fitness/{id}")
+    public ApiResponse<FitnessResponse> UpdateFitness(@AuthenticationPrincipal AuthUser authUser,
+                                                      @PathVariable Long id,
+                                                      @Valid @RequestBody FitnessRequest fitnessRequest) {
+        return ApiResponse.createSuccess(fitnessService.updateFitness(authUser, id, fitnessRequest));
+    }
+
+    @DeleteMapping("/v1/fitness/{id}")
+    public ApiResponse<String> deleteFitness(@AuthenticationPrincipal AuthUser authUser,
+                                             @PathVariable Long id) {
+        fitnessService.deleteFitness(authUser, id);
+        return ApiResponse.createSuccess("운동종목이 정상적으로 삭제되었습니다.");
+    }
+
 }
