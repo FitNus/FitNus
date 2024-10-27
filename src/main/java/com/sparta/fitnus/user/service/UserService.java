@@ -8,15 +8,20 @@ import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
+import com.sparta.fitnus.user.enums.UserStatus;
 import com.sparta.fitnus.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +57,10 @@ public class UserService {
 
     public String login(UserRequest userRequest, HttpServletResponse response) {
         User user = getUserFromEmail(userRequest.getEmail());
+        //비밀번호검증
         validatePassword(userRequest.getPassword(), user.getPassword());
-
+        //유저 상태 검증
+        validateStatus(user.getStatus());
         // ACCESS_TOKEN와 REFRESH_TOKEN 생성
         Long userId = user.getId();  // 사용자 id
         String role = user.getUserRole().name();  // 역할
@@ -103,7 +110,7 @@ public class UserService {
     }
 
     @Transactional
-    public String deleteUser(AuthUser authUser, Long userId, UserRequest userRequest) {
+    public String deleteUser(AuthUser authUser, Long userId, UserRequest userRequest, HttpServletResponse response) {
         User user = getUser(userId);
         String password = userRequest.getPassword();
         //로그인한 유저와 탈퇴 시도 유저 일치 검증
@@ -112,7 +119,39 @@ public class UserService {
         validatePassword(password, user.getPassword());
         //Db에서 탈퇴
         userRepository.delete(user);
+        // Redis에서 Refresh Token 삭제
+        redisUserService.deleteTokens(authUser.getId().toString());
+
+        // 쿠키에서 Access Token 삭제º
+        jwtUtil.clearTokenCookie(response);
         return "탈퇴 완료";
+    }
+
+    @Transactional
+    public String deactivateUser(Long userId, AuthUser authUser) {
+        User user = getUser(userId);
+        //admin권한 검증
+        Collection<? extends GrantedAuthority> authorities = authUser.getAuthorities();
+        validateAdmin(authorities);
+        //유저 status 검증
+        validateStatus(user.getStatus());
+        //유저 deactivate
+        user.deactivate();
+        //Db에 저장
+        userRepository.save(user);
+        return "유저 비활성화 완료";
+    }
+
+    private void validateStatus(UserStatus status) {
+        if (status.equals(UserStatus.BANNED)) {
+            throw new UserBannedException();
+        }
+    }
+
+    private void validateAdmin(Collection<? extends GrantedAuthority> authorities) {
+        if (!authorities.contains(new SimpleGrantedAuthority("ADMIN"))) {
+            throw new NotAdminException();
+        }
     }
 
     private void validateUser(AuthUser authUser, Long userId) {

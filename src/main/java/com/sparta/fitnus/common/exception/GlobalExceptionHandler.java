@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleNotLeaderException(NotLeaderException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
-  
+
     @ExceptionHandler(WrongUserException.class)
     public ApiResponse<?> handleWrongUserException(WrongUserException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
@@ -92,5 +92,15 @@ public class GlobalExceptionHandler {
 
         slackErrorSender.execute(cachingRequest, e);
         return ApiResponse.createError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @ExceptionHandler(NotAdminException.class)
+    public ApiResponse<?> handleNotAdminException(NotAdminException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @ExceptionHandler(UserBannedException.class)
+    public ApiResponse<?> handleUserBannedException(UserBannedException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
 }

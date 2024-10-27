@@ -43,8 +43,13 @@ public class UserController {
     }
 
     @DeleteMapping("/v1/user/{userId}/delete")
-    public ApiResponse<String> deleteUser(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long userId, @RequestBody UserRequest userRequest) {
-        return ApiResponse.createSuccess(userService.deleteUser(authUser, userId, userRequest));
+    public ApiResponse<String> deleteUser(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long userId, @RequestBody UserRequest userRequest, HttpServletResponse response) {
+        return ApiResponse.createSuccess(userService.deleteUser(authUser, userId, userRequest, response));
+    }
+
+    @PutMapping("/v1/admin/{userId}/deactivate")
+    public ApiResponse<String> deactivateUser(@PathVariable Long userId, @AuthenticationPrincipal AuthUser authUser) {
+        return ApiResponse.createSuccess(userService.deactivateUser(userId, authUser));
     }
 
 
