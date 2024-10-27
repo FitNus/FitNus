@@ -73,5 +73,9 @@ public class User extends Timestamped {
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
+
+    public void deactivate() {
+        this.status = UserStatus.BANNED;
+    }
 }
 
