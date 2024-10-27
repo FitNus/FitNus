@@ -1,6 +1,7 @@
 package com.sparta.fitnus.timeslot.service;
 
-import com.sparta.fitnus.common.exception.NotFoundTimeslotException;
+import com.sparta.fitnus.common.exception.NotAvailableTimeslot;
+import com.sparta.fitnus.common.exception.TimeslotNotFoundException;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.service.FitnessService;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
@@ -30,6 +31,12 @@ public class TimeslotService {
     }
 
     public Timeslot isValidTimeslot(long timeslotId) {
-        return timeslotRepository.findById(timeslotId).orElseThrow(NotFoundTimeslotException::new);
+        Timeslot timeslot = timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
+
+        if (timeslot.getIsDeleted()) {
+            throw new NotAvailableTimeslot();
+        }
+
+        return timeslot;
     }
 }

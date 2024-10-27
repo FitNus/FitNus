@@ -1,8 +1,10 @@
 package com.sparta.fitnus.schedule.entity;
 
 import com.sparta.fitnus.timeslot.entity.Timeslot;
-import com.sparta.fitnus.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,10 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId;
+
+    private Long timeslotId;
+
     private String fitnessName;
 
     private LocalDateTime startTime;
@@ -25,19 +31,24 @@ public class Schedule {
 
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    private Schedule(Timeslot timeslot, User user) {
+    private Schedule(long userId, Timeslot timeslot) {
+        this.userId = userId;
+        timeslotId = timeslot.getId();
         fitnessName = timeslot.getFitness().getFitnessName();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
         price = timeslot.getFitness().getPrice();
-        this.user = user;
     }
 
-    public static Schedule of(Timeslot timeslot, User user) {
-        return new Schedule(timeslot, user);
+    public static Schedule of(long userId, Timeslot timeslot) {
+        return new Schedule(userId, timeslot);
+    }
+
+    public void updateSchedule(Timeslot timeslot) {
+        timeslotId = timeslot.getId();
+        fitnessName = timeslot.getFitness().getFitnessName();
+        startTime = timeslot.getStartTime();
+        endTime = timeslot.getEndTime();
+        price = timeslot.getFitness().getPrice();
     }
 }
