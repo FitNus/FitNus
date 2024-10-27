@@ -102,7 +102,29 @@ public class ScheduleService {
             month = LocalDateTime.now().getMonthValue();
         }
 
-        List<Schedule> scheduleList = scheduleRepository.findAllByUserIdMonthly(month, authUser.getId());
+        List<Schedule> scheduleList = scheduleRepository.findAllByUserIdAndMonth(authUser.getId(), month);
+
+        return scheduleList.stream().map(ScheduleResponse::new).toList();
+    }
+
+    /**
+     * 일정 사용자별 일 단위 조회
+     *
+     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
+     * @param month    : 조회할 월
+     * @param day      : 조회할 일
+     * @return List<ScheduleResponse> : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO의 리스트
+     */
+    public List<ScheduleResponse> getDailyScheduleList(AuthUser authUser, Integer month, Integer day) {
+        if (month == null) {
+            month = LocalDateTime.now().getMonthValue();
+        }
+
+        if (day == null) {
+            day = LocalDateTime.now().getDayOfMonth();
+        }
+
+        List<Schedule> scheduleList = scheduleRepository.findAllByUserIdAndMonthAndDay(authUser.getId(), month, day);
 
         return scheduleList.stream().map(ScheduleResponse::new).toList();
     }
