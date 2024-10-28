@@ -50,6 +50,7 @@ public class ClubService {
     @Transactional
     public ClubResponse updateClub(AuthUser authUser, ClubRequest request, long clubId) {
         isExistsByClubName(request.getClubName());
+        
         Club club = isValidClub(clubId);
         isLeaderOfClub(authUser.getId(), club);
 
