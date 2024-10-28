@@ -10,7 +10,6 @@ public class CenterResponse {
 
     private final Long id;
     private final String center_name;
-    private final String nickname;
     private final Integer open_time;
     private final Integer close_time;
 
@@ -18,7 +17,6 @@ public class CenterResponse {
     public CenterResponse(Center center) {
         this.id = center.getId();
         this.center_name = center.getCenterName();
-        this.nickname = center.getNickName();
         this.open_time = center.getOpenTime();
         this.close_time = center.getCloseTime();
     }

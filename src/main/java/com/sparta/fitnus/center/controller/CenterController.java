@@ -19,8 +19,9 @@ public class CenterController {
     private final CenterService centerService;
 
     @PostMapping("/v1/centers")
-    public ApiResponse<CenterResponse> addCenter(@RequestBody CenterSaveRequest request) {
-        CenterResponse response = centerService.addCenter(request);
+    public ApiResponse<CenterResponse> addCenter(@AuthenticationPrincipal AuthUser authUser,
+                                                 @RequestBody CenterSaveRequest request) {
+        CenterResponse response = centerService.addCenter(authUser, request);
 
         return ApiResponse.createSuccess(response);
     }
