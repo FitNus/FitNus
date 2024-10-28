@@ -4,18 +4,13 @@ import com.sparta.fitnus.center.entity.Center;
 import lombok.Getter;
 
 @Getter
-//@AllArgsConstructor
 public class SearchCenterResponse {
 
-    private final Long id;
+    private final Long centerId;
     private final String centerName;
 
     public SearchCenterResponse(Center center) {
-        this.id = center.getId();
+        this.centerId = center.getId();
         this.centerName = center.getCenterName();
     }
-
-//    public static SearchCenterResponse fromCenter(Center center) {
-//        return new SearchCenterResponse(center.getId(), center.getCenterName());
-//    }
 }
