@@ -119,8 +119,18 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
+    @ExceptionHandler(CanNotDeportLeaderException.class)
+    public ApiResponse<?> handleCanNotDeportLeaderException(CanNotDeportLeaderException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
     @ExceptionHandler(NotAvailableTimeslot.class)
     public ApiResponse<?> NotAvailableTimeslot(NotAvailableTimeslot e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(MemberApplicantNotFoundException.class)
+    public ApiResponse<?> MemberApplicantNotFoundException(MemberApplicantNotFoundException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 

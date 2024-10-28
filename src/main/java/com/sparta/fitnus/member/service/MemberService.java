@@ -1,23 +1,17 @@
 package com.sparta.fitnus.member.service;
 
-import com.sparta.fitnus.applicant.dto.response.MemberApplicantResponse;
-import com.sparta.fitnus.applicant.entity.MemberApplicant;
-import com.sparta.fitnus.applicant.repository.MemberApplicantsRepository;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.service.ClubService;
+import com.sparta.fitnus.common.exception.AlreadyMemberException;
+import com.sparta.fitnus.common.exception.CanNotDeportLeaderException;
 import com.sparta.fitnus.common.exception.NotLeaderException;
-import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
 import com.sparta.fitnus.member.dto.request.MemberDeportRequest;
-import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.member.repository.MemberRepository;
-import com.sparta.fitnus.ssenotification.dto.EventPayload;
-import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
-import com.sparta.fitnus.user.dto.response.UserResponse;
+import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
-import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,113 +20,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberApplicantsRepository memberApplicantsRepository;
     private final ClubService clubService;
     private final UserService userService;
-    private final SseNotificationServiceImpl sseNotificationServiceImpl;
 
     /**
-     * 멤버 가입신청
-     *
-     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
-     * @param request  : 가입할 모임 ID를 담고 있는 DTO
-     */
-    @Transactional
-    public void applyMember(AuthUser authUser, MemberRequest request) {
-        Club club = clubService.isValidClub(request.getClubId());
-
-        memberApplicantsRepository.findByClubAndUserId(club, authUser.getId());
-        MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
-        memberApplicantsRepository.save(memberApplicant);
-
-        // 모임 리더에게 가입 신청 알림 전송
-        EventPayload eventPayload = new EventPayload(
-                "가입 신청",
-                authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
-                LocalDate.now());
-
-        sseNotificationServiceImpl.broadcast(club.getLeaderId(), eventPayload);  // 모임 리더에게 알림 전송
-    }
-
-    /**
-     * 멤버 가입신청 수락
-     *
-     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
-     * @param request  : 가입신청한 사용자 ID, 가입할 모임 ID를 담고 있는 DTO
-     * @return MemberResponse : 멤버 ID와 유저 프로필, 멤버 역할을 담고 있는 DTO
-     */
-    @Transactional
-    public MemberResponse acceptMember(AuthUser authUser, MemberAcceptRequest request) {
-        Club club = clubService.isValidClub(request.getClubId());
-        isLeaderOfClub(club, authUser.getId());
-
-        MemberApplicant memberApplicant = memberApplicantsRepository.findByClubAndUserId(club, request.getUserId());
-        memberApplicantsRepository.delete(memberApplicant);
-
-        Member newMember = Member.of(memberApplicant);
-        Member savedMember = memberRepository.save(newMember);
-
-        User user = userService.getUser(savedMember.getUserId());
-
-        return new MemberResponse(savedMember, new UserResponse(user));
-    }
-
-    /**
-     * 멤버 가입신청 거절
-     *
-     * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
-     * @param request  : 가입신청한 사용자 ID, 가입할 모임 ID를 담고 있는 DTO
-     */
-    @Transactional
-    public void rejectMember(AuthUser authUser, MemberRejectRequest request) {
-        Club club = clubService.isValidClub(request.getClubId());
-
-        isLeaderOfClub(club, authUser.getId());
-
-        MemberApplicant memberApplicant = memberApplicantsRepository.findByClubAndUserId(club, request.getUserId());
-        memberApplicantsRepository.delete(memberApplicant);
-    }
-
-    /**
-     * 멤버 목록 조회
-     *
      * @param page    : 기본값이 1인 page 번호
+     * @param size    : 기본값이 1인 size 크기
      * @param request : 조회할 모임 ID를 담고 있는 DTO
      * @return Page<MemberResponse> : 모임의 멤버 목록을 페이지네이션 한 객체
      */
-    public Page<MemberResponse> getMemberList(int page, MemberRequest request) {
-        Pageable pageable = PageRequest.of(page - 1, 5);
+    public Page<MemberResponse> getMemberList(int page, int size, MemberRequest request) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         Club club = clubService.isValidClub(request.getClubId());
 
-        Page<Member> memberPage = memberRepository.findAllByClub(pageable, club);
+        Page<Member> memberPage = memberRepository.findAllByClub(club, pageable);
 
         return memberPage.map(member -> new MemberResponse(
-                member, new UserResponse(userService.getUser(member.getUserId()))));
-    }
-
-    /**
-     * 멤버 신청목록 조회
-     *
-     * @param page    : 기본값이 1인 page 번호
-     * @param request : 조회할 모임 ID를 담고 있는 DTO
-     * @return Page<MemberApplicantResponse> : 모임의 멤버 신청목록을 페이지네이션 한 객체
-     */
-    public Page<MemberApplicantResponse> getMemberApplicantList(int page, MemberRequest request) {
-        Pageable pageable = PageRequest.of(page - 1, 5);
-        Club club = clubService.isValidClub(request.getClubId());
-
-        Page<MemberApplicant> memberApplicantPage = memberApplicantsRepository.findAllByClub(pageable, club);
-
-        return memberApplicantPage.map(memberApplicant -> new MemberApplicantResponse(
-                memberApplicant, new UserResponse(userService.getUser(memberApplicant.getUserId()))));
+                member, new ProfileResponse(userService.getUser(member.getUserId()))));
     }
 
     /**
@@ -140,15 +50,12 @@ public class MemberService {
      *
      * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
      * @param request  : 조회할 모임 ID를 담고 있는 DTO
-     * @return String : API 성공 응답메세지
      */
     @Transactional
-    public String withdrawMember(AuthUser authUser, MemberRequest request) {
+    public void withdrawMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
         memberRepository.deleteByClubAndUserId(club, authUser.getId());
-
-        return "모임에서 정상적으로 탈퇴되었습니다.";
     }
 
     /**
@@ -156,16 +63,17 @@ public class MemberService {
      *
      * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
      * @param request  : 추방할 userId, 조회할 모임 ID를 담고 있는 DTO
-     * @return String : API 성공 응답메세지
      */
     @Transactional
-    public String deportMember(AuthUser authUser, MemberDeportRequest request) {
+    public void deportMember(AuthUser authUser, MemberDeportRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
         isLeaderOfClub(club, authUser.getId());
 
-        memberRepository.deleteByClubAndUserId(club, request.getUserId());
+        if (request.getUserId().equals(club.getLeaderId())) {
+            throw new CanNotDeportLeaderException();
+        }
 
-        return "모임에서 정상적으로 추방되었습니다.";
+        memberRepository.deleteByClubAndUserId(club, request.getUserId());
     }
 
     /**
@@ -174,9 +82,21 @@ public class MemberService {
      * @param club   : 확인할 모임 Entity 객체
      * @param userId : 리더인지 확인할 사용자의 ID
      */
-    private void isLeaderOfClub(Club club, long userId) {
+    public void isLeaderOfClub(Club club, long userId) {
         if (!club.getLeaderId().equals(userId)) {
             throw new NotLeaderException();
+        }
+    }
+
+    /**
+     * 이미 멤버인지 확인
+     *
+     * @param club   : 확인할 모임 Entity 객체
+     * @param userId : 멤버인지 확인할 사용자 ID
+     */
+    public void isAlreadyMember(Club club, long userId) {
+        if (memberRepository.existsByClubAndUserId(club, userId) | club.getLeaderId().equals(userId)) {
+            throw new AlreadyMemberException();
         }
     }
 }

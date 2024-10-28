@@ -12,11 +12,12 @@ import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserStatus;
 import com.sparta.fitnus.user.repository.UserRepository;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +81,7 @@ public class ProfileService {
             throw new ProfileException("기능을 사용할 수 없습니다.");
         }
 
-        return new ProfileResponse(user.getNickname(), user.getBio(), user.getImageUrl());
+        return new ProfileResponse(user);
     }
 
     @Transactional
@@ -99,7 +100,7 @@ public class ProfileService {
 
     @Transactional
     public ProfileNicknameResponse updateNickname(AuthUser authUser,
-            ProfileNicknameRequest request) {
+                                                  ProfileNicknameRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
 

@@ -21,6 +21,7 @@ public class Club extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Long leaderId;
 
     @Column(unique = true)
