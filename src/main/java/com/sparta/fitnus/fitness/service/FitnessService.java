@@ -45,7 +45,6 @@ public class FitnessService {
                 .orElseThrow(() -> new NotFoundException("Fitness with id " + id + " not found"));
     }
 
-
     /***
      * CRUD - GET 다건조회
      */

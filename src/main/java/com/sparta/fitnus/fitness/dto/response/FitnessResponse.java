@@ -8,10 +8,12 @@ import lombok.Getter;
 @Data
 public class FitnessResponse {
     private final String fitnessName;
-    private final int price;
+    private final int requiredCoupon;
 
     public FitnessResponse(Fitness fitness) {
         this.fitnessName = fitness.getFitnessName();
-        this.price = fitness.getPrice();
+        this.requiredCoupon = fitness.getRequiredCoupon();
     }
+
+
 }
