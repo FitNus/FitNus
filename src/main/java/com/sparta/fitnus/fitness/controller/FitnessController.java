@@ -32,8 +32,8 @@ public class FitnessController {
 
     // 다건조회
     @GetMapping("/v1/fitness")
-    public ApiResponse<List<FitnessResponse>> serchFitness() {
-        return ApiResponse.createSuccess(fitnessService.serchFitness());
+    public ApiResponse<List<FitnessResponse>> getAllFitness() {
+        return ApiResponse.createSuccess(fitnessService.getAllFitness());
     }
 
     // 업데이트
@@ -50,5 +50,4 @@ public class FitnessController {
         fitnessService.deleteFitness(authUser, id);
         return ApiResponse.createSuccess("운동종목이 정상적으로 삭제되었습니다.");
     }
-
 }

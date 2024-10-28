@@ -14,6 +14,4 @@ public class FitnessResponse {
         this.fitnessName = fitness.getFitnessName();
         this.requiredCoupon = fitness.getRequiredCoupon();
     }
-
-
 }
