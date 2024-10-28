@@ -4,11 +4,11 @@ import com.sparta.fitnus.user.entity.User;
 import lombok.Getter;
 
 @Getter
-public class UserAttachFileResponse {
+public class ProfileAttachFileResponse {
 
     private final String imageUrl;
 
-    public UserAttachFileResponse(User user) {
+    public ProfileAttachFileResponse(User user) {
         this.imageUrl = user.getImageUrl();
     }
 }
