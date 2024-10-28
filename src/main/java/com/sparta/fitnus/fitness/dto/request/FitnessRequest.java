@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FitnessRequest {
     private String fitnessName;
-    private int price;
+    private int requiredCoupon;
 }

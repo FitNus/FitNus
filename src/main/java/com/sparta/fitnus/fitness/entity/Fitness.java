@@ -20,12 +20,12 @@ public class Fitness {
 
     private String fitnessName;
 
-    private Integer price;
+    private Integer requiredCoupon;
 
     public Fitness(FitnessRequest request, Center center) {
         this.center = center;
         this.fitnessName = request.getFitnessName();
-        this.price = request.getPrice();
+        this.requiredCoupon = request.getRequiredCoupon();
     }
 
     public static Fitness of(FitnessRequest request, Center center) {
@@ -34,6 +34,6 @@ public class Fitness {
 
     public void update(FitnessRequest request) {
         this.fitnessName = request.getFitnessName();
-        this.price = request.getPrice();
+        this.requiredCoupon = request.getRequiredCoupon();
     }
 }
