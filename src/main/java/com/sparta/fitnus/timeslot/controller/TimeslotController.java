@@ -5,10 +5,7 @@ import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
 import com.sparta.fitnus.timeslot.dto.response.TimeslotResponse;
 import com.sparta.fitnus.timeslot.service.TimeslotService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +14,13 @@ public class TimeslotController {
 
     private final TimeslotService timeslotService;
 
-    @PostMapping("/v1/timeslot")
+    @PostMapping("/v1/timeslots")
     public ApiResponse<TimeslotResponse> createTimeslot(@RequestBody TimeslotRequest request) {
         return ApiResponse.createSuccess(timeslotService.createTimeslot(request));
+    }
+
+    @GetMapping("/v1/timeslots/{id}")
+    public ApiResponse<TimeslotResponse> getTimeslot(@PathVariable Long id) {
+        return ApiResponse.createSuccess(timeslotService.getTimeslot(id));
     }
 }
