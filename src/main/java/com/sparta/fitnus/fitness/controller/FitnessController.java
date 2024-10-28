@@ -20,8 +20,9 @@ public class FitnessController {
 
     // 센터등록
     @PostMapping("/v1/fitness")
-    public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request) {
-        return ApiResponse.createSuccess(fitnessService.addFitness(request, request.getCenterId()));
+    public ApiResponse<FitnessResponse> addCenter(@AuthenticationPrincipal AuthUser authUser,
+                                                  @RequestBody FitnessRequest request) {
+        return ApiResponse.createSuccess(fitnessService.addFitness(authUser, request));
     }
 
     // 단건조회

@@ -2,6 +2,7 @@ package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.service.CenterService;
+import com.sparta.fitnus.common.exception.AccessDeniedException;
 import com.sparta.fitnus.common.exception.ForbiddenException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
@@ -26,8 +27,12 @@ public class FitnessService {
     private final CenterService centerService;
 
     @Transactional
-    public FitnessResponse addFitness(FitnessRequest request, Long id) {
-        Center center = centerService.getCenterId(id);
+    public FitnessResponse addFitness(AuthUser authUser, FitnessRequest request) {
+
+        Center center = centerService.getCenterId(request.getCenterId());
+        if (!authUser.getId().equals(center.getOwnerId())) {
+            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+        }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
         return new FitnessResponse(savedfitness);
