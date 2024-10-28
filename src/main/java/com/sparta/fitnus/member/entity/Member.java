@@ -16,6 +16,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private MemberRole memberRole;
 
     private Long userId;
@@ -25,13 +26,23 @@ public class Member {
     private Club club;
 
     private Member(MemberApplicant memberApplicant) {
-        this.memberRole = MemberRole.MEMBER;
-        this.userId = memberApplicant.getUserId();
-        this.club = memberApplicant.getClub();
+        memberRole = MemberRole.MEMBER;
+        userId = memberApplicant.getUserId();
+        club = memberApplicant.getClub();
+    }
+
+    private Member(Long userId, Club club) {
+        memberRole = MemberRole.LEADER;
+        this.userId = userId;
+        this.club = club;
     }
 
     public static Member of(MemberApplicant memberApplicant) {
         return new Member(memberApplicant);
+    }
+
+    public static Member addLeaderOfClub(long userId, Club club) {
+        return new Member(userId, club);
     }
 }
 

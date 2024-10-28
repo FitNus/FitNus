@@ -9,14 +9,17 @@ import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.service.MemberService;
 import com.sparta.fitnus.user.entity.AuthUser;
+import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Secured(UserRole.Authority.USER)
 public class MemberController {
 
     private final MemberService memberService;
@@ -26,7 +29,8 @@ public class MemberController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberRequest request
     ) {
-        return ApiResponse.createSuccess(memberService.applyMember(authUser, request));
+        memberService.applyMember(authUser, request);
+        return ApiResponse.createSuccess(null);
     }
 
     @PostMapping("/v1/members/accept")
@@ -42,7 +46,8 @@ public class MemberController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberRejectRequest request
     ) {
-        return ApiResponse.createSuccess(memberService.rejectMember(authUser, request));
+        memberService.rejectMember(authUser, request);
+        return ApiResponse.createSuccess(null);
     }
 
     @GetMapping("/v1/members")

@@ -19,13 +19,14 @@ import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -43,26 +44,22 @@ public class MemberService {
      *
      * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
      * @param request  : 가입할 모임 ID를 담고 있는 DTO
-     * @return String : API 성공 응답메세지
      */
     @Transactional
-    public String applyMember(AuthUser authUser, MemberRequest request) {
+    public void applyMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
-        User leader = club.getUser();
-
+        memberApplicantsRepository.findByClubAndUserId(club, authUser.getId());
         MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
         memberApplicantsRepository.save(memberApplicant);
 
         // 모임 리더에게 가입 신청 알림 전송
         EventPayload eventPayload = new EventPayload(
-            "가입 신청",
-            authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
-            LocalDate.now());
+                "가입 신청",
+                authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
+                LocalDate.now());
 
-        sseNotificationServiceImpl.broadcast(leader.getId(), eventPayload);  // 모임 리더에게 알림 전송
-
-        return "모임 가입이 정상적으로 신청되었습니다.";
+        sseNotificationServiceImpl.broadcast(club.getLeaderId(), eventPayload);  // 모임 리더에게 알림 전송
     }
 
     /**
@@ -93,18 +90,15 @@ public class MemberService {
      *
      * @param authUser : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
      * @param request  : 가입신청한 사용자 ID, 가입할 모임 ID를 담고 있는 DTO
-     * @return String : API 성공 응답메세지
      */
     @Transactional
-    public String rejectMember(AuthUser authUser, MemberRejectRequest request) {
+    public void rejectMember(AuthUser authUser, MemberRejectRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
         isLeaderOfClub(club, authUser.getId());
 
         MemberApplicant memberApplicant = memberApplicantsRepository.findByClubAndUserId(club, request.getUserId());
         memberApplicantsRepository.delete(memberApplicant);
-
-        return "모임 가입신청이 정상적으로 거절되었습니다.";
     }
 
     /**
@@ -181,7 +175,7 @@ public class MemberService {
      * @param userId : 리더인지 확인할 사용자의 ID
      */
     private void isLeaderOfClub(Club club, long userId) {
-        if (!club.getUser().getId().equals(userId)) {
+        if (!club.getLeaderId().equals(userId)) {
             throw new NotLeaderException();
         }
     }

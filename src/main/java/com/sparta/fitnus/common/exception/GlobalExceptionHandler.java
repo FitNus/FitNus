@@ -104,6 +104,11 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
+    @ExceptionHandler(AlreadyExistsClubNameException.class)
+    public ApiResponse<?> handleAlreadyExistsClubNameException(AlreadyExistsClubNameException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
 //    @ExceptionHandler(TimeslotNotFoundException.class)
 //    public ApiResponse<?> handleTimeslotNotFoundException(TimeslotNotFoundException e) {
 //        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
@@ -136,7 +141,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SseNotWorkingException.class)
-    public ApiResponse<?> handleSseNotWorkingException(SseNotWorkingException e){
+    public ApiResponse<?> handleSseNotWorkingException(SseNotWorkingException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
