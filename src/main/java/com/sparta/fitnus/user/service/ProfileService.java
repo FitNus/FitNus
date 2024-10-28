@@ -37,6 +37,12 @@ public class ProfileService {
 
         if (file != null && !file.isEmpty()) {
             try {
+                // 기존 파일 삭제
+                String existingFileName = user.getFile(); // 기존 파일 이름 가져오기
+                if (existingFileName != null) {
+                    s3Service.deleteFile(existingFileName); // s3에서 기존 파일 삭제
+                }
+                // 새로운 파일 업로드
                 String fileName = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
                 user.addFile(fileName);
             } catch (IOException e) {

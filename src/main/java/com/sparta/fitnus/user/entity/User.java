@@ -5,7 +5,13 @@ import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -61,6 +67,10 @@ public class User extends Timestamped {
 
     public void addFile(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getFile() {
+        return this.imageUrl;
     }
 
     public void changePassword(String encodedPassword) {
