@@ -14,12 +14,12 @@ public class TimeslotController {
 
     private final TimeslotService timeslotService;
 
-    @PostMapping("/v1/timeslot")
+    @PostMapping("/v1/timeslots")
     public ApiResponse<TimeslotResponse> createTimeslot(@RequestBody TimeslotRequest request) {
         return ApiResponse.createSuccess(timeslotService.createTimeslot(request));
     }
 
-    @GetMapping("/v1/timeslot/{id}")
+    @GetMapping("/v1/timeslots/{id}")
     public ApiResponse<TimeslotResponse> getTimeslot(@PathVariable Long id) {
         return ApiResponse.createSuccess(timeslotService.getTimeslot(id));
     }
