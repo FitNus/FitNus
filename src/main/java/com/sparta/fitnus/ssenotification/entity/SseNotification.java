@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
+@Entity(name = "notifications")
 @NoArgsConstructor
 public class SseNotification {
 
