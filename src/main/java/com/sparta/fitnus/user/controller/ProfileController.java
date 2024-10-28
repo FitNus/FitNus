@@ -10,7 +10,6 @@ import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.service.ProfileService;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +33,7 @@ public class ProfileController {
     @PostMapping("/users/images")
     public ApiResponse<UserAttachFileResponse> attachFile(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+            @RequestParam(value = "file", required = false) MultipartFile file) {
         return ApiResponse.createSuccess(profileService.attachFile(authUser, file));
     }
 
