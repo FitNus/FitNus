@@ -2,16 +2,12 @@ package com.sparta.fitnus.user.entity;
 
 
 import com.sparta.fitnus.common.Timestamped;
-import com.sparta.fitnus.review.profile.entity.ProfileReview;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -41,10 +37,6 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<ProfileReview> profileReviewList = new ArrayList<>();
-
 
     // 정팩매~~
     private User(UserRequest request, UserRole role) {

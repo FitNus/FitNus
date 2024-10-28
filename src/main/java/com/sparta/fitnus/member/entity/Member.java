@@ -1,7 +1,7 @@
 package com.sparta.fitnus.member.entity;
 
+import com.sparta.fitnus.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.club.entity.Club;
-import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.member.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.Getter;

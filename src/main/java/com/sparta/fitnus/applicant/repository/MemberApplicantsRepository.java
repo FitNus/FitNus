@@ -1,7 +1,7 @@
-package com.sparta.fitnus.member.applicant.repository;
+package com.sparta.fitnus.applicant.repository;
 
+import com.sparta.fitnus.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.club.entity.Club;
-import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
