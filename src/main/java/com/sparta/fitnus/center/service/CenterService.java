@@ -5,11 +5,12 @@ import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.repository.CenterRepository;
-import com.sparta.fitnus.common.exception.ForbiddenException;
+import com.sparta.fitnus.common.exception.AccessDeniedException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,27 +38,35 @@ public class CenterService {
      * CRUD-POST : saveCenter()의 기능입니다.
      * @param request
      * @return
+     * 예외처리 : OWNER 권한 체크(태현님 만드신 권한체크 사용하기 (O) )
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public CenterResponse addCenter(CenterSaveRequest request) {
-        Center center = Center.of(request);
+    public CenterResponse addCenter(AuthUser authUser, CenterSaveRequest request) {
+        Center center = Center.of(request, authUser);
         Center savedCenter = centerRepository.save(center);
         return new CenterResponse(savedCenter);
     }
 
+
     /***
      * CRUD-PATCH : updateCenter()의 기능입니다.
-     * @param authUser
+     * @param
      * @param centerId
      * @param updateRequest
      * @return
+     * 예외처리 : OWNER 권한 체크(태현님 만드신 권한체크 사용하기 (O) )
+     * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 ( O )
      */
     @Transactional
+    @Secured(UserRole.Authority.OWNER)
     public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
-        // 권한확인 == OWNER가 아닌경우, 바로 Exception 던지고 종료.
-//        if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
-//            throw new ForbiddenException("센터를 수정할 권한이 없습니다.");
-//        }
+        Long ownerId = centerRepository.findOwnerIdByCenterId(centerId);
+        Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
+
+        if (!ownerId.equals(currentUserId)) {
+            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+        }
         Center center = centerRepository.findCenterById(centerId);
         center.update(updateRequest);
 
@@ -66,18 +75,19 @@ public class CenterService {
 
     /***
      * CRUD-DELETE : deleteCenter()의 기능입니다.
-     * @param authuser
      * @param centerId
+     * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 ( O )
      */
     @Transactional
-    public void deleteCenter(AuthUser authuser, Long centerId) {
-        if (!authuser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
-            centerRepository.deleteById(centerId);
-        } else {
-            throw new ForbiddenException("이 센터를 삭제할 권한이 없습니다.");
+    @Secured(UserRole.Authority.OWNER)
+    public void deleteCenter(AuthUser authUser, Long centerId) {
+        Long ownerId = centerRepository.findOwnerIdByCenterId(centerId);
+        Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
+
+        if (!ownerId.equals(currentUserId)) {
+            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
         }
-
-
+        centerRepository.deleteById(centerId);
     }
 
     // CenterService.java
@@ -85,5 +95,6 @@ public class CenterService {
         return centerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Center with id " + id + " not found"));
     }
+
 
 }
