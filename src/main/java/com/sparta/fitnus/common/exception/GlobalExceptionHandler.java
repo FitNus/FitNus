@@ -134,6 +134,11 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
+    @ExceptionHandler(SseNotWorkingException.class)
+    public ApiResponse<?> handleSseNotWorkingException(SseNotWorkingException e){
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
     @ExceptionHandler(NotAdminException.class)
     public ApiResponse<?> handleNotAdminException(NotAdminException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
