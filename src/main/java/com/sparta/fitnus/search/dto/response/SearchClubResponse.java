@@ -7,14 +7,14 @@ import lombok.Getter;
 @Getter
 public class SearchClubResponse {
 
-    private final Long id;
+    private final Long clubId;
     private final String clubName;
     private final String clubInfo;
     private final String place;
     private final LocalDateTime date;
 
     public SearchClubResponse(Club club) {
-        this.id = club.getId();
+        this.clubId = club.getId();
         this.clubName = club.getClubName();
         this.clubInfo = club.getClubInfo();
         this.place = club.getPlace();
