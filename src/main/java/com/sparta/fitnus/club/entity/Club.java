@@ -1,8 +1,8 @@
 package com.sparta.fitnus.club.entity;
 
+import com.sparta.fitnus.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.club.dto.request.ClubRequest;
 import com.sparta.fitnus.common.Timestamped;
-import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.user.entity.User;
 import jakarta.persistence.*;

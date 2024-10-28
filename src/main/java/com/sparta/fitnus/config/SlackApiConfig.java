@@ -13,7 +13,7 @@ public class SlackApiConfig {
     private String token;
 
     @Bean
-    public MethodsClient getClient() {
+    public MethodsClient methodsClient() {
         Slack slackClient = Slack.getInstance();
         return slackClient.methods(token);
     }

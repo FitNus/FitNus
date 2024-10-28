@@ -1,6 +1,6 @@
-package com.sparta.fitnus.member.applicant.dto.response;
+package com.sparta.fitnus.applicant.dto.response;
 
-import com.sparta.fitnus.member.applicant.entity.MemberApplicant;
+import com.sparta.fitnus.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import lombok.Getter;
 

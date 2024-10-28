@@ -1,7 +1,7 @@
 package com.sparta.fitnus.member.controller;
 
+import com.sparta.fitnus.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import com.sparta.fitnus.member.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
 import com.sparta.fitnus.member.dto.request.MemberDeportRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
