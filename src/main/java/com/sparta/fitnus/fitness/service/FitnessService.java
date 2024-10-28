@@ -56,7 +56,7 @@ public class FitnessService {
 
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId, FitnessRequest fitnessRequest) {
-        if (!fitnessRepository.findById(fitnessId).isPresent()) {
+        if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
         }
 
@@ -68,9 +68,8 @@ public class FitnessService {
         } else {
             throw new ForbiddenException("이 종목을 수정할 권한이 없습니다.");
         }
-
-
     }
+
 
     /***
      * CRUD-DELETE : deleteCenter()의 기능입니다.
@@ -79,7 +78,7 @@ public class FitnessService {
      */
     @Transactional
     public void deleteFitness(AuthUser authuser, Long fitnessId) {
-        if (!fitnessRepository.findById(fitnessId).isPresent()) {
+        if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
         }
 

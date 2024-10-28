@@ -50,5 +50,4 @@ public class FitnessController {
         fitnessService.deleteFitness(authUser, id);
         return ApiResponse.createSuccess("운동종목이 정상적으로 삭제되었습니다.");
     }
-
 }
