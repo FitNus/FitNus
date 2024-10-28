@@ -30,6 +30,13 @@ public class TimeslotService {
         return new TimeslotResponse(savedTimeslot);
     }
 
+    public TimeslotResponse getTimeslot(Long timeslotId) {
+        return timeslotRepository.findById(timeslotId)
+                .map(TimeslotResponse::new)
+                .orElseThrow(TimeslotNotFoundException::new);
+    }
+
+
     public Timeslot isValidTimeslot(long timeslotId) {
         Timeslot timeslot = timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
 
