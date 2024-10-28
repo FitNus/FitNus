@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,6 +37,12 @@ public class TimeslotService {
         return timeslotRepository.findById(timeslotId)
                 .map(TimeslotResponse::new)
                 .orElseThrow(TimeslotNotFoundException::new);
+    }
+
+    public List<TimeslotResponse> getAllTimeslot() {
+        return timeslotRepository.findAll().stream()
+                .map(TimeslotResponse::new)
+                .collect(Collectors.toList());
     }
 
 

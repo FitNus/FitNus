@@ -7,6 +7,8 @@ import com.sparta.fitnus.timeslot.service.TimeslotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -22,5 +24,10 @@ public class TimeslotController {
     @GetMapping("/v1/timeslots/{id}")
     public ApiResponse<TimeslotResponse> getTimeslot(@PathVariable Long id) {
         return ApiResponse.createSuccess(timeslotService.getTimeslot(id));
+    }
+
+    @GetMapping("/v1/timeslots")
+    public ApiResponse<List<TimeslotResponse>> getAllTimeslot() {
+        return ApiResponse.createSuccess(timeslotService.getAllTimeslot());
     }
 }
