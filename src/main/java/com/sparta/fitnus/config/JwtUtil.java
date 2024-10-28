@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
@@ -21,7 +20,7 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
     private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 60분 (테스트용)
-    private final long REFRESH_TOKEN_EXPIRATION = 1 * 24 * 60 * 60 * 1000L; // 1일
+    private final long REFRESH_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000L; // 1일
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     @Value("${jwt.secret.key}")
@@ -108,13 +107,6 @@ public class JwtUtil {
         return null;  // 쿠키가 없으면 null 반환
     }
 
-    // Bearer prefix를 제거하는 메서드
-    public String substringToken(String tokenValue) {
-        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
-            return tokenValue.substring(7);  // "Bearer " 제거 후 반환
-        }
-        throw new IllegalArgumentException("Token does not start with Bearer");
-    }
 
     // 쿠키에서 Access Token 삭제
     public void clearTokenCookie(HttpServletResponse response) {

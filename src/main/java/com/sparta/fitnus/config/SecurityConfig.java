@@ -1,6 +1,5 @@
 package com.sparta.fitnus.config;
 
-import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +42,6 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
-                            .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
                             .anyRequest().authenticated();
                 })
                 .build();

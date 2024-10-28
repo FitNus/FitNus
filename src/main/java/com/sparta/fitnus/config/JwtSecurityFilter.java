@@ -31,6 +31,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        //로그인,회원가입 필터 bypass
+        String requestURI = request.getRequestURI();
+        if ("/api/v1/auth/login".equals(requestURI) || "/api/v1/auth/signup".equals(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 쿠키에서 Access Token 추출
         String accessToken = jwtUtil.resolveTokenFromCookie(request);
 

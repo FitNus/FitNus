@@ -15,13 +15,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -127,12 +124,10 @@ public class UserService {
         return "탈퇴 완료";
     }
 
+    @Secured(UserRole.Authority.ADMIN)
     @Transactional
     public String deactivateUser(Long userId, AuthUser authUser) {
         User user = getUser(userId);
-        //admin권한 검증
-        Collection<? extends GrantedAuthority> authorities = authUser.getAuthorities();
-        validateAdmin(authorities);
         //유저 status 검증
         validateStatus(user.getStatus());
         //유저 deactivate
@@ -147,12 +142,6 @@ public class UserService {
     private void validateStatus(UserStatus status) {
         if (status.equals(UserStatus.BANNED)) {
             throw new UserBannedException();
-        }
-    }
-
-    private void validateAdmin(Collection<? extends GrantedAuthority> authorities) {
-        if (!authorities.contains(new SimpleGrantedAuthority("ADMIN"))) {
-            throw new NotAdminException();
         }
     }
 
