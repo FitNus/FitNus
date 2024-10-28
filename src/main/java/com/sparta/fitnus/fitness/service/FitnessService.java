@@ -48,7 +48,7 @@ public class FitnessService {
     /***
      * CRUD - GET 다건조회
      */
-    public List<FitnessResponse> serchFitness() {
+    public List<FitnessResponse> getAllFitness() {
         return fitnessRepository.findAll().stream()
                 .map(FitnessResponse::new)
                 .collect(Collectors.toList());
