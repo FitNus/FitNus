@@ -2,12 +2,12 @@ package com.sparta.fitnus.user.service;
 
 import com.sparta.fitnus.common.exception.ProfileException;
 import com.sparta.fitnus.common.service.S3Service;
-import com.sparta.fitnus.user.dto.request.UserBioRequest;
-import com.sparta.fitnus.user.dto.request.UserNicknameRequest;
-import com.sparta.fitnus.user.dto.response.UserAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.UserBioResponse;
-import com.sparta.fitnus.user.dto.response.UserGetResponse;
-import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
+import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
+import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
+import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
+import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserStatus;
@@ -27,7 +27,7 @@ public class ProfileService {
     private final S3Service s3Service;
 
     @Transactional
-    public UserAttachFileResponse attachFile(AuthUser authUser, MultipartFile file) {
+    public ProfileAttachFileResponse attachFile(AuthUser authUser, MultipartFile file) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
 
@@ -45,10 +45,10 @@ public class ProfileService {
         }
 
         userRepository.save(user);
-        return new UserAttachFileResponse(user);
+        return new ProfileAttachFileResponse(user);
     }
 
-    public UserGetResponse getUser(Long id) {
+    public ProfileResponse getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
 
@@ -56,11 +56,11 @@ public class ProfileService {
             throw new ProfileException("기능을 사용할 수 없습니다.");
         }
 
-        return new UserGetResponse(user.getNickname(), user.getBio(), user.getImageUrl());
+        return new ProfileResponse(user.getNickname(), user.getBio(), user.getImageUrl());
     }
 
     @Transactional
-    public UserBioResponse updateBio(AuthUser authUser, UserBioRequest request) {
+    public ProfileBioResponse updateBio(AuthUser authUser, ProfileBioRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
 
@@ -70,11 +70,12 @@ public class ProfileService {
 
         user.updateBio(request.getBio());
 
-        return new UserBioResponse(user);
+        return new ProfileBioResponse(user);
     }
 
     @Transactional
-    public UserNicknameResponse updateNickname(AuthUser authUser, UserNicknameRequest request) {
+    public ProfileNicknameResponse updateNickname(AuthUser authUser,
+            ProfileNicknameRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
 
@@ -84,6 +85,6 @@ public class ProfileService {
 
         user.updateNickname(request.getNickname());
 
-        return new UserNicknameResponse(user);
+        return new ProfileNicknameResponse(user);
     }
 }
