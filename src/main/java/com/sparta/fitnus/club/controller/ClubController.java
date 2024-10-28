@@ -5,13 +5,16 @@ import com.sparta.fitnus.club.dto.response.ClubResponse;
 import com.sparta.fitnus.club.service.ClubService;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
+import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Secured(UserRole.Authority.USER)
 public class ClubController {
 
     private final ClubService clubService;
@@ -26,10 +29,11 @@ public class ClubController {
 
     @PutMapping("/v1/clubs/{id}")
     public ApiResponse<ClubResponse> updateClub(
-            @RequestBody ClubRequest request,
-            @PathVariable long id
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable long id,
+            @RequestBody ClubRequest request
     ) {
-        return ApiResponse.createSuccess(clubService.updateClub(request, id));
+        return ApiResponse.createSuccess(clubService.updateClub(authUser, request, id));
     }
 
     @GetMapping("/v1/clubs/{id}")
@@ -38,8 +42,11 @@ public class ClubController {
     }
 
     @DeleteMapping("/v1/clubs/{id}")
-    public ApiResponse<String> deleteClub(@PathVariable long id) {
-        clubService.deleteClub(id);
-        return ApiResponse.createSuccess("모임이 정상적으로 삭제되었습니다.");
+    public ApiResponse<String> deleteClub(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable long id
+    ) {
+        clubService.deleteClub(authUser, id);
+        return ApiResponse.createSuccess(null);
     }
 }
