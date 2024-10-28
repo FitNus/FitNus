@@ -73,6 +73,10 @@ public class User extends Timestamped {
         return this.imageUrl;
     }
 
+    public void removeFile() {
+        this.imageUrl = null;
+    }
+
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }

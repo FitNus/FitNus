@@ -12,6 +12,7 @@ import com.sparta.fitnus.user.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,12 @@ public class ProfileController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(value = "file", required = false) MultipartFile file) {
         return ApiResponse.createSuccess(profileService.attachFile(authUser, file));
+    }
+
+    @DeleteMapping("/users/images")
+    public ApiResponse<String> deleteFile(@AuthenticationPrincipal AuthUser authUser) {
+        profileService.deleteFile(authUser);
+        return ApiResponse.createSuccess("파일을 정상적으로 삭제했습니다.");
     }
 
     @GetMapping("/users/{id}")

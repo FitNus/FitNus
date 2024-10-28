@@ -54,6 +54,24 @@ public class ProfileService {
         return new ProfileAttachFileResponse(user);
     }
 
+    @Transactional
+    public void deleteFile(AuthUser authUser) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
+                new ProfileException("유저를 찾을 수 없습니다."));
+
+        if (user.getStatus() == UserStatus.BANNED) {
+            throw new ProfileException("기능을 사용할 수 없습니다.");
+        }
+
+        String fileName = user.getFile(); // 사용자 파일 이름 가져오기
+
+        if (fileName != null) {
+            s3Service.deleteFile(fileName); // s3에서 파일. 삭제
+            user.removeFile(); // 파일 정보 제거
+            userRepository.save(user); // 변경사항 저장
+        }
+    }
+
     public ProfileResponse getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ProfileException("유저를 찾을 수 없습니다."));
