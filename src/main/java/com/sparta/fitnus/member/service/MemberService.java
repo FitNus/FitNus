@@ -49,8 +49,6 @@ public class MemberService {
     public String applyMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
-        User leader = club.getUser();
-
         MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
         memberApplicantsRepository.save(memberApplicant);
 
@@ -60,6 +58,7 @@ public class MemberService {
             authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
             LocalDate.now());
 
+        User leader = club.getUser();
         sseNotificationServiceImpl.broadcast(leader.getId(), eventPayload);  // 모임 리더에게 알림 전송
 
         return "모임 가입이 정상적으로 신청되었습니다.";

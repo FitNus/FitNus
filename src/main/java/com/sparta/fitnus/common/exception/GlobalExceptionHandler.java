@@ -149,4 +149,9 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleUserBannedException(UserBannedException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ApiResponse<?> handleAccessDeniedException(AccessDeniedException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.FORBIDDEN.value());
+    }
 }

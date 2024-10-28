@@ -1,5 +1,6 @@
 package com.sparta.fitnus.ssenotification.service;
 
+import com.sparta.fitnus.common.exception.AccessDeniedException;
 import com.sparta.fitnus.ssenotification.dto.EventPayload;
 import com.sparta.fitnus.ssenotification.entity.SseNotification;
 import com.sparta.fitnus.ssenotification.repository.EmitterRepository;
@@ -32,7 +33,6 @@ public class SseNotificationServiceImpl implements SseNotificationService {
 
         // 사용자에게 모든 데이터가 전송되었다면 emitter 삭제
         sseEmitter.onCompletion(() -> emitterRepository.deleteById(userId));
-
         // Emitter 유효 시간이 만료되면 emitter 삭제
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(userId));
 
@@ -120,26 +120,18 @@ public class SseNotificationServiceImpl implements SseNotificationService {
     }
 
     /**
-     * 특정 사용자의 SSE 연결을 강제로 종료하는 메서드
-     * @param userId 연결을 종료할 사용자 ID
-     */
-    public void delete(Long userId) {
-        SseEmitter sseEmitter = emitterRepository.findById(userId);
-        if (sseEmitter != null) {
-            sseEmitter.complete(); // 연결 종료
-            emitterRepository.deleteById(userId); // Emitter 삭제
-        }
-    }
-
-    /**
      * 알림을 읽음 상태로 업데이트하는 메서드
      * @param notificationId 읽음 처리할 알림의 ID
      */
     @Transactional
-    public String markAsRead(Long notificationId) {
+    public String markAsRead(Long currentUserId, Long notificationId) {
 
         SseNotification notification = notificationRepository.findById(notificationId)
             .orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
+
+        if(!notification.getUserId().equals(currentUserId)){
+            throw new AccessDeniedException("해당 알림 권한이 없습니다.");
+        }
 
         notification.markAsRead(); // 읽음 처리
         notificationRepository.save(notification); // 업데이트된 상태로 저장
