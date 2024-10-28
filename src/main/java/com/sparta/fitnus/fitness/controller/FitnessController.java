@@ -19,9 +19,9 @@ public class FitnessController {
     private final FitnessService fitnessService;
 
     // 센터등록
-    @PostMapping("/v1/fitness/{id}")
-    public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request, @PathVariable Long id) {
-        return ApiResponse.createSuccess(fitnessService.addFitness(request, id));
+    @PostMapping("/v1/fitness")
+    public ApiResponse<FitnessResponse> addCenter(@RequestBody FitnessRequest request) {
+        return ApiResponse.createSuccess(fitnessService.addFitness(request, request.getCenterId()));
     }
 
     // 단건조회
