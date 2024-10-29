@@ -81,7 +81,6 @@ public class FitnessService {
      * @param fitnessId
      */
     @Transactional
-
     public void deleteFitness(AuthUser authUser, Long fitnessId) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
