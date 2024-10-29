@@ -99,6 +99,4 @@ public class CenterService {
         return centerRepository.findById(id)
                 .orElseThrow(CenterNotFoundException::new);
     }
-
-
 }
