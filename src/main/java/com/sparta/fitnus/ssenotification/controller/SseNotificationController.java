@@ -47,7 +47,6 @@ public class SseNotificationController {
      */
     @PatchMapping("/notifications/{id}/read")
     public ApiResponse<String> markAsRead(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long id) {
-        sseNotificationServiceImpl.markAsRead(authUser.getId(), id);
         return ApiResponse.createSuccess(sseNotificationServiceImpl.markAsRead(authUser.getId(), id));
     }
 }

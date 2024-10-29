@@ -1,13 +1,11 @@
 package com.sparta.fitnus.common.alert.slack;
 
 import com.slack.api.model.block.LayoutBlock;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -16,8 +14,8 @@ public class SlackMessageProvider {
     private final SlackAlertService slackAlertService;
     private final int MAX_LEN = 500;
 
-    @Value("${SLACK_CHANNEL}")
-    private String slackChannel;
+//    @Value("${SLACK_CHANNEL}")
+    private String slackChannel = "asdf";
 
     public String getErrorStack(Throwable throwable) {
         String exceptionAsString = Arrays.toString(throwable.getStackTrace());
