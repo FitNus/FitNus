@@ -2,7 +2,6 @@ package com.sparta.fitnus.search.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.repository.CenterRepository;
-import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.repository.ClubRepository;
 import com.sparta.fitnus.search.dto.response.SearchCenterResponse;
 import com.sparta.fitnus.search.dto.response.SearchClubResponse;
@@ -22,10 +21,10 @@ public class SearchService {
     private final ClubRepository clubRepository;
     private final CenterRepository centerRepository;
 
-    public Page<SearchClubResponse> getClubs(int page, int size) {
+    public Page<SearchClubResponse> searchClubs(String clubName, String clubInfo, String place,
+            int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("modifiedAt").descending());
-        Page<Club> clubPage = clubRepository.findAll(pageable);
-        return clubPage.map(SearchClubResponse::new);
+        return clubRepository.search(clubName, clubInfo, place, pageable);
     }
 
     public Page<SearchCenterResponse> getCenters(int page, int size) {

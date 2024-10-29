@@ -19,11 +19,15 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/search/clubs")
-    public ApiResponse<Page<SearchClubResponse>> getClubs(
+    public ApiResponse<Page<SearchClubResponse>> searchClubs(
+            @RequestParam(required = false) String clubName,
+            @RequestParam(required = false) String clubInfo,
+            @RequestParam(required = false) String place,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiResponse.createSuccess(searchService.getClubs(page, size));
+        return ApiResponse.createSuccess(
+                searchService.searchClubs(clubName, clubInfo, place, page, size));
     }
 
     @GetMapping("/search/centers")
