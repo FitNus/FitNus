@@ -89,7 +89,7 @@ public class JwtUtil {
     public void setTokenCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
         cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정
-        cookie.setMaxAge(7 * 24 * 60 * 60);  // 쿠키의 만료 시간 7일로 설정 (Access Token 만료 시간과는 별개)
+        cookie.setMaxAge(24 * 60 * 60);  // 쿠키의 만료 시간 7일로 설정 (Access Token 만료 시간과는 별개)
         cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
         response.addCookie(cookie);
     }

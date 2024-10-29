@@ -3,6 +3,9 @@ package com.sparta.fitnus.common.exception;
 
 import com.sparta.fitnus.common.alert.slack.SlackErrorSender;
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.kakao.exception.KakaoAccountException;
+import com.sparta.fitnus.kakao.exception.KakaoApiException;
+import com.sparta.fitnus.kakao.exception.KakaoEmailException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -163,5 +166,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserBannedException.class)
     public ApiResponse<?> handleUserBannedException(UserBannedException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ApiResponse<?> handleKakaoApiException(KakaoApiException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(KakaoAccountException.class)
+    public ApiResponse<?> handleKakaoAccountException(KakaoAccountException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(KakaoEmailException.class)
+    public ApiResponse<?> handleKakaoEmailException(KakaoEmailException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 }
