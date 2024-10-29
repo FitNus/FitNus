@@ -1,7 +1,9 @@
 package com.sparta.fitnus.common.exception;
 
-public class ProfileException extends RuntimeException {
-  public ProfileException(String message) {
-    super(message);
-  }
+import org.springframework.http.HttpStatus;
+
+public class ProfileException extends FitNusException {
+    public ProfileException(String message) {
+        super(message, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,9 +1,10 @@
 package com.sparta.fitnus.member.exception;
 
 import com.sparta.fitnus.common.exception.FitNusException;
+import org.springframework.http.HttpStatus;
 
 public class NotLeaderException extends FitNusException {
     public NotLeaderException() {
-        super("해당 모임을 관리할 권한이 없습니다.");
+        super("Not leader", HttpStatus.FORBIDDEN);
     }
 }
