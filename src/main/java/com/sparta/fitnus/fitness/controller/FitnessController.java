@@ -18,10 +18,10 @@ import java.util.List;
 public class FitnessController {
     private final FitnessService fitnessService;
 
-    // 센터등록
+    // 피트니스 등록
     @PostMapping("/v1/fitness")
     public ApiResponse<FitnessResponse> addFitness(@AuthenticationPrincipal AuthUser authUser,
-                                                   @RequestBody FitnessRequest request) {
+                                                  @RequestBody FitnessRequest request) {
         return ApiResponse.createSuccess(fitnessService.addFitness(authUser, request));
     }
 
