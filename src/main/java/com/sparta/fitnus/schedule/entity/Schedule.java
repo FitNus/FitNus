@@ -27,7 +27,7 @@ public class Schedule {
 
     private LocalDateTime endTime;
 
-    private Integer price;
+    private Integer requiredCoupon;
 
     private Schedule(long userId, Timeslot timeslot) {
         this.userId = userId;
@@ -35,7 +35,7 @@ public class Schedule {
         fitnessName = timeslot.getFitness().getFitnessName();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
-        price = timeslot.getFitness().getRequiredCoupon();
+        requiredCoupon = timeslot.getFitness().getRequiredCoupon();
     }
 
     public static Schedule of(long userId, Timeslot timeslot) {
@@ -47,6 +47,6 @@ public class Schedule {
         fitnessName = timeslot.getFitness().getFitnessName();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
-        price = timeslot.getFitness().getRequiredCoupon();
+        requiredCoupon = timeslot.getFitness().getRequiredCoupon();
     }
 }
