@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
 
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
+                    auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/kakao/signup-login", "/api/v1/auth/kakao/callback", "api/v1/auth/kakao/signup", "api/v1/auth/kakao/login", "/api/v1/auth/kakao/logout").permitAll()
                             .anyRequest().authenticated();
                 })
                 .build();

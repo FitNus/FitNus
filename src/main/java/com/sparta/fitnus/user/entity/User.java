@@ -5,13 +5,7 @@ import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.user.dto.request.UserRequest;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -53,8 +47,20 @@ public class User extends Timestamped {
         this.status = UserStatus.ACTIVE;
     }
 
+    private User(String email, String password, String nickname, UserRole role) {
+        this.email = email;
+        this.userRole = role;
+        this.password = password;
+        this.nickname = nickname;
+        this.status = UserStatus.ACTIVE;
+    }
+
     public static User of(UserRequest request, UserRole role) {
         return new User(request, role);
+    }
+
+    public static User of(String email, String password, String nickname, UserRole role) {
+        return new User(email, password, nickname, role);
     }
 
     public void updateBio(String bio) {
