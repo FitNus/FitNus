@@ -6,6 +6,7 @@ import com.sparta.fitnus.timeslot.dto.response.TimeslotResponse;
 import com.sparta.fitnus.timeslot.service.TimeslotService;
 import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ public class TimeslotController {
     private final TimeslotService timeslotService;
 
     @PostMapping("/v1/timeslots")
-    public ApiResponse<TimeslotResponse> createTimeslot(@RequestBody TimeslotRequest request) {
-        return ApiResponse.createSuccess(timeslotService.createTimeslot(request));
+    public ApiResponse<TimeslotResponse> createTimeslot(@AuthenticationPrincipal AuthUser authUser,
+                                                        @RequestBody TimeslotRequest request) {
+        return ApiResponse.createSuccess(timeslotService.createTimeslot(authUser,request));
     }
 
     @GetMapping("/v1/timeslots/{id}")

@@ -7,7 +7,6 @@ import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.exception.CenterAccessDeniedException;
 import com.sparta.fitnus.center.exception.CenterNotFoundException;
 import com.sparta.fitnus.center.repository.CenterRepository;
-import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +56,8 @@ public class CenterService {
      * 예외처리1) : OWNER 권한 체크 - @Secured(UserRole.Authority.OWNER)
      * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 - ownerId.equals(currentUserId)
      */
-    @Transactional
     @Secured(UserRole.Authority.OWNER)
+    @Transactional
     public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
         Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
@@ -78,8 +77,8 @@ public class CenterService {
      * 예외처리1) : OWNER 권한 체크 - @Secured(UserRole.Authority.OWNER)
      * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 - ownerId.equals(currentUserId)
      */
-    @Transactional
     @Secured(UserRole.Authority.OWNER)
+    @Transactional
     public void deleteCenter(AuthUser authUser, Long centerId) {
         Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기

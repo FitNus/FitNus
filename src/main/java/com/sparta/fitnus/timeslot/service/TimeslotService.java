@@ -1,5 +1,7 @@
 package com.sparta.fitnus.timeslot.service;
 
+import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.service.CenterService;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.service.FitnessService;
@@ -9,7 +11,9 @@ import com.sparta.fitnus.timeslot.entity.Timeslot;
 import com.sparta.fitnus.timeslot.exception.TimeslotNotFoundException;
 import com.sparta.fitnus.timeslot.repository.TimeslotRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
+import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +27,15 @@ public class TimeslotService {
 
     private final TimeslotRepository timeslotRepository;
     private final FitnessService fitnessService;
+    private final CenterService centerService;
 
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public TimeslotResponse createTimeslot(TimeslotRequest request) {
+    public TimeslotResponse createTimeslot(AuthUser authUser,TimeslotRequest request) {
+        Center center = centerService.getCenterId(request.getCenterId());
+        if (authUser.getId().equals(center.getOwnerId())) {
+            throw new AccessDeniedException();
+        }
         Fitness fitness = fitnessService.isValidFitness(request.getFitnessId());
         Timeslot newTimeslot = Timeslot.of(request, fitness);
 
@@ -45,7 +55,7 @@ public class TimeslotService {
                 .map(TimeslotResponse::new)
                 .collect(Collectors.toList());
     }
-
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
     public void deleteTimeslot(AuthUser authUser, Long timeslotId){
         if (timeslotRepository.findById(timeslotId).isEmpty()) {
@@ -59,6 +69,7 @@ public class TimeslotService {
         timeslotRepository.deleteById(timeslotId);
     }
 
+    //timeslotId로 FitnessId가 아니라, CenterId 알아내야 한다.
     public Long isValidFitnessInTimeslot(Long timeslotId){
         return timeslotRepository.findFitnessIdByTimeslotId(timeslotId)
                 .orElseThrow(TimeslotNotFoundException::new);

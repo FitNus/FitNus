@@ -11,7 +11,10 @@ import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,20 +28,19 @@ public class FitnessService {
     private final CenterService centerService;
 
     /***
-     * CRUD-POST : addFitness()의 기능입니다.
+     * CRUD-POST : createFitness()의 기능입니다.
      * @param authUser
      * @param request
      * @return FitnessResponse
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public FitnessResponse createFitness(Long fitnessId, AuthUser authUser, FitnessRequest request) {
+    public FitnessResponse createFitness(AuthUser authUser, FitnessRequest request) {
 
-        Long ownerId = isValidCenterInFitness(fitnessId);
-        Long currentUserId = authUser.getId();
-        if (!currentUserId.equals(ownerId)) {
+        Center center = centerService.getCenterId(request.getCenterId());
+        if (!authUser.getId().equals(center.getOwnerId())) {
             throw new AccessDeniedException();
         }
-        Center center = centerService.getCenterId(ownerId);
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
         return new FitnessResponse(savedfitness);
@@ -73,15 +75,15 @@ public class FitnessService {
      * @param fitnessRequest
      * @return FitnessResponse
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
             FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }
-        Long ownerId = isValidCenterInFitness(fitnessId);
-        Long currentUserId = authUser.getId();
-        if (!currentUserId.equals(ownerId)) {
+        Center center = centerService.getCenterId(fitnessRequest.getCenterId());
+        if (!authUser.getId().equals(center.getOwnerId())) {
             throw new AccessDeniedException();
         }
         Fitness fitness = isValidFitness(fitnessId);
@@ -95,6 +97,7 @@ public class FitnessService {
      * @param authUser
      * @param fitnessId
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
     public void deleteFitness(AuthUser authUser, Long fitnessId) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
