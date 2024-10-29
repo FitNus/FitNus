@@ -21,6 +21,7 @@ import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.service.UserService;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,7 +58,7 @@ public class MemberService {
         EventPayload eventPayload = new EventPayload(
             "가입 신청",
             authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
-            LocalDate.now());
+            LocalDateTime.now());
 
         User leader = club.getUser();
         sseNotificationServiceImpl.broadcast(SseMessageName.MESSAGE, leader.getId(), eventPayload);  // 모임 리더에게 알림 전송

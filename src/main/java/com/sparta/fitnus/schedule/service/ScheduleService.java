@@ -24,6 +24,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final TimeslotService timeslotService;
+    private final ScheduleMessageService scheduleMessageService;
 
     /**
      * 일정 생성
@@ -41,6 +42,9 @@ public class ScheduleService {
 
         Schedule newSchedule = Schedule.of(authUser.getId(), timeslot);
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
+
+        // 알림 예약 (시작 시간 1시간 전)
+        scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(), savedSchedule.getId());
 
         return new ScheduleResponse(savedSchedule);
     }

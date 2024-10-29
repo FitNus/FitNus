@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,10 +20,10 @@ public class SseNotification {
     private Long userId;
     private String eventType;
     private String message;
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
     private boolean isRead; // 읽음 상태
 
-    public SseNotification(Long userId, String eventType, String message, LocalDate timestamp) {
+    public SseNotification(Long userId, String eventType, String message, LocalDateTime timestamp) {
         this.userId = userId;
         this.eventType = eventType;
         this.message = message;
