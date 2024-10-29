@@ -91,14 +91,13 @@ public class CenterService {
     }
 
     public Long isValidOwnerInCenter(Long centerId) {
-        return centerRepository.findOwnerIdByCenterId(centerId).orElseThrow(() ->
-                new NotFoundException("해당 CenterId는 없는 Id입니다."));
+        return centerRepository.findOwnerIdByCenterId(centerId).orElseThrow(CenterNotFoundException::new);
     }
 
     // CenterService.java
     public Center getCenterId(Long id) {
         return centerRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Center with id " + id + " not found"));
+                .orElseThrow(CenterNotFoundException::new);
     }
 
 
