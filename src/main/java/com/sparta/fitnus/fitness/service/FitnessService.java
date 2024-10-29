@@ -1,19 +1,20 @@
 package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.exception.AccessDeniedException;
 import com.sparta.fitnus.center.service.CenterService;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
-import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,7 +30,7 @@ public class FitnessService {
 
         Center center = centerService.getCenterId(request.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("");
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
@@ -59,13 +60,13 @@ public class FitnessService {
 
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
-            FitnessRequest fitnessRequest) {
+                                         FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
         }
         Center center = centerService.getCenterId(fitnessRequest.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
         }
         Fitness fitness = isValidFitness(fitnessId);
         fitness.update(fitnessRequest);
@@ -87,7 +88,7 @@ public class FitnessService {
         }
         Center center = centerService.getCenterId(isValidCenterInFitness(fitnessId));
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
         }
 
         fitnessRepository.deleteById(fitnessId);
