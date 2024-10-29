@@ -3,14 +3,14 @@ package com.sparta.fitnus.center.repository;
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import io.lettuce.core.dynamic.annotation.Param;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface CenterRepository extends JpaRepository<Center, Long> {
+public interface CenterRepository extends JpaRepository<Center, Long>, CenterQueryRepository {
+
     default Center findCenterById(Long id) {
         return findById(id).orElseThrow(
                 () -> new NotFoundException("Center with id " + id + " not found")

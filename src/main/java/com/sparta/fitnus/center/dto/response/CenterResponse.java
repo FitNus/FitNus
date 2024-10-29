@@ -9,16 +9,16 @@ import lombok.RequiredArgsConstructor;
 public class CenterResponse {
 
     private final Long id;
-    private final String center_name;
-    private final Integer open_time;
-    private final Integer close_time;
+    private final String centerName;
+    private final Integer openTime;
+    private final Integer closeTime;
 
 
     public CenterResponse(Center center) {
         this.id = center.getId();
-        this.center_name = center.getCenterName();
-        this.open_time = center.getOpenTime();
-        this.close_time = center.getCloseTime();
+        this.centerName = center.getCenterName();
+        this.openTime = center.getOpenTime();
+        this.closeTime = center.getCloseTime();
     }
 
 }

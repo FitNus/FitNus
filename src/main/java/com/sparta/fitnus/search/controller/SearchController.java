@@ -31,11 +31,14 @@ public class SearchController {
     }
 
     @GetMapping("/search/centers")
-    public ApiResponse<Page<SearchCenterResponse>> getCenters(
+    public ApiResponse<Page<SearchCenterResponse>> searchCenters(
+            @RequestParam(required = false) String centerName,
+            @RequestParam(required = false) String fitnessName,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiResponse.createSuccess(searchService.getCenters(page, size));
+        return ApiResponse.createSuccess(
+                searchService.searchCenters(centerName, fitnessName, page, size));
     }
 
 }
