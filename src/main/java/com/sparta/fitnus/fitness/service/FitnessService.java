@@ -64,21 +64,27 @@ public class FitnessService {
                 .collect(Collectors.toList());
     }
 
+    /***
+     * CRUD - PATCH 피트니스수정_Api_연관 메소드 입니다.
+     * @param authUser
+     * @param fitnessId
+     * @param fitnessRequest
+     * @return FitnessResponse
+     */
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
             FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }
-        Center center = centerService.getCenterId(fitnessRequest.getCenterId());
-        if (!authUser.getId().equals(center.getOwnerId())) {
+        Long ownerId = isValidCenterInFitness(fitnessId);
+        Long currentUserId = authUser.getId();
+        if (!currentUserId.equals(ownerId)) {
             throw new AccessDeniedException();
         }
         Fitness fitness = isValidFitness(fitnessId);
         fitness.update(fitnessRequest);
-
         return new FitnessResponse(fitness);
-
     }
 
 
@@ -92,14 +98,12 @@ public class FitnessService {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }
-        Center center = centerService.getCenterId(isValidCenterInFitness(fitnessId));
-        if (!authUser.getId().equals(center.getOwnerId())) {
+        Long ownerId = isValidCenterInFitness(fitnessId);
+        Long currentUserId = authUser.getId();
+        if (!currentUserId.equals(ownerId)) {
             throw new AccessDeniedException();
         }
-
         fitnessRepository.deleteById(fitnessId);
-
-
     }
 
     public Long isValidCenterInFitness(Long fitnessId) {
