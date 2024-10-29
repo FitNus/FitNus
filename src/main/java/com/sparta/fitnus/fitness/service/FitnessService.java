@@ -2,11 +2,11 @@ package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.service.CenterService;
-import com.sparta.fitnus.common.exception.AccessDeniedException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
+import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class FitnessService {
 
         Center center = centerService.getCenterId(request.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+            throw new AccessDeniedException();
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
@@ -65,7 +65,7 @@ public class FitnessService {
         }
         Center center = centerService.getCenterId(fitnessRequest.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+            throw new AccessDeniedException();
         }
         Fitness fitness = isValidFitness(fitnessId);
         fitness.update(fitnessRequest);
@@ -82,20 +82,23 @@ public class FitnessService {
      */
     @Transactional
 
-    public void deleteFitness(FitnessRequest request, AuthUser authUser, Long fitnessId) {
+    public void deleteFitness(AuthUser authUser, Long fitnessId) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
         }
-        Center center = centerService.getCenterId(request.getCenterId());
+        Center center = centerService.getCenterId(isValidCenterInFitness(fitnessId));
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+            throw new AccessDeniedException();
         }
 
         fitnessRepository.deleteById(fitnessId);
 
 
     }
-
+    public Long isValidCenterInFitness(Long fitnessId) {
+        return fitnessRepository.findCenterIdByFitnessId(fitnessId).orElseThrow(() ->
+                new NotFoundException("해당 fitnessId는 없는 Id입니다."));
+    }
 
     public Fitness isValidFitness(Long fitnessId) {
         return fitnessRepository.findById(fitnessId).orElseThrow(() ->
