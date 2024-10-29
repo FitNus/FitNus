@@ -31,7 +31,7 @@ public class FitnessService {
      * @return FitnessResponse
      */
     @Transactional
-    public FitnessResponse addFitness(Long fitnessId, AuthUser authUser, FitnessRequest request) {
+    public FitnessResponse createFitness(Long fitnessId, AuthUser authUser, FitnessRequest request) {
 
         Long ownerId = isValidCenterInFitness(fitnessId);
         Long currentUserId = authUser.getId();

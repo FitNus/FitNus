@@ -20,10 +20,10 @@ public class FitnessController {
 
     // 피트니스 등록
     @PostMapping("/v1/fitness/{id}")
-    public ApiResponse<FitnessResponse> addFitness(@PathVariable Long id,
+    public ApiResponse<FitnessResponse> createFitness(@PathVariable Long id,
                                                    @AuthenticationPrincipal AuthUser authUser,
                                                    @RequestBody FitnessRequest request) {
-        return ApiResponse.createSuccess(fitnessService.addFitness(id,authUser, request));
+        return ApiResponse.createSuccess(fitnessService.createFitness(id,authUser, request));
     }
 
     // 단건조회
