@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 public interface ClubQueryRepository {
 
     Page<SearchClubResponse> search(
-            String fitnessName,
             String clubName,
+            String clubInfo,
             String place,
             Pageable pageable
     );

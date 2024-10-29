@@ -9,12 +9,11 @@ import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -59,7 +58,8 @@ public class FitnessService {
     }
 
     @Transactional
-    public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId, FitnessRequest fitnessRequest) {
+    public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
+            FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
         }
@@ -94,6 +94,7 @@ public class FitnessService {
 
 
     }
+
     public Long isValidCenterInFitness(Long fitnessId) {
         return fitnessRepository.findCenterIdByFitnessId(fitnessId).orElseThrow(() ->
                 new NotFoundException("해당 fitnessId는 없는 Id입니다."));
