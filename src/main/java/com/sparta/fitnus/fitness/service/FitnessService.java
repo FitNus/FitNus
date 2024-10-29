@@ -2,6 +2,7 @@ package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.service.CenterService;
+import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
@@ -99,20 +100,15 @@ public class FitnessService {
      */
     @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public void deleteFitness(AuthUser authUser, Long fitnessId) {
+    public void deleteFitness(AuthUser authUser, Long fitnessId, FitnessDeleteRequest request) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }
-        Long ownerId = isValidCenterInFitness(fitnessId);
-        Long currentUserId = authUser.getId();
-        if (!currentUserId.equals(ownerId)) {
+        Center center = centerService.getCenterId(request.getCenterId());
+        if (!authUser.getId().equals(center.getOwnerId())) {
             throw new AccessDeniedException();
         }
         fitnessRepository.deleteById(fitnessId);
-    }
-
-    public Long isValidCenterInFitness(Long fitnessId) {
-        return fitnessRepository.findCenterIdByFitnessId(fitnessId).orElseThrow(FitnessNotFoundException::new);
     }
 
     public Fitness isValidFitness(Long fitnessId) {

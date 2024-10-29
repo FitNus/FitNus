@@ -1,6 +1,7 @@
 package com.sparta.fitnus.fitness.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.service.FitnessService;
@@ -47,8 +48,9 @@ public class FitnessController {
 
     @DeleteMapping("/v1/fitness/{id}")
     public ApiResponse<String> deleteFitness(@AuthenticationPrincipal AuthUser authUser,
-                                             @PathVariable Long id) {
-        fitnessService.deleteFitness(authUser, id);
+                                             @PathVariable Long id,
+                                             @RequestBody FitnessDeleteRequest request) {
+        fitnessService.deleteFitness(authUser, id, request);
         return ApiResponse.createSuccess("운동종목이 정상적으로 삭제되었습니다.");
     }
 }
