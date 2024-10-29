@@ -21,8 +21,6 @@ public class Timeslot {
 
     private LocalDateTime endTime;
 
-    private Boolean isDeleted = false;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fitness_id", nullable = false)
     private Fitness fitness;
@@ -37,7 +35,4 @@ public class Timeslot {
         return new Timeslot(request, fitness);
     }
 
-    public void updateTimeslotStatus() {
-        isDeleted = true;
-    }
 }

@@ -1,13 +1,14 @@
 package com.sparta.fitnus.timeslot.service;
 
 import com.sparta.fitnus.fitness.entity.Fitness;
+import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.service.FitnessService;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
 import com.sparta.fitnus.timeslot.dto.response.TimeslotResponse;
 import com.sparta.fitnus.timeslot.entity.Timeslot;
-import com.sparta.fitnus.timeslot.exception.NotAvailableTimeslot;
 import com.sparta.fitnus.timeslot.exception.TimeslotNotFoundException;
 import com.sparta.fitnus.timeslot.repository.TimeslotRepository;
+import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,14 +46,26 @@ public class TimeslotService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deleteTimeslot(AuthUser authUser, Long timeslotId){
+        if (timeslotRepository.findById(timeslotId).isEmpty()) {
+            throw new TimeslotNotFoundException();
+        }
+        Fitness fitness = fitnessService.isValidFitness(isValidFitnessInTimeslot(timeslotId));
+        //이 fitness를 만든 fitness ID인지 체크
+        if (authUser.getId().equals(fitness.getId())){
+            throw new AccessDeniedException();
+        }
+        timeslotRepository.deleteById(timeslotId);
+    }
+
+    public Long isValidFitnessInTimeslot(Long timeslotId){
+        return timeslotRepository.findFitnessIdByTimeslotId(timeslotId)
+                .orElseThrow(TimeslotNotFoundException::new);
+    }
+
 
     public Timeslot isValidTimeslot(long timeslotId) {
-        Timeslot timeslot = timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
-
-        if (timeslot.getIsDeleted()) {
-            throw new NotAvailableTimeslot();
-        }
-
-        return timeslot;
+        return timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
     }
 }
