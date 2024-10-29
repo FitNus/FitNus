@@ -5,6 +5,7 @@ import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.exception.CenterAccessDeniedException;
+import com.sparta.fitnus.center.exception.CenterNotFoundException;
 import com.sparta.fitnus.center.repository.CenterRepository;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -29,9 +30,7 @@ public class CenterService {
     public CenterResponse getCenter(Long centerId) {
         return centerRepository.findById(centerId)
                 .map(CenterResponse::new)
-                .orElseThrow(
-                        () -> new NotFoundException("Center with id " + centerId + " not found")
-                );
+                .orElseThrow(CenterNotFoundException::new);
     }
 
     /***
