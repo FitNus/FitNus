@@ -7,6 +7,7 @@ import com.sparta.fitnus.center.entity.Center;
 import com.sparta.fitnus.center.exception.AccessDeniedException;
 import com.sparta.fitnus.center.repository.CenterRepository;
 import com.sparta.fitnus.common.exception.NotFoundException;
+import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public class CenterService {
     @Transactional
     @Secured(UserRole.Authority.OWNER)
     public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
-        Long ownerId = centerRepository.findOwnerIdByCenterId(centerId);
+        Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
 
         if (!ownerId.equals(currentUserId)) {
@@ -81,13 +82,18 @@ public class CenterService {
     @Transactional
     @Secured(UserRole.Authority.OWNER)
     public void deleteCenter(AuthUser authUser, Long centerId) {
-        Long ownerId = centerRepository.findOwnerIdByCenterId(centerId);
+        Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
 
         if (!ownerId.equals(currentUserId)) {
             throw new AccessDeniedException("본인만 접근할 수 있습니다.");
         }
         centerRepository.deleteById(centerId);
+    }
+
+    public Long isValidOwnerInCenter(Long centerId){
+        return centerRepository.findOwnerIdByCenterId(centerId).orElseThrow(() ->
+                new NotFoundException("해당 CenterId는 없는 Id입니다."));
     }
 
     // CenterService.java
