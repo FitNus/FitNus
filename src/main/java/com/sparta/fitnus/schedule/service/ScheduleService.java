@@ -1,11 +1,11 @@
 package com.sparta.fitnus.schedule.service;
 
-import com.sparta.fitnus.common.exception.ScheduleNotFoundException;
 import com.sparta.fitnus.schedule.dto.request.ScheduleRequest;
 import com.sparta.fitnus.schedule.dto.response.ScheduleResponse;
 import com.sparta.fitnus.schedule.entity.Schedule;
 import com.sparta.fitnus.schedule.exception.InValidDateException;
 import com.sparta.fitnus.schedule.exception.NotScheduleOwnerException;
+import com.sparta.fitnus.schedule.exception.ScheduleNotFoundException;
 import com.sparta.fitnus.schedule.exception.TimeslotAlreadyExistsException;
 import com.sparta.fitnus.schedule.repository.ScheduleRepository;
 import com.sparta.fitnus.timeslot.entity.Timeslot;

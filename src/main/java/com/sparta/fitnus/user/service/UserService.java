@@ -1,6 +1,6 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.exception.*;
+import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.config.JwtUtil;
 import com.sparta.fitnus.user.dto.request.ChangePasswordRequest;
 import com.sparta.fitnus.user.dto.request.UserRequest;
@@ -9,6 +9,7 @@ import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
+import com.sparta.fitnus.user.exception.*;
 import com.sparta.fitnus.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -170,7 +171,7 @@ public class UserService {
     private UserRole validateOwnerToken(UserRequest userRequest, UserRole role) {
         if (userRequest.isOwner()) {
             if (!OWNER_TOKEN.equals(userRequest.getOwnerToken())) {
-                throw new WrongAdminTokenException();
+                throw new WrongOwnerTokenException();
             }
             role = UserRole.OWNER;
         }

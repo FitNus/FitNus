@@ -8,8 +8,8 @@ import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.member.exception.AlreadyMemberException;
 import com.sparta.fitnus.member.exception.CanNotDeportLeaderException;
+import com.sparta.fitnus.member.exception.MemberNotFound;
 import com.sparta.fitnus.member.exception.NotLeaderException;
-import com.sparta.fitnus.member.exception.NotMemberException;
 import com.sparta.fitnus.member.repository.MemberRepository;
 import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -112,7 +112,7 @@ public class MemberService {
      */
     private void isValidMemberOfClub(Club club, long userId) {
         if (!memberRepository.existsByClubAndUserId(club, userId)) {
-            throw new NotMemberException();
+            throw new MemberNotFound();
         }
     }
 }

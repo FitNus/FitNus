@@ -1,12 +1,12 @@
 package com.sparta.fitnus.timeslot.service;
 
-import com.sparta.fitnus.common.exception.NotAvailableTimeslot;
-import com.sparta.fitnus.common.exception.TimeslotNotFoundException;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.service.FitnessService;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
 import com.sparta.fitnus.timeslot.dto.response.TimeslotResponse;
 import com.sparta.fitnus.timeslot.entity.Timeslot;
+import com.sparta.fitnus.timeslot.exception.NotAvailableTimeslot;
+import com.sparta.fitnus.timeslot.exception.TimeslotNotFoundException;
 import com.sparta.fitnus.timeslot.repository.TimeslotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
