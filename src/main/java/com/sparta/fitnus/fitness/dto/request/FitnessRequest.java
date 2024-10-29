@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class FitnessRequest {
     private String fitnessName;
     private int requiredCoupon;
-    private Long centerId;
 }
