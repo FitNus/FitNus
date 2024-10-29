@@ -14,6 +14,7 @@ import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
 import com.sparta.fitnus.member.repository.MemberRepository;
 import com.sparta.fitnus.ssenotification.dto.EventPayload;
+import com.sparta.fitnus.ssenotification.entity.SseMessageName;
 import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -59,7 +60,7 @@ public class MemberService {
             LocalDate.now());
 
         User leader = club.getUser();
-        sseNotificationServiceImpl.broadcast(leader.getId(), eventPayload);  // 모임 리더에게 알림 전송
+        sseNotificationServiceImpl.broadcast(SseMessageName.MESSAGE, leader.getId(), eventPayload);  // 모임 리더에게 알림 전송
 
         return "모임 가입이 정상적으로 신청되었습니다.";
     }

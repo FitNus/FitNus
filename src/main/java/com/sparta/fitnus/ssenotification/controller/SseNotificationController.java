@@ -1,8 +1,10 @@
 package com.sparta.fitnus.ssenotification.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.ssenotification.dto.EventPayload;
 import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.fitnus.user.entity.AuthUser;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +29,15 @@ public class SseNotificationController {
     @GetMapping(value = "/sse/subscribe/users", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal AuthUser authUser){
         return sseNotificationServiceImpl.subscribe(authUser.getId());
+    }
+
+    /**
+     * 읽지 않은 알림 목록 조회
+     * @param authUser
+     */
+    @GetMapping("/notifications")
+    public ApiResponse<List<EventPayload>> getUnreadNotifications(@AuthenticationPrincipal AuthUser authUser){
+        return ApiResponse.createSuccess(sseNotificationServiceImpl.getUnreadNotifications(authUser.getId()));
     }
 
     /**
