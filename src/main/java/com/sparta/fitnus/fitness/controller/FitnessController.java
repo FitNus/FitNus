@@ -20,8 +20,8 @@ public class FitnessController {
 
     // 센터등록
     @PostMapping("/v1/fitness")
-    public ApiResponse<FitnessResponse> addCenter(@AuthenticationPrincipal AuthUser authUser,
-                                                  @RequestBody FitnessRequest request) {
+    public ApiResponse<FitnessResponse> addFitness(@AuthenticationPrincipal AuthUser authUser,
+                                                   @RequestBody FitnessRequest request) {
         return ApiResponse.createSuccess(fitnessService.addFitness(authUser, request));
     }
 
@@ -39,7 +39,7 @@ public class FitnessController {
 
     // 업데이트
     @PatchMapping("/v1/fitness/{id}")
-    public ApiResponse<FitnessResponse> UpdateFitness(@AuthenticationPrincipal AuthUser authUser,
+    public ApiResponse<FitnessResponse> updateFitness(@AuthenticationPrincipal AuthUser authUser,
                                                       @PathVariable Long id,
                                                       @Valid @RequestBody FitnessRequest fitnessRequest) {
         return ApiResponse.createSuccess(fitnessService.updateFitness(authUser, id, fitnessRequest));

@@ -44,7 +44,7 @@ public class MemberApplicantService {
      * @param request  : 가입할 모임 ID를 담고 있는 DTO
      */
     @Transactional
-    public void createMemberApplicants(AuthUser authUser, MemberRequest request) {
+    public void createMemberApplicant(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
         memberService.isAlreadyMember(club, authUser.getId());
@@ -71,11 +71,11 @@ public class MemberApplicantService {
      * @param request  : 가입신청한 사용자 ID, 가입할 모임 ID를 담고 있는 DTO
      */
     @Transactional
-    public void acceptMember(AuthUser authUser, MemberAcceptRequest request) {
+    public void acceptMemberApplicant(AuthUser authUser, MemberAcceptRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
         memberService.isLeaderOfClub(club, authUser.getId());
 
-        MemberApplicant memberApplicant = isValidApplicants(club, request.getUserId());
+        MemberApplicant memberApplicant = isValidApplicant(club, request.getUserId());
 
         Member member = Member.of(memberApplicant);
         club.getMemberList().add(member);
@@ -90,11 +90,11 @@ public class MemberApplicantService {
      * @param request  : 가입신청한 사용자 ID, 가입할 모임 ID를 담고 있는 DTO
      */
     @Transactional
-    public void rejectMember(AuthUser authUser, MemberRejectRequest request) {
+    public void rejectMemberApplicant(AuthUser authUser, MemberRejectRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
         memberService.isLeaderOfClub(club, authUser.getId());
 
-        MemberApplicant memberApplicant = isValidApplicants(club, request.getUserId());
+        MemberApplicant memberApplicant = isValidApplicant(club, request.getUserId());
         memberApplicantsRepository.delete(memberApplicant);
     }
 
@@ -125,7 +125,7 @@ public class MemberApplicantService {
      * @param userId : 확인할 사용자 ID
      * @return MemberApplicant : 신청자 Entity 객체
      */
-    private MemberApplicant isValidApplicants(Club club, long userId) {
+    private MemberApplicant isValidApplicant(Club club, long userId) {
         return memberApplicantsRepository.findByClubAndUserId(club, userId)
                 .orElseThrow(MemberApplicantNotFoundException::new);
     }

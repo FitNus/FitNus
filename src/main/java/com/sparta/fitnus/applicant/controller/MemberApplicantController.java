@@ -23,29 +23,29 @@ public class MemberApplicantController {
     private final MemberApplicantService memberApplicantService;
 
     @PostMapping("/v1/member-applicants/apply")
-    public ApiResponse<String> createMemberApplicants(
+    public ApiResponse<String> createMemberApplicant(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberRequest request
     ) {
-        memberApplicantService.createMemberApplicants(authUser, request);
+        memberApplicantService.createMemberApplicant(authUser, request);
         return ApiResponse.createSuccess(null);
     }
 
     @PostMapping("/v1/member-applicants/accept")
-    public ApiResponse<String> acceptMember(
+    public ApiResponse<String> acceptMemberApplicant(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberAcceptRequest request
     ) {
-        memberApplicantService.acceptMember(authUser, request);
+        memberApplicantService.acceptMemberApplicant(authUser, request);
         return ApiResponse.createSuccess(null);
     }
 
     @PostMapping("/v1/member-applicants/reject")
-    public ApiResponse<String> rejectMember(
+    public ApiResponse<String> rejectMemberApplicant(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberRejectRequest request
     ) {
-        memberApplicantService.rejectMember(authUser, request);
+        memberApplicantService.rejectMemberApplicant(authUser, request);
         return ApiResponse.createSuccess(null);
     }
 
