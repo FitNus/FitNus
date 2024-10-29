@@ -42,7 +42,7 @@ public class CenterService {
      */
     @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public CenterResponse addCenter(AuthUser authUser, CenterSaveRequest request) {
+    public CenterResponse createCenter(AuthUser authUser, CenterSaveRequest request) {
         Center center = Center.of(request, authUser);
         Center savedCenter = centerRepository.save(center);
         return new CenterResponse(savedCenter);
