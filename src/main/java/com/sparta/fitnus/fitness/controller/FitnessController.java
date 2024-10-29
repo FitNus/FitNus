@@ -47,8 +47,9 @@ public class FitnessController {
 
     @DeleteMapping("/v1/fitness/{id}")
     public ApiResponse<String> deleteFitness(@AuthenticationPrincipal AuthUser authUser,
-                                             @PathVariable Long id) {
-        fitnessService.deleteFitness(authUser, id);
+                                             @PathVariable Long id,
+                                             @RequestBody FitnessRequest request) {
+        fitnessService.deleteFitness(request, authUser, id);
         return ApiResponse.createSuccess("운동종목이 정상적으로 삭제되었습니다.");
     }
 }
