@@ -10,12 +10,9 @@ import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.enums.UserStatus;
 import com.sparta.fitnus.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,42 +49,30 @@ public class UserService {
         return new UserResponse(savedUser);
     }
 
-    public String login(UserRequest userRequest, HttpServletResponse response) {
-        User user = getUserFromEmail(userRequest.getEmail());
-        //비밀번호검증
-        validatePassword(userRequest.getPassword(), user.getPassword());
-        //유저 상태 검증
-        validateStatus(user.getStatus());
-        // ACCESS_TOKEN와 REFRESH_TOKEN 생성
+    public void redisSaveTokens(Long userId, String accessToken, String refreshToken) {
+        // Redis에 토큰 저장 (Access Token과 Refresh Token)
+        redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
+    }
+
+    public String createAccessToken(User user) {
         Long userId = user.getId();  // 사용자 id
         String role = user.getUserRole().name();  // 역할
         String nickname = user.getNickname();
-
-
-        // Access Token과 Refresh Token 발급
-        String accessToken = jwtUtil.createAccessToken(userId, user.getEmail(), role, nickname);
-        String refreshToken = jwtUtil.createRefreshToken(userId);
-
-        // Redis에 토큰 저장 (Access Token과 Refresh Token)
-        redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
-
-        // Access Token을 쿠키에 저장
-        jwtUtil.setTokenCookie(response, accessToken);
-
-        // Refresh Token을 응답 헤더에 담아 보내는 방법 (예시)
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Set-Cookie", "refreshToken=" + refreshToken + "; HttpOnly; Path=/; Max-Age=604800");
-
-        return "로그인 완료";
+        String email = user.getEmail();
+        String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
+        return accessToken;
     }
 
-    public String logout(AuthUser authUser, HttpServletResponse response) {
+    public String createRefreshToken(User user) {
+        Long userId = user.getId();
+        String refreshToken = jwtUtil.createRefreshToken(userId);
+        return refreshToken;
+    }
+
+    public void deleteRedisToken(AuthUser authUser) {
         // Redis에서 Refresh Token 삭제
         redisUserService.deleteTokens(authUser.getId().toString());
 
-        // 쿠키에서 Access Token 삭제º
-        jwtUtil.clearTokenCookie(response);
-        return "로그아웃 완료";
     }
 
     @Transactional
@@ -107,7 +92,7 @@ public class UserService {
     }
 
     @Transactional
-    public String deleteUser(AuthUser authUser, Long userId, UserRequest userRequest, HttpServletResponse response) {
+    public void deleteUser(AuthUser authUser, Long userId, UserRequest userRequest) {
         User user = getUser(userId);
         String password = userRequest.getPassword();
         //로그인한 유저와 탈퇴 시도 유저 일치 검증
@@ -118,13 +103,18 @@ public class UserService {
         userRepository.delete(user);
         // Redis에서 Refresh Token 삭제
         redisUserService.deleteTokens(authUser.getId().toString());
-
-        // 쿠키에서 Access Token 삭제º
-        jwtUtil.clearTokenCookie(response);
-        return "탈퇴 완료";
     }
 
-    @Secured(UserRole.Authority.ADMIN)
+    public User checkLogin(UserRequest userRequest) {
+        User user = getUserFromEmail(userRequest.getEmail());
+        //비밀번호검증
+        validatePassword(userRequest.getPassword(), user.getPassword());
+        //유저 상태 검증
+        validateStatus(user.getStatus());
+        return user;
+    }
+
+
     @Transactional
     public String deactivateUser(Long userId, AuthUser authUser) {
         User user = getUser(userId);
@@ -193,5 +183,6 @@ public class UserService {
             throw new DuplicateEmailException();
         }
     }
+
 }
 
