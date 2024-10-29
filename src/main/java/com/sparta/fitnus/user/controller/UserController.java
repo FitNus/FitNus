@@ -75,6 +75,12 @@ public class UserController {
         return ApiResponse.createSuccess(userService.deactivateUser(userId, authUser));
     }
 
+    @GetMapping("/v1/user/info")
+    public ApiResponse<UserResponse> getUserInfo(@AuthenticationPrincipal AuthUser authUser) {
+        User user = userService.getUser(authUser.getId());
+        return ApiResponse.createSuccess(new UserResponse(user));
+    }
+
 
     // 현재 인증된 사용자 정보에 접근하는 예시
     @GetMapping("/test")
