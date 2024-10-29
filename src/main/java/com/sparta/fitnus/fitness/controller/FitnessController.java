@@ -19,10 +19,11 @@ public class FitnessController {
     private final FitnessService fitnessService;
 
     // 피트니스 등록
-    @PostMapping("/v1/fitness")
-    public ApiResponse<FitnessResponse> addFitness(@AuthenticationPrincipal AuthUser authUser,
-                                                  @RequestBody FitnessRequest request) {
-        return ApiResponse.createSuccess(fitnessService.addFitness(authUser, request));
+    @PostMapping("/v1/fitness/{id}")
+    public ApiResponse<FitnessResponse> addFitness(@PathVariable Long id,
+                                                   @AuthenticationPrincipal AuthUser authUser,
+                                                   @RequestBody FitnessRequest request) {
+        return ApiResponse.createSuccess(fitnessService.addFitness(id,authUser, request));
     }
 
     // 단건조회

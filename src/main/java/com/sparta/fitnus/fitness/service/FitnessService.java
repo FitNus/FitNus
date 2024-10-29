@@ -31,12 +31,14 @@ public class FitnessService {
      * @return FitnessResponse
      */
     @Transactional
-    public FitnessResponse addFitness(AuthUser authUser, FitnessRequest request) {
+    public FitnessResponse addFitness(Long fitnessId, AuthUser authUser, FitnessRequest request) {
 
-        Center center = centerService.getCenterId(request.getCenterId());
-        if (!authUser.getId().equals(center.getOwnerId())) {
+        Long ownerId = isValidCenterInFitness(fitnessId);
+        Long currentUserId = authUser.getId();
+        if (!currentUserId.equals(ownerId)) {
             throw new AccessDeniedException();
         }
+        Center center = centerService.getCenterId(ownerId);
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
         return new FitnessResponse(savedfitness);
