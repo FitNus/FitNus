@@ -1,6 +1,6 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.exception.ProfileException;
+import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.common.service.S3Service;
 import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
 import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
@@ -11,13 +11,14 @@ import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserStatus;
+import com.sparta.fitnus.user.exception.ProfileUploadException;
+import com.sparta.fitnus.user.exception.UserBannedException;
 import com.sparta.fitnus.user.repository.UserRepository;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +31,10 @@ public class ProfileService {
     @Transactional
     public ProfileAttachFileResponse attachFile(AuthUser authUser, MultipartFile file) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         if (file != null && !file.isEmpty()) {
@@ -47,7 +48,7 @@ public class ProfileService {
                 String fileName = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
                 user.addFile(fileName);
             } catch (IOException e) {
-                throw new ProfileException("업로드 중 오류가 발생했습니다.");
+                throw new ProfileUploadException();
             }
         }
 
@@ -58,10 +59,10 @@ public class ProfileService {
     @Transactional
     public void deleteFile(AuthUser authUser) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         String fileName = user.getFile(); // 사용자 파일 이름 가져오기
@@ -75,10 +76,10 @@ public class ProfileService {
 
     public ProfileResponse getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         return new ProfileResponse(user);
@@ -87,10 +88,10 @@ public class ProfileService {
     @Transactional
     public ProfileBioResponse updateBio(AuthUser authUser, ProfileBioRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         user.updateBio(request.getBio());
@@ -100,12 +101,12 @@ public class ProfileService {
 
     @Transactional
     public ProfileNicknameResponse updateNickname(AuthUser authUser,
-                                                  ProfileNicknameRequest request) {
+            ProfileNicknameRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         user.updateNickname(request.getNickname());
