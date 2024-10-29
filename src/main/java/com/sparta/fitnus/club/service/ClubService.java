@@ -3,11 +3,11 @@ package com.sparta.fitnus.club.service;
 import com.sparta.fitnus.club.dto.request.ClubRequest;
 import com.sparta.fitnus.club.dto.response.ClubResponse;
 import com.sparta.fitnus.club.entity.Club;
+import com.sparta.fitnus.club.exception.AlreadyExistsClubNameException;
+import com.sparta.fitnus.club.exception.ClubNotFoundException;
 import com.sparta.fitnus.club.repository.ClubRepository;
-import com.sparta.fitnus.common.exception.AlreadyExistsClubNameException;
-import com.sparta.fitnus.common.exception.ClubNotFoundException;
-import com.sparta.fitnus.common.exception.NotLeaderException;
 import com.sparta.fitnus.member.entity.Member;
+import com.sparta.fitnus.member.exception.NotLeaderException;
 import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class ClubService {
     @Transactional
     public ClubResponse updateClub(AuthUser authUser, ClubRequest request, long clubId) {
         isExistsByClubName(request.getClubName());
-        
+
         Club club = isValidClub(clubId);
         isLeaderOfClub(authUser.getId(), club);
 

@@ -2,11 +2,11 @@ package com.sparta.fitnus.applicant.service;
 
 import com.sparta.fitnus.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.fitnus.applicant.entity.MemberApplicant;
+import com.sparta.fitnus.applicant.exception.AlreadyApplyException;
+import com.sparta.fitnus.applicant.exception.MemberApplicantNotFoundException;
 import com.sparta.fitnus.applicant.repository.MemberApplicantsRepository;
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.service.ClubService;
-import com.sparta.fitnus.common.exception.AlreadyApplyException;
-import com.sparta.fitnus.common.exception.MemberApplicantNotFoundException;
 import com.sparta.fitnus.member.dto.request.MemberAcceptRequest;
 import com.sparta.fitnus.member.dto.request.MemberRejectRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;

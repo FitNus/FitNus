@@ -40,23 +40,17 @@ public class ScheduleController {
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable long id
     ) {
-        return ApiResponse.createSuccess(scheduleService.deleteSchedule(authUser, id));
+        scheduleService.deleteSchedule(authUser, id);
+        return ApiResponse.createSuccess(null);
     }
 
-    @GetMapping("/v1/schedules/monthly")
-    public ApiResponse<List<ScheduleResponse>> getMonthlySchedule(
+    @GetMapping("/v1/schedules")
+    public ApiResponse<List<ScheduleResponse>> getScheduleList(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam(required = false) Integer month
-    ) {
-        return ApiResponse.createSuccess(scheduleService.getMonthlyScheduleList(authUser, month));
-    }
-
-    @GetMapping("/v1/schedules/daily")
-    public ApiResponse<List<ScheduleResponse>> getDailySchedule(
-            @AuthenticationPrincipal AuthUser authUser,
+            @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) Integer day
     ) {
-        return ApiResponse.createSuccess(scheduleService.getDailyScheduleList(authUser, month, day));
+        return ApiResponse.createSuccess(scheduleService.getScheduleList(authUser, year, month, day));
     }
 }

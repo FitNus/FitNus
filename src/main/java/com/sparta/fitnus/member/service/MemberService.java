@@ -2,13 +2,14 @@ package com.sparta.fitnus.member.service;
 
 import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.club.service.ClubService;
-import com.sparta.fitnus.common.exception.AlreadyMemberException;
-import com.sparta.fitnus.common.exception.CanNotDeportLeaderException;
-import com.sparta.fitnus.common.exception.NotLeaderException;
 import com.sparta.fitnus.member.dto.request.MemberDeportRequest;
 import com.sparta.fitnus.member.dto.request.MemberRequest;
 import com.sparta.fitnus.member.dto.response.MemberResponse;
 import com.sparta.fitnus.member.entity.Member;
+import com.sparta.fitnus.member.exception.AlreadyMemberException;
+import com.sparta.fitnus.member.exception.CanNotDeportLeaderException;
+import com.sparta.fitnus.member.exception.NotLeaderException;
+import com.sparta.fitnus.member.exception.NotMemberException;
 import com.sparta.fitnus.member.repository.MemberRepository;
 import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -55,6 +56,8 @@ public class MemberService {
     public void withdrawMember(AuthUser authUser, MemberRequest request) {
         Club club = clubService.isValidClub(request.getClubId());
 
+        isValidMemberOfClub(club, authUser.getId());
+
         memberRepository.deleteByClubAndUserId(club, authUser.getId());
     }
 
@@ -69,6 +72,7 @@ public class MemberService {
         Club club = clubService.isValidClub(request.getClubId());
         isLeaderOfClub(club, authUser.getId());
 
+        isValidMemberOfClub(club, authUser.getId());
         if (request.getUserId().equals(club.getLeaderId())) {
             throw new CanNotDeportLeaderException();
         }
@@ -95,8 +99,20 @@ public class MemberService {
      * @param userId : 멤버인지 확인할 사용자 ID
      */
     public void isAlreadyMember(Club club, long userId) {
-        if (memberRepository.existsByClubAndUserId(club, userId) | club.getLeaderId().equals(userId)) {
+        if (memberRepository.existsByClubAndUserId(club, userId)) {
             throw new AlreadyMemberException();
+        }
+    }
+
+    /**
+     * 멤버가 유효한지 확인
+     *
+     * @param club   : 확인할 모임 Entity 객체
+     * @param userId : 확인할 사용자 ID
+     */
+    private void isValidMemberOfClub(Club club, long userId) {
+        if (!memberRepository.existsByClubAndUserId(club, userId)) {
+            throw new NotMemberException();
         }
     }
 }
