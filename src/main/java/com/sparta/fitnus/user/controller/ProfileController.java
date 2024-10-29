@@ -41,7 +41,7 @@ public class ProfileController {
     @DeleteMapping("/users/images")
     public ApiResponse<String> deleteFile(@AuthenticationPrincipal AuthUser authUser) {
         profileService.deleteFile(authUser);
-        return ApiResponse.createSuccess("파일을 정상적으로 삭제했습니다.");
+        return ApiResponse.createSuccess(null);
     }
 
     @GetMapping("/users/{id}")
