@@ -25,7 +25,7 @@ public class FitnessService {
     private final CenterService centerService;
 
     /***
-     * CRUD - POST 운동종목_등록_Api 연관 메소드 입니다.
+     * CRUD-POST : addFitness()의 기능입니다.
      * @param authUser
      * @param request
      * @return FitnessResponse
@@ -44,7 +44,7 @@ public class FitnessService {
 
 
     /***
-     * CRUD - GET 단건조회_Api_연관 메소드 입니다.
+     * CRUD-GET(단건조회) : getFitness()의 기능입니다.
      * @param id
      * @return FitnessResponse
      */
@@ -55,7 +55,7 @@ public class FitnessService {
     }
 
     /***
-     * CRUD - GET 다건조회_Api_연관 메소드 입니다.
+     * CRUD-GET(다건조회) : getAllFitness()의 기능입니다.
      * @return List<FitnessResponse>
      */
     public List<FitnessResponse> getAllFitness() {
@@ -65,7 +65,7 @@ public class FitnessService {
     }
 
     /***
-     * CRUD - PATCH 피트니스수정_Api_연관 메소드 입니다.
+     * CRUD-PATCH : updateFitness()의 기능입니다.
      * @param authUser
      * @param fitnessId
      * @param fitnessRequest
@@ -89,7 +89,7 @@ public class FitnessService {
 
 
     /***
-     * CRUD-DELETE : deleteCenter()의 기능입니다.
+     * CRUD-DELETE : deleteFitness()의 기능입니다.
      * @param authUser
      * @param fitnessId
      */
