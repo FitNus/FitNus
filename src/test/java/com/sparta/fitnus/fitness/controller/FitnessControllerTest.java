@@ -3,6 +3,7 @@ package com.sparta.fitnus.fitness.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.fitnus.config.JwtSecurityFilter;
+import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.service.FitnessService;
 import org.junit.jupiter.api.BeforeEach;
@@ -123,9 +124,12 @@ class FitnessControllerTest {
         @Test
         void deleteFitness_성공() throws Exception {
             //given
+            FitnessDeleteRequest fitnessDeleteRequest = new FitnessDeleteRequest();
 
             //when
-            ResultActions result = mockMvc.perform(delete("/api/v1/fitness/{id}", 1L));
+            ResultActions result = mockMvc.perform(delete("/api/v1/fitness/{id}", 1L)
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(fitnessDeleteRequest)));
 
             //then
             result.andExpect(status().isOk());
