@@ -3,7 +3,6 @@ package com.sparta.fitnus.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,7 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final JwtSecurityFilter jwtSecurityFilter;
-    private final Environment env;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,16 +30,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // SessionManagementFilter, SecurityContextPersistenceFilter
-            )
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .addFilterBefore(jwtSecurityFilter, SecurityContextHolderAwareRequestFilter.class)
-            .formLogin(AbstractHttpConfigurer::disable) // UsernamePasswordAuthenticationFilter, DefaultLoginPageGeneratingFilter 비활성화
-            .anonymous(AbstractHttpConfigurer::disable) // AnonymousAuthenticationFilter 비활성화
-            .httpBasic(AbstractHttpConfigurer::disable) // BasicAuthenticationFilter 비활성화
-            .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // SessionManagementFilter, SecurityContextPersistenceFilter
+                )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .addFilterBefore(jwtSecurityFilter, SecurityContextHolderAwareRequestFilter.class)
+                .formLogin(AbstractHttpConfigurer::disable) // UsernamePasswordAuthenticationFilter, DefaultLoginPageGeneratingFilter 비활성화
+                .anonymous(AbstractHttpConfigurer::disable) // AnonymousAuthenticationFilter 비활성화
+                .httpBasic(AbstractHttpConfigurer::disable) // BasicAuthenticationFilter 비활성화
+                .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
 
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/kakao/signup-login", "/api/v1/auth/kakao/callback", "api/v1/auth/kakao/signup", "api/v1/auth/kakao/login", "/api/v1/auth/kakao/logout").permitAll()
@@ -49,6 +47,7 @@ public class SecurityConfig {
                 })
                 .build();
     }
+
     private UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
