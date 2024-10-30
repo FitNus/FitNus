@@ -42,8 +42,8 @@ public class ProfileController {
     }
 
     @GetMapping("/users/{id}")
-    public ApiResponse<ProfileResponse> getUser(@PathVariable Long id) {
-        return ApiResponse.createSuccess(profileService.getUser(id));
+    public ApiResponse<ProfileResponse> getUserProfile(@PathVariable Long id) {
+        return ApiResponse.createSuccess(profileService.getUserProfile(id));
     }
 
     @PutMapping("/users/profile")
