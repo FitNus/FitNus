@@ -61,6 +61,9 @@ public class ScheduleService {
         Schedule newSchedule = Schedule.ofClub(authUser.getId(), club);
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
+        // 알림 예약 (시작 시간 1시간 전)
+        scheduleMessageService.scheduleNotification(authUser.getId(),club.getDate());
+
         return new ScheduleResponse(savedSchedule);
     }
 
