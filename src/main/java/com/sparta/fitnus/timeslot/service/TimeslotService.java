@@ -40,7 +40,7 @@ public class TimeslotService {
     @Transactional
     public TimeslotResponse createTimeslot(AuthUser authUser,TimeslotRequest request) {
         Center center = centerService.getCenterId(request.getCenterId());
-        if (authUser.getId().equals(center.getOwnerId())) {
+        if (!authUser.getId().equals(center.getOwnerId())) {
             throw new AccessDeniedException();
         }
         Fitness fitness = fitnessService.isValidFitness(request.getFitnessId());
@@ -84,7 +84,7 @@ public class TimeslotService {
         if (timeslotRepository.findById(timeslotId).isEmpty()) {
             throw new TimeslotNotFoundException();
         }
-        if (authUser.getId().equals(request.getCenterId())){
+        if (!authUser.getId().equals(request.getCenterId())){
             throw new AccessDeniedException();
         }
         timeslotRepository.deleteById(timeslotId);
