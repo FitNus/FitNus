@@ -1,27 +1,26 @@
 package com.sparta.fitnus.common.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
+@RequiredArgsConstructor
 public class S3Service {
 
-    private final S3Client s3Client;
+    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String AWS_BUCKET;
-
-    public S3Service(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
+    @Value("${cloud.aws.region.static}")
+    private String AWS_REGION;
 
     public String uploadFile(MultipartFile file) throws IOException {
         // 파일 검증(크기와 형식)
@@ -30,26 +29,24 @@ public class S3Service {
         // 고유한 파일 이름 생성
         String fileName = generateFileName(file);
 
-        try {
-            // S3에 파일 업로드
-            s3Client.putObject(
-                    PutObjectRequest.builder().bucket(AWS_BUCKET).key(fileName).build(),
-                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-        } catch (S3Exception e) {
-            throw new IllegalArgumentException("S3에 파일 업로드를 실패했습니다.");
-        }
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
 
-        return fileName;
+        PutObjectRequest putObjectRequest = new PutObjectRequest(AWS_BUCKET, fileName,
+                file.getInputStream(), metadata);
+
+        amazonS3.putObject(putObjectRequest);
+
+        return getPublicUrl(fileName);
     }
 
-    public void deleteFile(String fileName) {
+    public void deleteFile(String fileUrl) {
         // S3에서 파일 삭제
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(AWS_BUCKET)
-                .key(fileName)
-                .build();
-
-        s3Client.deleteObject(deleteObjectRequest);
+        String splitString = ".com/";
+        String fileName = fileUrl.substring(
+                fileUrl.lastIndexOf(splitString) + splitString.length());
+        amazonS3.deleteObject(new DeleteObjectRequest(AWS_BUCKET, fileName));
     }
 
     // 파일 검증 로직
@@ -81,5 +78,9 @@ public class S3Service {
     // 고유한 파일 이름 생성
     private String generateFileName(MultipartFile file) {
         return UUID.randomUUID() + "_" + file.getOriginalFilename();
+    }
+
+    private String getPublicUrl(String fileName) {
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", AWS_BUCKET, AWS_REGION, fileName);
     }
 }
