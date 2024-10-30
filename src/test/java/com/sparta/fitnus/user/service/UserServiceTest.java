@@ -60,21 +60,17 @@ class UserServiceTest {
                 .ownerToken("")
                 .adminToken("")
                 .build();
-
-        // lenient()로 findUserById에 대해 stubbing 설정
-        lenient().when(userRepository.findUserById(1L)).thenReturn(user);
     }
 
     @Nested
-            //회원가입 테스트
     class SignupTests {
 
         @Test
         void signup_성공() {
             // given
-            lenient().when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.empty());
-            lenient().when(passwordEncoder.encode(userRequest.getPassword())).thenReturn("encodedPassword");
-            lenient().when(userRepository.save(any(User.class))).thenReturn(user);
+            when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.empty());
+            when(passwordEncoder.encode(userRequest.getPassword())).thenReturn("encodedPassword");
+            when(userRepository.save(any(User.class))).thenReturn(user);
 
             // when
             UserResponse response = userService.signup(userRequest);
@@ -88,7 +84,7 @@ class UserServiceTest {
         @Test
         void signup_실패_ThrowDuplicateEmailException_whenEmailExists() {
             // given
-            lenient().when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
 
             // when & then
             assertThrows(DuplicateEmailException.class, () -> userService.signup(userRequest));
@@ -96,7 +92,6 @@ class UserServiceTest {
     }
 
     @Nested
-            //비밀번호 변경 테스트
     class ChangePasswordTests {
 
         @Test
@@ -108,8 +103,10 @@ class UserServiceTest {
                     .newPassword("newPassword")
                     .build();
 
-            lenient().when(passwordEncoder.matches(changeRequest.getOldPassword(), user.getPassword())).thenReturn(true);
-            lenient().when(passwordEncoder.encode(changeRequest.getNewPassword())).thenReturn("encodedNewPassword");
+            // userRepository에서 user를 반환하도록 설정
+            when(userRepository.findUserById(1L)).thenReturn(user);
+            when(passwordEncoder.matches(changeRequest.getOldPassword(), user.getPassword())).thenReturn(true);
+            when(passwordEncoder.encode(changeRequest.getNewPassword())).thenReturn("encodedNewPassword");
 
             // when
             String result = userService.changePassword(authUser, 1L, changeRequest);
@@ -128,22 +125,25 @@ class UserServiceTest {
                     .newPassword("newPassword")
                     .build();
 
-            lenient().when(passwordEncoder.matches(changeRequest.getOldPassword(), user.getPassword())).thenReturn(false);
+            // userRepository에서 user를 반환하도록 설정
+            when(userRepository.findUserById(1L)).thenReturn(user);
+            when(passwordEncoder.matches(changeRequest.getOldPassword(), user.getPassword())).thenReturn(false);
 
             // when & then
             assertThrows(WrongPasswordException.class, () -> userService.changePassword(authUser, 1L, changeRequest));
         }
     }
 
+
     @Nested
-            //회월 탈퇴 테스트
     class DeleteUserTests {
 
         @Test
         void deleteUser_성공_whenValidRequest() {
             // given
             AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@example.com", "testUser");
-            lenient().when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(true);
+            when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(true);
+            when(userRepository.findUserById(1L)).thenReturn(user); // 필요한 테스트에만 설정
 
             // when
             userService.deleteUser(authUser, 1L, userRequest);
@@ -155,14 +155,13 @@ class UserServiceTest {
     }
 
     @Nested
-            //로그인 테스트
     class CheckLoginTests {
 
         @Test
         void checkLogin_성공_whenValidCredentials() {
             // given
-            lenient().when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
-            lenient().when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(true);
+            when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(true);
 
             // when
             User result = userService.checkLogin(userRequest);
@@ -175,8 +174,8 @@ class UserServiceTest {
         @Test
         void checkLogin_실패_whenPasswordIsIncorrect() {
             // given
-            lenient().when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
-            lenient().when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(false);
+            when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches(userRequest.getPassword(), user.getPassword())).thenReturn(false);
 
             // when & then
             assertThrows(WrongPasswordException.class, () -> userService.checkLogin(userRequest));
@@ -184,14 +183,13 @@ class UserServiceTest {
     }
 
     @Nested
-            //유저 ban테스트
     class DeactivateUserTests {
 
         @Test
         void deactivateUser_성공_whenValidUser() {
             // given
             AuthUser authUser = new AuthUser(1L, UserRole.ADMIN, "test@example.com", "testUser");
-            lenient().when(userRepository.findUserById(1L)).thenReturn(user);
+            when(userRepository.findUserById(1L)).thenReturn(user);
 
             // when
             String result = userService.deactivateUser(1L, authUser);
@@ -200,18 +198,17 @@ class UserServiceTest {
             assertEquals("유저 비활성화 완료", result);
             assertEquals(UserStatus.BANNED, user.getStatus());
             verify(userRepository, times(1)).save(user);
-            verify(redisUserService, times(1)).deleteTokens("1"); // "1"을 String으로 예상
+            verify(redisUserService, times(1)).deleteTokens("1");
         }
     }
 
     @Nested
-            //이메일 중복 검증
     class ValidateDuplicateEmailTests {
 
         @Test
         void validateDuplicateEmail_실패_whenEmailExists() {
             // given
-            lenient().when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
             // when & then
             assertThrows(DuplicateEmailException.class, () -> userService.validateDuplicateEmail(user.getEmail()));
