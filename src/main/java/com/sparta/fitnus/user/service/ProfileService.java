@@ -95,6 +95,7 @@ public class ProfileService {
         }
 
         user.updateBio(request.getBio());
+        userRepository.save(user);
 
         return new ProfileBioResponse(user);
     }
@@ -110,6 +111,7 @@ public class ProfileService {
         }
 
         user.updateNickname(request.getNickname());
+        userRepository.save(user);
 
         return new ProfileNicknameResponse(user);
     }
