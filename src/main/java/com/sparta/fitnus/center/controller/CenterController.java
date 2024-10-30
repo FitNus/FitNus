@@ -19,17 +19,18 @@ public class CenterController {
     private final CenterService centerService;
 
     @PostMapping("/v1/centers")
-    public ApiResponse<CenterResponse> addCenter(@RequestBody CenterSaveRequest request) {
-        CenterResponse response = centerService.addCenter(request);
+    public ApiResponse<CenterResponse> createCenter(@AuthenticationPrincipal AuthUser authUser,
+                                                 @RequestBody CenterSaveRequest request) {
+        CenterResponse response = centerService.createCenter(authUser, request);
 
         return ApiResponse.createSuccess(response);
     }
 
-    @PatchMapping("/v1/centers/{centerId}")
+    @PatchMapping("/v1/centers/{id}")
     public ApiResponse<CenterResponse> updateCenter(@AuthenticationPrincipal AuthUser authUser,
-                                                    @PathVariable Long centerId,
+                                                    @PathVariable Long id,
                                                     @Valid @RequestBody CenterUpdateRequest centerUpdateRequest) {
-        return ApiResponse.createSuccess(centerService.updateCenter(authUser, centerId, centerUpdateRequest));
+        return ApiResponse.createSuccess(centerService.updateCenter(authUser, id, centerUpdateRequest));
     }
 
     @DeleteMapping("/v1/centers/{id}")

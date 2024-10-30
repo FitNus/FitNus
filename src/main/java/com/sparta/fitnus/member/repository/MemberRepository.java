@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Page<Member> findAllByClub(Pageable pageable, Club club);
+    Page<Member> findAllByClub(Club club, Pageable pageable);
 
     void deleteByClubAndUserId(Club club, long userId);
+
+    boolean existsByClubAndUserId(Club club, long userId);
 }

@@ -4,7 +4,6 @@ import com.sparta.fitnus.applicant.entity.MemberApplicant;
 import com.sparta.fitnus.club.dto.request.ClubRequest;
 import com.sparta.fitnus.common.Timestamped;
 import com.sparta.fitnus.member.entity.Member;
-import com.sparta.fitnus.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +21,9 @@ public class Club extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long leaderId;
+
     @Column(unique = true)
     private String clubName;
 
@@ -31,26 +33,22 @@ public class Club extends Timestamped {
 
     private LocalDateTime date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> memberList = new ArrayList<>();
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberApplicant> memberApplicantList = new ArrayList<>();
 
-    private Club(ClubRequest request, User user) {
+    private Club(ClubRequest request, long leaderId) {
+        this.leaderId = leaderId;
         this.clubName = request.getClubName();
         this.clubInfo = request.getClubInfo();
         this.place = request.getPlace();
         this.date = request.getDate();
-        this.user = user;
     }
 
-    public static Club of(ClubRequest request, User user) {
-        return new Club(request, user);
+    public static Club of(ClubRequest request, long leaderId) {
+        return new Club(request, leaderId);
     }
 
     public void update(ClubRequest request) {

@@ -1,5 +1,6 @@
 package com.sparta.fitnus.schedule.entity;
 
+import com.sparta.fitnus.club.entity.Club;
 import com.sparta.fitnus.timeslot.entity.Timeslot;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,32 +22,54 @@ public class Schedule {
     @Column(unique = true)
     private Long timeslotId;
 
-    private String fitnessName;
+    @Column(unique = true)
+    private Long clubId;
+
+    private String scheduleName;
 
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    private Integer price;
+    private Integer requiredCoupon;
 
     private Schedule(long userId, Timeslot timeslot) {
         this.userId = userId;
         timeslotId = timeslot.getId();
-        fitnessName = timeslot.getFitness().getFitnessName();
+        scheduleName = timeslot.getFitness().getFitnessName();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
-        price = timeslot.getFitness().getRequiredCoupon();
+        requiredCoupon = timeslot.getFitness().getRequiredCoupon();
     }
 
-    public static Schedule of(long userId, Timeslot timeslot) {
+    private Schedule(long userId, Club club) {
+        this.userId = userId;
+        clubId = club.getId();
+        scheduleName = club.getClubName();
+        startTime = club.getDate();
+        requiredCoupon = 0;
+    }
+
+    public static Schedule ofTimeslot(long userId, Timeslot timeslot) {
         return new Schedule(userId, timeslot);
     }
 
-    public void updateSchedule(Timeslot timeslot) {
+    public static Schedule ofClub(long userId, Club club) {
+        return new Schedule(userId, club);
+    }
+
+    public void updateFitnessSchedule(Timeslot timeslot) {
         timeslotId = timeslot.getId();
-        fitnessName = timeslot.getFitness().getFitnessName();
+        scheduleName = timeslot.getFitness().getFitnessName();
         startTime = timeslot.getStartTime();
         endTime = timeslot.getEndTime();
-        price = timeslot.getFitness().getRequiredCoupon();
+        requiredCoupon = timeslot.getFitness().getRequiredCoupon();
+    }
+
+    public void updateClubSchedule(Club club) {
+        clubId = club.getId();
+        scheduleName = club.getClubName();
+        startTime = club.getDate();
+        requiredCoupon = 0;
     }
 }

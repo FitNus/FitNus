@@ -33,7 +33,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
         //로그인,회원가입 필터 bypass
         String requestURI = request.getRequestURI();
-        if ("/api/v1/auth/login".equals(requestURI) || "/api/v1/auth/signup".equals(requestURI)) {
+        if ("/api/v1/auth/login".equals(requestURI) || "/api/v1/auth/signup".equals(requestURI) || requestURI.startsWith("/api/v1/auth/kakao")) {
             filterChain.doFilter(request, response);
             return;
         }

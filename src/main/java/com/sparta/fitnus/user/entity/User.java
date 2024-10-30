@@ -47,8 +47,20 @@ public class User extends Timestamped {
         this.status = UserStatus.ACTIVE;
     }
 
+    private User(String email, String password, String nickname, UserRole role) {
+        this.email = email;
+        this.userRole = role;
+        this.password = password;
+        this.nickname = nickname;
+        this.status = UserStatus.ACTIVE;
+    }
+
     public static User of(UserRequest request, UserRole role) {
         return new User(request, role);
+    }
+
+    public static User of(String email, String password, String nickname, UserRole role) {
+        return new User(email, password, nickname, role);
     }
 
     public void updateBio(String bio) {
@@ -61,6 +73,14 @@ public class User extends Timestamped {
 
     public void addFile(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getFile() {
+        return this.imageUrl;
+    }
+
+    public void removeFile() {
+        this.imageUrl = null;
     }
 
     public void changePassword(String encodedPassword) {

@@ -4,12 +4,13 @@ import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
 import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.exception.CenterAccessDeniedException;
+import com.sparta.fitnus.center.exception.CenterNotFoundException;
 import com.sparta.fitnus.center.repository.CenterRepository;
-import com.sparta.fitnus.common.exception.ForbiddenException;
-import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +24,28 @@ public class CenterService {
     /***
      * CRUD-Get : getCenter()의 기능입니다.
      * @param centerId
-     * @return
+     * @return centerRepository
      */
     public CenterResponse getCenter(Long centerId) {
         return centerRepository.findById(centerId)
                 .map(CenterResponse::new)
-                .orElseThrow(
-                        () -> new NotFoundException("Center with id " + centerId + " not found")
-                );
+                .orElseThrow(CenterNotFoundException::new);
     }
 
     /***
      * CRUD-POST : saveCenter()의 기능입니다.
      * @param request
-     * @return
+     * @return CenterResponse
+     * 예외처리 : OWNER 권한 체크 - @Secured(UserRole.Authority.OWNER)
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public CenterResponse addCenter(CenterSaveRequest request) {
-        Center center = Center.of(request);
+    public CenterResponse createCenter(AuthUser authUser, CenterSaveRequest request) {
+        Center center = Center.of(request, authUser);
         Center savedCenter = centerRepository.save(center);
         return new CenterResponse(savedCenter);
     }
+
 
     /***
      * CRUD-PATCH : updateCenter()의 기능입니다.
@@ -51,13 +53,18 @@ public class CenterService {
      * @param centerId
      * @param updateRequest
      * @return
+     * 예외처리1) : OWNER 권한 체크 - @Secured(UserRole.Authority.OWNER)
+     * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 - ownerId.equals(currentUserId)
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
     public CenterResponse updateCenter(AuthUser authUser, Long centerId, CenterUpdateRequest updateRequest) {
-        // 권한확인 == OWNER가 아닌경우, 바로 Exception 던지고 종료.
-//        if (!authUser.getAuthorities().equals(UserRole.OWNER)) {
-//            throw new ForbiddenException("센터를 수정할 권한이 없습니다.");
-//        }
+        Long ownerId = isValidOwnerInCenter(centerId);
+        Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
+
+        if (!ownerId.equals(currentUserId)) {
+            throw new CenterAccessDeniedException();
+        }
         Center center = centerRepository.findCenterById(centerId);
         center.update(updateRequest);
 
@@ -66,24 +73,29 @@ public class CenterService {
 
     /***
      * CRUD-DELETE : deleteCenter()의 기능입니다.
-     * @param authuser
      * @param centerId
+     * 예외처리1) : OWNER 권한 체크 - @Secured(UserRole.Authority.OWNER)
+     * 예외처리2) : OWNER가 이 센터를 만든 OWNER랑 같은 ID인지 체크 - ownerId.equals(currentUserId)
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public void deleteCenter(AuthUser authuser, Long centerId) {
-        if (!authuser.getAuthorities().stream().findFirst().get().equals(UserRole.OWNER)) {
-            centerRepository.deleteById(centerId);
-        } else {
-            throw new ForbiddenException("이 센터를 삭제할 권한이 없습니다.");
+    public void deleteCenter(AuthUser authUser, Long centerId) {
+        Long ownerId = isValidOwnerInCenter(centerId);
+        Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
+
+        if (!ownerId.equals(currentUserId)) {
+            throw new CenterAccessDeniedException();
         }
+        centerRepository.deleteById(centerId);
+    }
 
-
+    public Long isValidOwnerInCenter(Long centerId) {
+        return centerRepository.findOwnerIdByCenterId(centerId).orElseThrow(CenterNotFoundException::new);
     }
 
     // CenterService.java
     public Center getCenterId(Long id) {
         return centerRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Center with id " + id + " not found"));
+                .orElseThrow(CenterNotFoundException::new);
     }
-
 }

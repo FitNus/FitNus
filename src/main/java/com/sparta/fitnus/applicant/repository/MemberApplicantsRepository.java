@@ -6,9 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface MemberApplicantsRepository extends JpaRepository<MemberApplicant, Long> {
 
-    MemberApplicant findByClubAndUserId(Club club, long userId);
+    Optional<MemberApplicant> findByClubAndUserId(Club club, long userId);
 
-    Page<MemberApplicant> findAllByClub(Pageable pageable, Club club);
+    boolean existsByClubAndUserId(Club club, long userId);
+
+    Page<MemberApplicant> findAllByClub(Club club, Pageable pageable);
 }

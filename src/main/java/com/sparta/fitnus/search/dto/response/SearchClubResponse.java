@@ -1,6 +1,6 @@
 package com.sparta.fitnus.search.dto.response;
 
-import com.sparta.fitnus.club.entity.Club;
+import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
@@ -13,11 +13,13 @@ public class SearchClubResponse {
     private final String place;
     private final LocalDateTime date;
 
-    public SearchClubResponse(Club club) {
-        this.clubId = club.getId();
-        this.clubName = club.getClubName();
-        this.clubInfo = club.getClubInfo();
-        this.place = club.getPlace();
-        this.date = club.getDate();
+    @QueryProjection
+    public SearchClubResponse(Long clubId, String clubName, String clubInfo, String place,
+            LocalDateTime date) {
+        this.clubId = clubId;
+        this.clubName = clubName;
+        this.clubInfo = clubInfo;
+        this.place = place;
+        this.date = date;
     }
 }

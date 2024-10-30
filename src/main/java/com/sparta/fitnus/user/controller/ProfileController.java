@@ -1,17 +1,18 @@
 package com.sparta.fitnus.user.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import com.sparta.fitnus.user.dto.request.UserBioRequest;
-import com.sparta.fitnus.user.dto.request.UserNicknameRequest;
-import com.sparta.fitnus.user.dto.response.UserAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.UserBioResponse;
-import com.sparta.fitnus.user.dto.response.UserGetResponse;
-import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
+import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
+import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
+import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
+import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,27 +32,33 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/users/images")
-    public ApiResponse<UserAttachFileResponse> attachFile(
+    public ApiResponse<ProfileAttachFileResponse> attachFile(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(value = "file", required = false) MultipartFile file) {
         return ApiResponse.createSuccess(profileService.attachFile(authUser, file));
     }
 
+    @DeleteMapping("/users/images")
+    public ApiResponse<String> deleteFile(@AuthenticationPrincipal AuthUser authUser) {
+        profileService.deleteFile(authUser);
+        return ApiResponse.createSuccess(null);
+    }
+
     @GetMapping("/users/{id}")
-    public ApiResponse<UserGetResponse> getUser(@PathVariable Long id) {
+    public ApiResponse<ProfileResponse> getUser(@PathVariable Long id) {
         return ApiResponse.createSuccess(profileService.getUser(id));
     }
 
     @PutMapping("/users/bio")
-    public ApiResponse<UserBioResponse> updateBio(@AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody UserBioRequest request) {
+    public ApiResponse<ProfileBioResponse> updateBio(@AuthenticationPrincipal AuthUser authUser,
+            @Valid @RequestBody ProfileBioRequest request) {
         return ApiResponse.createSuccess(profileService.updateBio(authUser, request));
     }
 
     @PatchMapping("/users/nickname")
-    public ApiResponse<UserNicknameResponse> updateNickname(
+    public ApiResponse<ProfileNicknameResponse> updateNickname(
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody UserNicknameRequest request) {
+            @Valid @RequestBody ProfileNicknameRequest request) {
         return ApiResponse.createSuccess(profileService.updateNickname(authUser, request));
     }
 }

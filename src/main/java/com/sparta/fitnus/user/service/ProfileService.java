@@ -1,16 +1,18 @@
 package com.sparta.fitnus.user.service;
 
-import com.sparta.fitnus.common.exception.ProfileException;
+import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.common.service.S3Service;
-import com.sparta.fitnus.user.dto.request.UserBioRequest;
-import com.sparta.fitnus.user.dto.request.UserNicknameRequest;
-import com.sparta.fitnus.user.dto.response.UserAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.UserBioResponse;
-import com.sparta.fitnus.user.dto.response.UserGetResponse;
-import com.sparta.fitnus.user.dto.response.UserNicknameResponse;
+import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
+import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
+import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
+import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserStatus;
+import com.sparta.fitnus.user.exception.ProfileUploadException;
+import com.sparta.fitnus.user.exception.UserBannedException;
 import com.sparta.fitnus.user.repository.UserRepository;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -27,63 +29,90 @@ public class ProfileService {
     private final S3Service s3Service;
 
     @Transactional
-    public UserAttachFileResponse attachFile(AuthUser authUser, MultipartFile file) {
+    public ProfileAttachFileResponse attachFile(AuthUser authUser, MultipartFile file) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         if (file != null && !file.isEmpty()) {
             try {
+                // 기존 파일 삭제
+                String existingFileName = user.getFile(); // 기존 파일 이름 가져오기
+                if (existingFileName != null) {
+                    s3Service.deleteFile(existingFileName); // s3에서 기존 파일 삭제
+                }
+                // 새로운 파일 업로드
                 String fileName = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
                 user.addFile(fileName);
             } catch (IOException e) {
-                throw new ProfileException("업로드 중 오류가 발생했습니다.");
+                throw new ProfileUploadException();
             }
         }
 
         userRepository.save(user);
-        return new UserAttachFileResponse(user);
-    }
-
-    public UserGetResponse getUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
-
-        if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
-        }
-
-        return new UserGetResponse(user.getNickname(), user.getBio(), user.getImageUrl());
+        return new ProfileAttachFileResponse(user);
     }
 
     @Transactional
-    public UserBioResponse updateBio(AuthUser authUser, UserBioRequest request) {
+    public void deleteFile(AuthUser authUser) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
+        }
+
+        String fileName = user.getFile(); // 사용자 파일 이름 가져오기
+
+        if (fileName != null) {
+            s3Service.deleteFile(fileName); // s3에서 파일. 삭제
+            user.removeFile(); // 파일 정보 제거
+            userRepository.save(user); // 변경사항 저장
+        }
+    }
+
+    public ProfileResponse getUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("유저를 찾을 수 없습니다."));
+
+        if (user.getStatus() == UserStatus.BANNED) {
+            throw new UserBannedException();
+        }
+
+        return new ProfileResponse(user);
+    }
+
+    @Transactional
+    public ProfileBioResponse updateBio(AuthUser authUser, ProfileBioRequest request) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
+                new NotFoundException("유저를 찾을 수 없습니다."));
+
+        if (user.getStatus() == UserStatus.BANNED) {
+            throw new UserBannedException();
         }
 
         user.updateBio(request.getBio());
+        userRepository.save(user);
 
-        return new UserBioResponse(user);
+        return new ProfileBioResponse(user);
     }
 
     @Transactional
-    public UserNicknameResponse updateNickname(AuthUser authUser, UserNicknameRequest request) {
+    public ProfileNicknameResponse updateNickname(AuthUser authUser,
+            ProfileNicknameRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new ProfileException("유저를 찾을 수 없습니다."));
+                new NotFoundException("유저를 찾을 수 없습니다."));
 
         if (user.getStatus() == UserStatus.BANNED) {
-            throw new ProfileException("기능을 사용할 수 없습니다.");
+            throw new UserBannedException();
         }
 
         user.updateNickname(request.getNickname());
+        userRepository.save(user);
 
-        return new UserNicknameResponse(user);
+        return new ProfileNicknameResponse(user);
     }
 }

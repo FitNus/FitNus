@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 public class TimeslotRequest {
 
     private Long fitnessId;
-
+    private Long centerId;
     private LocalDateTime startTime;
-
     private LocalDateTime endTime;
 }

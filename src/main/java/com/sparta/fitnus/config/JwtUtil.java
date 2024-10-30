@@ -18,8 +18,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
-    private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 60분 (테스트용)
+    public static final String REFRESH_TOKEN_HEADER = "refreshToken";
+    private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 60분
     private final long REFRESH_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000L; // 1일
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -88,9 +88,18 @@ public class JwtUtil {
     // Access Token을 쿠키에 저장 (Bearer prefix 없이)
     public void setTokenCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
-        cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정
-        cookie.setMaxAge(7 * 24 * 60 * 60);  // 쿠키의 만료 시간 7일로 설정 (Access Token 만료 시간과는 별개)
+        cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
+        cookie.setMaxAge(24 * 60 * 60);  // Access Token 쿠키의 만료 시간 1일로 설정 (Access Token 만료 시간과는 별개)
         cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
+        response.addCookie(cookie);
+    }
+
+    // Refresh Token 쿠키 설정
+    public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
+        cookie.setHttpOnly(true);        // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
+        cookie.setMaxAge(1 * 24 * 60 * 60);  // Refresh Token 쿠키의 만료 시간 1일로 설정 (Refresh Token 만료 시간과는 별개)
+        cookie.setPath("/");             // 쿠키의 경로를 루트로 설정
         response.addCookie(cookie);
     }
 
@@ -107,16 +116,21 @@ public class JwtUtil {
         return null;  // 쿠키가 없으면 null 반환
     }
 
+    public void clearAllCookies(HttpServletRequest request, HttpServletResponse response) {
+        // 요청에서 모든 쿠키가져옴.
+        Cookie[] cookies = request.getCookies();
 
-    // 쿠키에서 Access Token 삭제
-    public void clearTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie(AUTHORIZATION_HEADER, null);
-        cookie.setMaxAge(0);  // 쿠키 즉시 만료
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");  // 쿠키 경로 설정
-        response.addCookie(cookie);
+        // 모든 쿠키에 대해 값과 만료를 설정하여 삭제.
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue(null);
+                cookie.setMaxAge(0);  // 즉시 만료
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");  // 모든 경로에 대해 삭제 적용
+                response.addCookie(cookie);
+            }
+        }
     }
-
 }
 
 

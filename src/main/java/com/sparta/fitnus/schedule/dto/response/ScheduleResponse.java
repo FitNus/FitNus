@@ -10,19 +10,19 @@ public class ScheduleResponse {
 
     private final Long scheduleId;
 
-    private final String fitnessName;
+    private final String scheduleName;
 
     private final LocalDateTime startTime;
 
     private final LocalDateTime endTime;
 
-    private final Integer price;
+    private final Integer requiredCoupon;
 
     public ScheduleResponse(Schedule schedule) {
         scheduleId = schedule.getId();
-        fitnessName = schedule.getFitnessName();
+        scheduleName = schedule.getScheduleName();
         startTime = schedule.getStartTime();
         endTime = schedule.getEndTime();
-        price = schedule.getPrice();
+        requiredCoupon = schedule.getRequiredCoupon();
     }
 }

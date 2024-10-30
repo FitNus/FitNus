@@ -43,11 +43,11 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable) // BasicAuthenticationFilter 비활성화
             .logout(AbstractHttpConfigurer::disable) // LogoutFilter 비활성화
 
-            .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
-                    .anyRequest().authenticated();
-            })
-            .build();
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/kakao/signup-login", "/api/v1/auth/kakao/callback", "api/v1/auth/kakao/signup", "api/v1/auth/kakao/login", "/api/v1/auth/kakao/logout").permitAll()
+                            .anyRequest().authenticated();
+                })
+                .build();
     }
     private UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
