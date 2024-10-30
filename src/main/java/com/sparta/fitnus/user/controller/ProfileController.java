@@ -1,12 +1,10 @@
 package com.sparta.fitnus.user.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
-import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
-import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.request.ProfileUpdateRequest;
 import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
-import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
 import com.sparta.fitnus.user.dto.response.ProfileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileUpdateResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.service.ProfileService;
 import jakarta.validation.Valid;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,16 +46,10 @@ public class ProfileController {
         return ApiResponse.createSuccess(profileService.getUser(id));
     }
 
-    @PutMapping("/users/bio")
-    public ApiResponse<ProfileBioResponse> updateBio(@AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody ProfileBioRequest request) {
-        return ApiResponse.createSuccess(profileService.updateBio(authUser, request));
-    }
-
-    @PatchMapping("/users/nickname")
-    public ApiResponse<ProfileNicknameResponse> updateNickname(
+    @PutMapping("/users/profile")
+    public ApiResponse<ProfileUpdateResponse> updateProfile(
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody ProfileNicknameRequest request) {
-        return ApiResponse.createSuccess(profileService.updateNickname(authUser, request));
+            @Valid @RequestBody ProfileUpdateRequest request) {
+        return ApiResponse.createSuccess(profileService.updateProfile(authUser, request));
     }
 }

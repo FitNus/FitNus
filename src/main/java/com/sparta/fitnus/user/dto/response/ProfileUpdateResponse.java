@@ -4,11 +4,13 @@ import com.sparta.fitnus.user.entity.User;
 import lombok.Getter;
 
 @Getter
-public class ProfileBioResponse {
+public class ProfileUpdateResponse {
 
     private final String bio;
+    private final String nickname;
 
-    public ProfileBioResponse(User user) {
+    public ProfileUpdateResponse(User user) {
         this.bio = user.getBio();
+        this.nickname = user.getNickname();
     }
 }

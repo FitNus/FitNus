@@ -8,12 +8,10 @@ import static org.mockito.Mockito.when;
 
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.common.service.S3Service;
-import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
-import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.request.ProfileUpdateRequest;
 import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
-import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
 import com.sparta.fitnus.user.dto.response.ProfileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileUpdateResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
@@ -73,7 +71,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void 파일_업로드_유저_차단됨() {
+    public void 파일_업로드_유저_차단() {
         // Given
         AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
         User user = User.of("test@test.com", "password", "test", UserRole.USER);
@@ -133,71 +131,166 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void 바이오_업데이트_성공() {
+    public void 프로필_업데이트_바이오와_닉네임_동시_업데이트() {
         // Given
-        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
-        User user = User.of("test@test.com", "password", "test", UserRole.USER);
-        ProfileBioRequest request = new ProfileBioRequest("test bio");
-
-        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
-
-        // When
-        ProfileBioResponse response = profileService.updateBio(authUser, request);
-
-        // Then
-        assertEquals("test bio", response.getBio());
-        assertEquals("test bio", user.getBio());
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    public void 바이오_업데이트_유저가_차단됨() {
-        // Given
-        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
-        User user = User.of("test@test.com", "password", "test", UserRole.USER);
-        user.deactivate();
-
-        ProfileBioRequest request = new ProfileBioRequest("test Bio");
-
-        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
-
-        // When & Then
-        assertThrows(UserBannedException.class, () -> {
-            profileService.updateBio(authUser, request);
-        });
-    }
-
-    @Test
-    public void 닉네임_업데이트_성공() {
-        // Given
-        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
         User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
-        ProfileNicknameRequest request = new ProfileNicknameRequest("newNickname");
+        ProfileUpdateRequest request = new ProfileUpdateRequest("newBio", "newNickname");
 
         when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
 
         // When
-        ProfileNicknameResponse response = profileService.updateNickname(authUser, request);
+        ProfileUpdateResponse response = profileService.updateProfile(authUser, request);
 
         // Then
+        assertEquals("newBio", response.getBio());
         assertEquals("newNickname", response.getNickname());
+        assertEquals("newBio", user.getBio());
         assertEquals("newNickname", user.getNickname());
         verify(userRepository).save(user);
     }
 
     @Test
-    public void 닉네임_업데이트_유저가_차단됨() {
+    public void 프로필_바이오만_업데이트_성공() {
         // Given
-        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        ProfileUpdateRequest request = new ProfileUpdateRequest("newBio", null);
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser, request);
+
+        // Then
+        assertEquals("newBio", response.getBio());
+        assertEquals("oldNickname", response.getNickname());
+        assertEquals("newBio", user.getBio());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    public void 프로필_닉네임만_업데이트_성공() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        ProfileUpdateRequest request = new ProfileUpdateRequest(null, "newNickname");
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser, request);
+
+        // Then
+        assertEquals("newNickname", response.getNickname());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    public void 프로필_업데이트_유저를_찾을_수_없음() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> profileService.updateProfile(authUser,
+                new ProfileUpdateRequest("newBio", "newNickname")));
+    }
+
+    @Test
+    public void 프로필_업데이트_유저가_차단됨() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
         User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
         user.deactivate();
-        ProfileNicknameRequest request = new ProfileNicknameRequest("newNickname");
+        ProfileUpdateRequest request = new ProfileUpdateRequest("newBio", "newNickname");
 
         when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
 
         // When & Then
-        assertThrows(UserBannedException.class, () -> {
-            profileService.updateNickname(authUser, request);
-        });
+        assertThrows(UserBannedException.class,
+                () -> profileService.updateProfile(authUser, request));
+    }
+
+    @Test
+    void 프로필_업데이트_닉네임_유지_바이오_업데이트() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        user.updateBio("oldBio");
+
+        ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest(null, "newNickname");
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser,
+                profileUpdateRequest);
+
+        // Then
+        assertEquals("oldBio", response.getBio()); // 바이오는 유지
+        assertEquals("newNickname", response.getNickname()); // 닉네임은 업데이트됨
+    }
+
+    @Test
+    void 프로필_업데이트_닉네임_업데이트_바이오_유지() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        user.updateBio("oldBio");
+
+        // 닉네임을 업데이트하기 위한 요청
+        ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest(null, "newNickname");
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser,
+                profileUpdateRequest);
+
+        // Then
+        assertEquals("oldBio", response.getBio()); // 응답에서 바이오가 기존 값을 유지하는지 확인
+        assertEquals("newNickname", response.getNickname()); // 응답에서 닉네임 업데이트 확인
+    }
+
+    @Test
+    void 프로필_업데이트_닉네임_제거_바이오_유지() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        user.updateBio("oldBio");
+
+        ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest("newBio", null);
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser,
+                profileUpdateRequest);
+
+        // Then
+        assertEquals("newBio", response.getBio()); // 바이오가 업데이트됨
+        assertEquals("oldNickname", response.getNickname()); // 닉네임은 유지
+    }
+
+    @Test
+    void 프로필_업데이트_닉네임_유지_바이오_제거() {
+        // Given
+        AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "oldNickname");
+        User user = User.of("test@test.com", "password", "oldNickname", UserRole.USER);
+        user.updateNickname("oldNickname");
+
+        // 바이오를 비우기 위한 요청
+        ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest("", "oldNickname");
+
+        when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+
+        // When
+        ProfileUpdateResponse response = profileService.updateProfile(authUser,
+                profileUpdateRequest);
+
+        // Then
+        assertEquals("", response.getBio()); // 응답에서 바이오가 비워졌는지 확인
+        assertEquals("oldNickname", response.getNickname()); // 응답에서 닉네임이 기존 값으로 유지되는지 확인
     }
 }

@@ -1,10 +1,15 @@
 package com.sparta.fitnus.user.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.fitnus.config.JwtSecurityFilter;
-import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
-import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.request.ProfileUpdateRequest;
 import com.sparta.fitnus.user.service.ProfileService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -20,9 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(
@@ -101,37 +103,20 @@ class ProfileControllerTest {
     }
 
     @Nested
-    class updateBio {
+    class updateProfile {
 
         @Test
-        void updateBio_성공() throws Exception {
-            //given
-            ProfileBioRequest profileBioRequest = new ProfileBioRequest();
+        void profile_update_성공() throws Exception {
+            // given
+            ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest("newBio",
+                    "newNickname");
 
-            //when
-            ResultActions result = mockMvc.perform(put("/api/v1/users/bio")
+            // when
+            ResultActions result = mockMvc.perform(put("/api/v1/users/profile") // 새로운 엔드포인트로 변경
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(profileBioRequest)));
+                    .content(objectMapper.writeValueAsString(profileUpdateRequest)));
 
-            //then
-            result.andExpect(status().isOk());
-        }
-    }
-
-    @Nested
-    class updateNickname {
-
-        @Test
-        void updateNickname_성공() throws Exception {
-            //given
-            ProfileNicknameRequest profileNicknameRequest = new ProfileNicknameRequest();
-
-            //when
-            ResultActions result = mockMvc.perform(patch("/api/v1/users/nickname")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(profileNicknameRequest)));
-
-            //then
+            // then
             result.andExpect(status().isOk());
         }
     }
