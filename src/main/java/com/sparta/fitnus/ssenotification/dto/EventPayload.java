@@ -1,22 +1,19 @@
 package com.sparta.fitnus.ssenotification.dto;
 
+import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
 public class EventPayload {
+    private final Long id;
+    private final String eventype;
+    private final String message;
+    private final LocalDateTime timestamp;
 
-    private String eventype;
-    private String message;
-    private LocalDate timestamp;
-
-    public EventPayload(String eventype, String message, LocalDate timestamp) {
+    public EventPayload(Long id, String eventype, String message, LocalDateTime timestamp ){
+        this.id = id;
         this.eventype = eventype;
         this.message = message;
         this.timestamp = timestamp;
     }
-
 }

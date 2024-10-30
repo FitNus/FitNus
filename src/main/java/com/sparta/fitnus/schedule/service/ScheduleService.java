@@ -29,6 +29,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final TimeslotService timeslotService;
+    private final ScheduleMessageService scheduleMessageService;
     private final ClubService clubService;
 
     /**
@@ -45,6 +46,9 @@ public class ScheduleService {
 
         Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
+
+        // 알림 예약 (시작 시간 1시간 전)
+        scheduleMessageService.scheduleNotification(authUser.getId(),timeslot.getStartTime());
 
         return new ScheduleResponse(savedSchedule);
     }

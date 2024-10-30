@@ -56,4 +56,9 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleKakaoEmailException(KakaoEmailException e) {
         return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ApiResponse<?> handleAccessDeniedException(AccessDeniedException e) {
+        return ApiResponse.createError(e.getMessage(), HttpStatus.FORBIDDEN.value());
+    }
 }
