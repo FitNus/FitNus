@@ -64,6 +64,10 @@ dependencies {
 
     // slack api
     implementation("com.slack.api:slack-api-client:1.44.1")
+
+    // security-test
+    testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 tasks.named('test') {
