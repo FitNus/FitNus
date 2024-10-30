@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'io.security'
@@ -11,6 +12,10 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
 }
 
 bootBuildImage {
@@ -66,6 +71,15 @@ dependencies {
     implementation("com.slack.api:slack-api-client:1.44.1")
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport // 테스트 후 자동으로 리포트 생성
+}
+
+jacocoTestReport {
+    dependsOn test // 테스트가 먼저 실행된 후 리포트 생성
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
