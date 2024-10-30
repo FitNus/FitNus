@@ -1,20 +1,23 @@
 package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
-import com.sparta.fitnus.center.exception.AccessDeniedException;
 import com.sparta.fitnus.center.service.CenterService;
-import com.sparta.fitnus.common.exception.NotFoundException;
+import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
+import com.sparta.fitnus.fitness.exception.AccessDeniedException;
+import com.sparta.fitnus.fitness.exception.FitnessNotFoundException;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.sparta.fitnus.user.enums.UserRole;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -25,12 +28,19 @@ public class FitnessService {
     private final FitnessRepository fitnessRepository;
     private final CenterService centerService;
 
+    /***
+     * CRUD-POST : createFitness()의 기능입니다.
+     * @param authUser
+     * @param request
+     * @return FitnessResponse
+     */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public FitnessResponse addFitness(AuthUser authUser, FitnessRequest request) {
+    public FitnessResponse createFitness(AuthUser authUser, FitnessRequest request) {
 
         Center center = centerService.getCenterId(request.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("");
+            throw new AccessDeniedException();
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
@@ -39,18 +49,19 @@ public class FitnessService {
 
 
     /***
-     * CRUD - GET 단건조회 Api연관 메소드 입니다.
+     * CRUD-GET(단건조회) : getFitness()의 기능입니다.
      * @param id
-     * @return
+     * @return FitnessResponse
      */
     public FitnessResponse getFitness(Long id) {
         return fitnessRepository.findById(id)
                 .map(FitnessResponse::new)
-                .orElseThrow(() -> new NotFoundException("Fitness with id " + id + " not found"));
+                .orElseThrow(FitnessNotFoundException::new);
     }
 
     /***
-     * CRUD - GET 다건조회
+     * CRUD-GET(다건조회) : getAllFitness()의 기능입니다.
+     * @return List<FitnessResponse>
      */
     public List<FitnessResponse> getAllFitness() {
         return fitnessRepository.findAll().stream()
@@ -58,52 +69,50 @@ public class FitnessService {
                 .collect(Collectors.toList());
     }
 
+    /***
+     * CRUD-PATCH : updateFitness()의 기능입니다.
+     * @param authUser
+     * @param fitnessId
+     * @param fitnessRequest
+     * @return FitnessResponse
+     */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
-                                         FitnessRequest fitnessRequest) {
+            FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
-            throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
+            throw new FitnessNotFoundException();
         }
         Center center = centerService.getCenterId(fitnessRequest.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+            throw new AccessDeniedException();
         }
         Fitness fitness = isValidFitness(fitnessId);
         fitness.update(fitnessRequest);
-
         return new FitnessResponse(fitness);
-
     }
 
 
     /***
-     * CRUD-DELETE : deleteCenter()의 기능입니다.
+     * CRUD-DELETE : deleteFitness()의 기능입니다.
      * @param authUser
      * @param fitnessId
      */
+    @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public void deleteFitness(AuthUser authUser, Long fitnessId) {
+    public void deleteFitness(AuthUser authUser, Long fitnessId, FitnessDeleteRequest request) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
-            throw new NotFoundException("해당 피트니스 아이디는 존재하지 않습니다.");
+            throw new FitnessNotFoundException();
         }
-        Center center = centerService.getCenterId(isValidCenterInFitness(fitnessId));
+        Center center = centerService.getCenterId(request.getCenterId());
         if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException("본인만 접근할 수 있습니다.");
+            throw new AccessDeniedException();
         }
-
         fitnessRepository.deleteById(fitnessId);
-
-
-    }
-
-    public Long isValidCenterInFitness(Long fitnessId) {
-        return fitnessRepository.findCenterIdByFitnessId(fitnessId).orElseThrow(() ->
-                new NotFoundException("해당 fitnessId는 없는 Id입니다."));
     }
 
     public Fitness isValidFitness(Long fitnessId) {
-        return fitnessRepository.findById(fitnessId).orElseThrow(() ->
-                new NotFoundException("Fitness not found"));
+        return fitnessRepository.findById(fitnessId).orElseThrow(FitnessNotFoundException::new);
     }
 }
 

@@ -1,6 +1,7 @@
 package com.sparta.fitnus.center.repository;
 
 import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.exception.CenterNotFoundException;
 import com.sparta.fitnus.common.exception.NotFoundException;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterQue
 
     default Center findCenterById(Long id) {
         return findById(id).orElseThrow(
-                () -> new NotFoundException("Center with id " + id + " not found")
+                CenterNotFoundException::new
         );
     }
 

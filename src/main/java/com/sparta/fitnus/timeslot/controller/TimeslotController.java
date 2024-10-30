@@ -1,11 +1,13 @@
 package com.sparta.fitnus.timeslot.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
+import com.sparta.fitnus.timeslot.dto.request.TimeslotDeleteRequest;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
 import com.sparta.fitnus.timeslot.dto.response.TimeslotResponse;
 import com.sparta.fitnus.timeslot.service.TimeslotService;
 import com.sparta.fitnus.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,9 @@ public class TimeslotController {
     private final TimeslotService timeslotService;
 
     @PostMapping("/v1/timeslots")
-    public ApiResponse<TimeslotResponse> createTimeslot(@RequestBody TimeslotRequest request) {
-        return ApiResponse.createSuccess(timeslotService.createTimeslot(request));
+    public ApiResponse<TimeslotResponse> createTimeslot(@AuthenticationPrincipal AuthUser authUser,
+                                                        @RequestBody TimeslotRequest request) {
+        return ApiResponse.createSuccess(timeslotService.createTimeslot(authUser,request));
     }
 
     @GetMapping("/v1/timeslots/{id}")
@@ -35,8 +38,9 @@ public class TimeslotController {
 
     @DeleteMapping("v1/timeslots/{id}")
     public ApiResponse<String> deleteTimeslot(@AuthenticationPrincipal AuthUser authUser,
-                                              @PathVariable Long id){
-        timeslotService.deleteTimeslot(authUser, id);
+                                              @PathVariable Long id,
+                                              @RequestBody TimeslotDeleteRequest request){
+        timeslotService.deleteTimeslot(authUser, id, request);
         return ApiResponse.createSuccess("타임슬롯이 정상적으로 삭제되었습니다.");
     }
 }
