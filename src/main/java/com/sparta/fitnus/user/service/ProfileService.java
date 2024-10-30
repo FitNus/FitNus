@@ -72,7 +72,7 @@ public class ProfileService {
         }
     }
 
-    public ProfileResponse getUser(Long id) {
+    public ProfileResponse getUserProfile(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException("유저를 찾을 수 없습니다."));
 

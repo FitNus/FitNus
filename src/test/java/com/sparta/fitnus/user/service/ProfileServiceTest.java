@@ -111,7 +111,7 @@ public class ProfileServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // When
-        ProfileResponse response = profileService.getUser(userId);
+        ProfileResponse response = profileService.getUserProfile(userId);
 
         // Then
         assertEquals("test", response.getNickname());
@@ -127,7 +127,7 @@ public class ProfileServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(NotFoundException.class, () -> profileService.getUser(userId));
+        assertThrows(NotFoundException.class, () -> profileService.getUserProfile(userId));
     }
 
     @Test
