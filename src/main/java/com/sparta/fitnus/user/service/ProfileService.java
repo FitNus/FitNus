@@ -2,12 +2,10 @@ package com.sparta.fitnus.user.service;
 
 import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.common.service.S3Service;
-import com.sparta.fitnus.user.dto.request.ProfileBioRequest;
-import com.sparta.fitnus.user.dto.request.ProfileNicknameRequest;
+import com.sparta.fitnus.user.dto.request.ProfileUpdateRequest;
 import com.sparta.fitnus.user.dto.response.ProfileAttachFileResponse;
-import com.sparta.fitnus.user.dto.response.ProfileBioResponse;
-import com.sparta.fitnus.user.dto.response.ProfileNicknameResponse;
 import com.sparta.fitnus.user.dto.response.ProfileResponse;
+import com.sparta.fitnus.user.dto.response.ProfileUpdateResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserStatus;
@@ -86,7 +84,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public ProfileBioResponse updateBio(AuthUser authUser, ProfileBioRequest request) {
+    public ProfileUpdateResponse updateProfile(AuthUser authUser, ProfileUpdateRequest request) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new NotFoundException("유저를 찾을 수 없습니다."));
 
@@ -94,25 +92,17 @@ public class ProfileService {
             throw new UserBannedException();
         }
 
-        user.updateBio(request.getBio());
-        userRepository.save(user);
-
-        return new ProfileBioResponse(user);
-    }
-
-    @Transactional
-    public ProfileNicknameResponse updateNickname(AuthUser authUser,
-            ProfileNicknameRequest request) {
-        User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new NotFoundException("유저를 찾을 수 없습니다."));
-
-        if (user.getStatus() == UserStatus.BANNED) {
-            throw new UserBannedException();
+        // Bio 업데이트
+        if (request.getBio() != null) {
+            user.updateBio(request.getBio());
         }
 
-        user.updateNickname(request.getNickname());
-        userRepository.save(user);
+        // Nickname 업데이트
+        if (request.getNickname() != null) {
+            user.updateNickname(request.getNickname());
+        }
 
-        return new ProfileNicknameResponse(user);
+        userRepository.save(user);
+        return new ProfileUpdateResponse(user);
     }
 }
