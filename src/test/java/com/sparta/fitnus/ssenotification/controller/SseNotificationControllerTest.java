@@ -1,9 +1,13 @@
 package com.sparta.fitnus.ssenotification.controller;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.fitnus.config.JwtSecurityFilter;
-import com.sparta.fitnus.ssenotification.dto.EventPayload;
 import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.enums.UserRole;
@@ -16,16 +20,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(
@@ -79,35 +77,18 @@ class SseNotificationControllerTest {
     }
 
     @Nested
-    class broadcast {
-
-        @Test
-        void broadcast_성공() {
-            //given
-            AuthUser authUser = new AuthUser(1L, UserRole.USER, "test@test.com", "test");
-            EventPayload eventPayload = new EventPayload();
-            ReflectionTestUtils.setField(eventPayload, "message", "test");
-
-            //when
-            sseNotificationController.broadcast(authUser, eventPayload);
-
-            //then
-            verify(sseNotificationServiceImpl, times(1)).broadcast(authUser.getId(), eventPayload);
-        }
-    }
-
-    @Nested
     class markAsRead {
 
         @Test
         void markAsRead_성공() {
             //given
+            AuthUser authUser = new AuthUser(1L, UserRole.USER, "test", "test");
 
             //when
-            sseNotificationController.markAsRead(1L);
+            sseNotificationController.markAsRead(authUser, 1L);
 
             //then
-            verify(sseNotificationServiceImpl, times(1)).markAsRead(1L);
+            verify(sseNotificationServiceImpl, times(1)).markAsRead(1L, 1L);
         }
     }
 }
