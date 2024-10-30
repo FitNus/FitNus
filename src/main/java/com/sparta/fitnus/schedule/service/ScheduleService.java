@@ -44,7 +44,7 @@ public class ScheduleService {
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
         // 알림 예약 (시작 시간 1시간 전)
-        scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(), savedSchedule.getId());
+        scheduleMessageService.scheduleNotification(authUser.getId(),timeslot.getStartTime());
 
         return new ScheduleResponse(savedSchedule);
     }

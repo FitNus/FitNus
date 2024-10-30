@@ -1,14 +1,15 @@
 package com.sparta.fitnus.ssenotification.service;
 
 import com.sparta.fitnus.common.exception.AccessDeniedException;
+import com.sparta.fitnus.common.exception.SseNotWorkingException;
 import com.sparta.fitnus.ssenotification.dto.EventPayload;
 import com.sparta.fitnus.ssenotification.entity.SseMessageName;
 import com.sparta.fitnus.ssenotification.entity.SseNotification;
 import com.sparta.fitnus.ssenotification.repository.EmitterRepository;
 import com.sparta.fitnus.ssenotification.repository.NotificationRepository;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,32 +46,20 @@ public class SseNotificationServiceImpl implements SseNotificationService {
         //개수 sse로 전송
         sendToClient(SseMessageName.FIRST_MESSAGE,userId, unreadCount);
 
-//        // 주기적으로 keep-alive 메시지를 전송하여 연결 유지
-//        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        scheduler.scheduleAtFixedRate(() -> {
-//            try {
-//                sseEmitter.send(SseEmitter.event()
-//                    .name("keep-alive")
-//                    .data("keep-alive"));  // keep-alive 메시지 전송
-//            } catch (IOException e) {
-//                emitterRepository.deleteById(userId);  // 연결 실패 시 emitter 삭제
-//                scheduler.shutdown();  // 스케줄러 종료
-//            }
-//        }, 0, 60, TimeUnit.SECONDS);  // 30초마다 keep-alive 메시지 전송
-
         return sseEmitter;
     }
 
     /**
      * 구독된 사용자에게 알림을 전송하는 메서드
      * @param userId 알림을 받을 사용자 ID
-     * @param eventPayload 전송할 알림의 내용
      */
-    public void broadcast(SseMessageName name,Long userId, EventPayload eventPayload) {
+    public void broadcast(SseMessageName name, Long userId, String eventType, String message, LocalDateTime timeStamp) {
+
         // 알림을 데이터베이스에 저장
         SseNotification notification = new SseNotification(
-            userId, eventPayload.getEventype(), eventPayload.getMessage(), eventPayload.getTimestamp());
-        notificationRepository.save(notification);
+            userId, eventType, message, timeStamp);
+
+       notificationRepository.save(notification);
 
         // 기존 방식대로 SSE 전송
         sendToClient(name, userId, 1L);
@@ -94,13 +83,8 @@ public class SseNotificationServiceImpl implements SseNotificationService {
                 .name(name.toString());
 
             // 데이터가 Long 타입의 개수인 경우와 일반 메시지인 경우 구분
-            if (data instanceof Long) {
-                Long count = (Long) data;
-                if (count > 1) {
-                    eventBuilder.data(count); // 첫 연결 시
-                } else {
-                    eventBuilder.data(count); // 새로운 알림을 숫자 1로 전송
-                }
+            if (data instanceof Long count) {
+                eventBuilder.data(count); // 개수를 그대로 전송
             } else {
                 eventBuilder.data(data); // 일반 메시지 전송
             }
@@ -112,7 +96,7 @@ public class SseNotificationServiceImpl implements SseNotificationService {
             // 전송 실패 시 Emitter 삭제 및 재시도 로직 실행
             emitterRepository.deleteById(userId);
             retrySendToClient(name, userId, data);
-            throw new RuntimeException("연결 오류 발생");
+            throw new SseNotWorkingException("연결 오류 발생");
         }
     }
 
@@ -134,23 +118,41 @@ public class SseNotificationServiceImpl implements SseNotificationService {
             }
             attempt++;
         }
-        throw new RuntimeException("연결 오류 발생: 알림 전송에 실패했습니다.");
+        throw new SseNotWorkingException("연결 오류 발생: 알림 전송에 실패했습니다.");
     }
 
     /**
-     * 알림 목록 조회 메서드
-     * @param userId
-     * @return
+     * 주어진 사용자 ID에 대한 읽지 않은 알림 목록을 조회하는 메서드.
+     * @param userId 읽지 않은 알림을 조회할 사용자의 ID
+     * @return 사용자의 읽지 않은 알림을 담고 있는 EventPayload 객체 리스트
      */
     public List<EventPayload> getUnreadNotifications(Long userId) {
         List<SseNotification> unreadNotifications = notificationRepository.findUnreadNotificationsByUserId(userId);
         return unreadNotifications.stream()
             .map(notification -> new EventPayload(
+                notification.getId(),
                 notification.getEventType(),
                 notification.getMessage(),
                 notification.getTimestamp()
             ))
-            .collect(Collectors.toList());
+            .toList();
+    }
+
+    /**
+     * 주어진 사용자 ID에 대한 전체 알림 목록을 조회하는 메서드.
+     * @param userId 전체 알림을 조회할 사용자의 ID
+     * @return 사용자의 전체 알림을 담고 있는 EventPayload 객체 리스트
+     */
+    public List<EventPayload> getAllNotifications(Long userId){
+        List<SseNotification> allNotifications = notificationRepository.findAllByUserId(userId);
+        return allNotifications.stream()
+            .map(notification -> new EventPayload(
+                notification.getId(),
+                notification.getEventType(),
+                notification.getMessage(),
+                notification.getTimestamp()
+            ))
+            .toList();
     }
 
     /**
