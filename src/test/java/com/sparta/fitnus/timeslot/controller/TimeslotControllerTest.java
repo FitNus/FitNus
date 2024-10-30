@@ -3,6 +3,7 @@ package com.sparta.fitnus.timeslot.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.fitnus.config.JwtSecurityFilter;
+import com.sparta.fitnus.timeslot.dto.request.TimeslotDeleteRequest;
 import com.sparta.fitnus.timeslot.dto.request.TimeslotRequest;
 import com.sparta.fitnus.timeslot.service.TimeslotService;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,9 +106,12 @@ class TimeslotControllerTest {
         @Test
         void deleteTimeslot_성공() throws Exception {
             //given
+            TimeslotDeleteRequest timeslotDeleteRequest = new TimeslotDeleteRequest();
 
             //when
-            ResultActions result = mockMvc.perform(delete("/api/v1/timeslots/{id}", 1L));
+            ResultActions result = mockMvc.perform(delete("/api/v1/timeslots/{id}", 1L)
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(timeslotDeleteRequest)));
 
             //then
             result.andExpect(status().isOk());

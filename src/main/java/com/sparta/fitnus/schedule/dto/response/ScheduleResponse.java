@@ -10,7 +10,7 @@ public class ScheduleResponse {
 
     private final Long scheduleId;
 
-    private final String fitnessName;
+    private final String scheduleName;
 
     private final LocalDateTime startTime;
 
@@ -20,7 +20,7 @@ public class ScheduleResponse {
 
     public ScheduleResponse(Schedule schedule) {
         scheduleId = schedule.getId();
-        fitnessName = schedule.getFitnessName();
+        scheduleName = schedule.getScheduleName();
         startTime = schedule.getStartTime();
         endTime = schedule.getEndTime();
         requiredCoupon = schedule.getRequiredCoupon();

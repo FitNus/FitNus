@@ -3,7 +3,8 @@ package com.sparta.fitnus.schedule.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.fitnus.config.JwtSecurityFilter;
-import com.sparta.fitnus.schedule.dto.request.ScheduleRequest;
+import com.sparta.fitnus.schedule.dto.request.ClubScheduleRequest;
+import com.sparta.fitnus.schedule.dto.request.FitnessScheduleRequest;
 import com.sparta.fitnus.schedule.service.ScheduleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -55,12 +56,26 @@ class ScheduleControllerTest {
     class createSchedule {
 
         @Test
-        void 일정_생성_성공() throws Exception {
+        void 운동_일정_생성_성공() throws Exception {
             //given
-            ScheduleRequest scheduleRequest = new ScheduleRequest();
+            FitnessScheduleRequest scheduleRequest = new FitnessScheduleRequest();
 
             //when
-            ResultActions result = mockMvc.perform(post("/api/v1/schedules")
+            ResultActions result = mockMvc.perform(post("/api/v1/schedules/fitness")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(scheduleRequest)));
+
+            //then
+            result.andExpect(status().isOk());
+        }
+
+        @Test
+        void 모임_일정_생성_성공() throws Exception {
+            //given
+            ClubScheduleRequest scheduleRequest = new ClubScheduleRequest();
+
+            //when
+            ResultActions result = mockMvc.perform(post("/api/v1/schedules/club")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(scheduleRequest)));
 
@@ -73,12 +88,26 @@ class ScheduleControllerTest {
     class updateSchedule {
 
         @Test
-        void 일정_수정_성공() throws Exception {
+        void 운동_일정_수정_성공() throws Exception {
             //given
-            ScheduleRequest scheduleRequest = new ScheduleRequest();
+            FitnessScheduleRequest scheduleRequest = new FitnessScheduleRequest();
 
             //when
-            ResultActions result = mockMvc.perform(put("/api/v1/schedules/{id}", 1L)
+            ResultActions result = mockMvc.perform(put("/api/v1/schedules/{id}/fitness", 1L)
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(scheduleRequest)));
+
+            //then
+            result.andExpect(status().isOk());
+        }
+
+        @Test
+        void 모임_일정_수정_성공() throws Exception {
+            //given
+            ClubScheduleRequest scheduleRequest = new ClubScheduleRequest();
+
+            //when
+            ResultActions result = mockMvc.perform(put("/api/v1/schedules/{id}/club", 1L)
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(scheduleRequest)));
 

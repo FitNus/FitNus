@@ -1,12 +1,16 @@
 package com.sparta.fitnus.schedule.service;
 
-import com.sparta.fitnus.schedule.dto.request.ScheduleRequest;
+import com.sparta.fitnus.club.entity.Club;
+import com.sparta.fitnus.club.service.ClubService;
+import com.sparta.fitnus.schedule.dto.request.ClubScheduleRequest;
+import com.sparta.fitnus.schedule.dto.request.FitnessScheduleRequest;
+import com.sparta.fitnus.schedule.dto.response.ScheduleListResponse;
 import com.sparta.fitnus.schedule.dto.response.ScheduleResponse;
 import com.sparta.fitnus.schedule.entity.Schedule;
 import com.sparta.fitnus.schedule.exception.InValidDateException;
 import com.sparta.fitnus.schedule.exception.NotScheduleOwnerException;
+import com.sparta.fitnus.schedule.exception.ScheduleAlreadyExistsException;
 import com.sparta.fitnus.schedule.exception.ScheduleNotFoundException;
-import com.sparta.fitnus.schedule.exception.TimeslotAlreadyExistsException;
 import com.sparta.fitnus.schedule.repository.ScheduleRepository;
 import com.sparta.fitnus.timeslot.entity.Timeslot;
 import com.sparta.fitnus.timeslot.service.TimeslotService;
@@ -25,20 +29,32 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final TimeslotService timeslotService;
+    private final ClubService clubService;
 
     /**
      * 일정 생성
      *
-     * @param authUser        : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
-     * @param scheduleRequest : 타임슬롯 ID를 담고 있는 DTO
+     * @param authUser               : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
+     * @param fitnessScheduleRequest : 타임슬롯 ID를 담고 있는 DTO
      * @return ScheduleResponse : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO
      */
     @Transactional
-    public ScheduleResponse createSchedule(AuthUser authUser, ScheduleRequest scheduleRequest) {
-        Timeslot timeslot = timeslotService.isValidTimeslot(scheduleRequest.getTimeslotId());
-        isExistsTimeslot(authUser.getId(), timeslot.getStartTime());
+    public ScheduleResponse createFitnessSchedule(AuthUser authUser, FitnessScheduleRequest fitnessScheduleRequest) {
+        Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
+        isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
-        Schedule newSchedule = Schedule.of(authUser.getId(), timeslot);
+        Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
+        Schedule savedSchedule = scheduleRepository.save(newSchedule);
+
+        return new ScheduleResponse(savedSchedule);
+    }
+
+    @Transactional
+    public ScheduleResponse createClubSchedule(AuthUser authUser, ClubScheduleRequest clubScheduleRequest) {
+        Club club = clubService.isValidClub(clubScheduleRequest.getClubId());
+        isExistsSchedule(authUser.getId(), club.getDate());
+
+        Schedule newSchedule = Schedule.ofClub(authUser.getId(), club);
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
         return new ScheduleResponse(savedSchedule);
@@ -47,20 +63,33 @@ public class ScheduleService {
     /**
      * 일정 수정
      *
-     * @param authUser        : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
-     * @param scheduleId      : 수정할 일정 ID
-     * @param scheduleRequest : 타임슬롯 ID를 담고 있는 DTO
+     * @param authUser               : 사용자 ID, 사용자 권한, email, nickname을 담고 있는 객체
+     * @param scheduleId             : 수정할 일정 ID
+     * @param fitnessScheduleRequest : 타임슬롯 ID를 담고 있는 DTO
      * @return ScheduleResponse : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO
      */
     @Transactional
-    public ScheduleResponse updateSchedule(AuthUser authUser, long scheduleId, ScheduleRequest scheduleRequest) {
-        Timeslot timeslot = timeslotService.isValidTimeslot(scheduleRequest.getTimeslotId());
-        isExistsTimeslot(authUser.getId(), timeslot.getStartTime());
+    public ScheduleResponse updateFitnessSchedule(AuthUser authUser, long scheduleId, FitnessScheduleRequest fitnessScheduleRequest) {
+        Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
+        isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
         Schedule schedule = isValidSchedule(scheduleId);
         isScheduleOwner(authUser.getId(), schedule);
 
-        schedule.updateSchedule(timeslot);
+        schedule.updateFitnessSchedule(timeslot);
+
+        return new ScheduleResponse(schedule);
+    }
+
+    @Transactional
+    public ScheduleResponse updateClubSchedule(AuthUser authUser, long scheduleId, ClubScheduleRequest clubScheduleRequest) {
+        Club club = clubService.isValidClub(clubScheduleRequest.getClubId());
+        isExistsSchedule(authUser.getId(), club.getDate());
+
+        Schedule schedule = isValidSchedule(scheduleId);
+        isScheduleOwner(authUser.getId(), schedule);
+
+        schedule.updateClubSchedule(club);
 
         return new ScheduleResponse(schedule);
     }
@@ -88,7 +117,7 @@ public class ScheduleService {
      * @param day      : 조회할 일
      * @return List<ScheduleResponse> : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO의 리스트
      */
-    public List<ScheduleResponse> getScheduleList(AuthUser authUser, Integer year, Integer month, Integer day) {
+    public ScheduleListResponse getScheduleList(AuthUser authUser, Integer year, Integer month, Integer day) {
         if (year == null) {
             year = LocalDateTime.now().getYear();
         }
@@ -106,7 +135,15 @@ public class ScheduleService {
 
         List<Schedule> scheduleList = scheduleRepository.findAllByUserIdYearAndMonthAndDay(authUser.getId(), year, month, day);
 
-        return scheduleList.stream().map(ScheduleResponse::new).toList();
+        List<ScheduleResponse> scheduleResponseList = scheduleList.stream()
+                .map(ScheduleResponse::new)
+                .toList();
+
+        int sum = scheduleList.stream()
+                .mapToInt(Schedule::getRequiredCoupon)
+                .sum();
+
+        return new ScheduleListResponse(scheduleResponseList, sum);
     }
 
     /**
@@ -115,9 +152,9 @@ public class ScheduleService {
      * @param userId    : 사용자 ID
      * @param startTime : 타임슬롯의 시작 시간
      */
-    private void isExistsTimeslot(long userId, LocalDateTime startTime) {
+    private void isExistsSchedule(long userId, LocalDateTime startTime) {
         if (scheduleRepository.existsByUserIdAndStartTime(userId, startTime)) {
-            throw new TimeslotAlreadyExistsException();
+            throw new ScheduleAlreadyExistsException();
         }
     }
 

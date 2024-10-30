@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleRequest {
+public class FitnessScheduleRequest {
 
     private Long timeslotId;
 }
