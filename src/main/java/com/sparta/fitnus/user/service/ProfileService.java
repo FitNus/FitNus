@@ -39,12 +39,12 @@ public class ProfileService {
             try {
                 // 기존 파일 삭제
                 String existingFileName = user.getFile(); // 기존 파일 이름 가져오기
-                if (existingFileName != null) {
+                if (existingFileName != null && !existingFileName.isEmpty()) {
                     s3Service.deleteFile(existingFileName); // s3에서 기존 파일 삭제
                 }
                 // 새로운 파일 업로드
-                String fileName = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
-                user.addFile(fileName);
+                String newFileName = s3Service.uploadFile(file); // 파일 업로드 후 URL 반환
+                user.addFile(newFileName);
             } catch (IOException e) {
                 throw new ProfileUploadException();
             }
@@ -92,13 +92,13 @@ public class ProfileService {
             throw new UserBannedException();
         }
 
-        // Bio 업데이트
-        if (request.getBio() != null) {
+        /// 바이오 업데이트
+        if (request.getBio() != null && !request.getBio().isEmpty()) {
             user.updateBio(request.getBio());
         }
 
-        // Nickname 업데이트
-        if (request.getNickname() != null) {
+        // 닉네임 업데이트
+        if (request.getNickname() != null && !request.getNickname().isEmpty()) {
             user.updateNickname(request.getNickname());
         }
 

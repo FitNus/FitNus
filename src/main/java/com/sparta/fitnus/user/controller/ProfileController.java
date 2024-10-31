@@ -7,7 +7,6 @@ import com.sparta.fitnus.user.dto.response.ProfileResponse;
 import com.sparta.fitnus.user.dto.response.ProfileUpdateResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.service.ProfileService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,7 +48,7 @@ public class ProfileController {
     @PutMapping("/users/profile")
     public ApiResponse<ProfileUpdateResponse> updateProfile(
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody ProfileUpdateRequest request) {
+            @RequestBody ProfileUpdateRequest request) {
         return ApiResponse.createSuccess(profileService.updateProfile(authUser, request));
     }
 }
