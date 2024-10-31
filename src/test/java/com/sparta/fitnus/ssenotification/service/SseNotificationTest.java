@@ -18,7 +18,6 @@ import com.sparta.fitnus.ssenotification.entity.SseNotification;
 import com.sparta.fitnus.ssenotification.repository.EmitterRepository;
 import com.sparta.fitnus.ssenotification.repository.NotificationRepository;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,15 +90,18 @@ public class SseNotificationTest {
         Long userId = 1L;
         SseNotification notification1 = new SseNotification(userId, "Type1", "Message1", LocalDateTime.now());
         SseNotification notification2 = new SseNotification(userId, "Type2", "Message2", LocalDateTime.now());
-        when(notificationRepository.findUnreadNotificationsByUserId(userId)).thenReturn(
-            Arrays.asList(notification1, notification2));
+        List<SseNotification> notificationList = List.of(notification1, notification2);
+        Page<SseNotification> notificationPage = new PageImpl<>(notificationList);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        when(notificationRepository.findUnreadNotificationsByUserId(userId, pageable)).thenReturn(notificationPage);
 
         // when
-        List<EventPayload> result = sseNotificationService.getUnreadNotifications(userId);
+        List<EventPayload> unreadResult = sseNotificationService.getNotifications(userId, "unread", pageable);
 
         // then
-        assertEquals(2, result.size());
-        assertEquals("Message1", result.get(0).getMessage());
+        assertEquals(2, unreadResult.size());
+        assertEquals("Message1", unreadResult.get(0).getMessage());
     }
 
     @Test

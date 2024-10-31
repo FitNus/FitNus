@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -36,9 +38,6 @@ public class SseNotificationServiceImpl implements SseNotificationService {
         sseEmitter.onCompletion(() -> emitterRepository.deleteById(userId));
         // Emitter 유효 시간이 만료되면 emitter 삭제
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(userId));
-
-        // 첫 데이터를 전송하여 503 오류를 방지
-        sendToClient(SseMessageName.TEST_MESSAGE, userId,"subscribe event, userId : " + userId);
 
         // 읽지 않은 알림 개수 조회
         Long unreadCount = notificationRepository.countUnreadNotifications(userId);
@@ -95,57 +94,30 @@ public class SseNotificationServiceImpl implements SseNotificationService {
         } catch (IOException e) {
             // 전송 실패 시 Emitter 삭제 및 재시도 로직 실행
             emitterRepository.deleteById(userId);
-            retrySendToClient(name, userId, data);
             throw new SseNotWorkingException("연결 오류 발생");
         }
     }
 
     /**
-     * 데이터 전송이 실패했을 때, 재시도하는 메서드
-     * @param userId 데이터를 전송할 사용자 ID
-     * @param data 전송할 데이터 (알림 또는 메시지)
+     * 주어진 사용자 ID에 대한 알림 목록을 조회하는 메서드.
+     * @param userId 알림을 조회할 사용자의 ID
+     * @param type 알림 조회 유형 ("unread" 또는 "all")
+     * @return 사용자의 알림을 담고 있는 EventPayload 객체 리스트
      */
-    private void retrySendToClient(SseMessageName name, Long userId, Object data) {
-        int maxRetries = 3;
-        int attempt = 0;
-        while (attempt < maxRetries) {
-            try {
-                Thread.sleep(2000); // 2초 대기 후 재시도
-                sendToClient(name, userId, data);
-                return; // 성공 시 종료
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            attempt++;
+    public List<EventPayload> getNotifications(Long userId, String type, Pageable pageable) {
+        Page<SseNotification> notifications;
+
+        // type 값에 따라 알림 조회
+        if ("unread".equalsIgnoreCase(type)) {
+            notifications = notificationRepository.findUnreadNotificationsByUserId(userId, pageable);
+        } else if ("all".equalsIgnoreCase(type)) {
+            notifications = notificationRepository.findAllByUserId(userId, pageable);
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 타입입니다. 'unread' 또는 'all' 둘 중 하나의 타입을 입력해주세요.");
         }
-        throw new SseNotWorkingException("연결 오류 발생: 알림 전송에 실패했습니다.");
-    }
 
-    /**
-     * 주어진 사용자 ID에 대한 읽지 않은 알림 목록을 조회하는 메서드.
-     * @param userId 읽지 않은 알림을 조회할 사용자의 ID
-     * @return 사용자의 읽지 않은 알림을 담고 있는 EventPayload 객체 리스트
-     */
-    public List<EventPayload> getUnreadNotifications(Long userId) {
-        List<SseNotification> unreadNotifications = notificationRepository.findUnreadNotificationsByUserId(userId);
-        return unreadNotifications.stream()
-            .map(notification -> new EventPayload(
-                notification.getId(),
-                notification.getEventType(),
-                notification.getMessage(),
-                notification.getTimestamp()
-            ))
-            .toList();
-    }
-
-    /**
-     * 주어진 사용자 ID에 대한 전체 알림 목록을 조회하는 메서드.
-     * @param userId 전체 알림을 조회할 사용자의 ID
-     * @return 사용자의 전체 알림을 담고 있는 EventPayload 객체 리스트
-     */
-    public List<EventPayload> getAllNotifications(Long userId){
-        List<SseNotification> allNotifications = notificationRepository.findAllByUserId(userId);
-        return allNotifications.stream()
+        // 조회된 알림을 EventPayload로 변환하여 반환
+        return notifications.stream()
             .map(notification -> new EventPayload(
                 notification.getId(),
                 notification.getEventType(),

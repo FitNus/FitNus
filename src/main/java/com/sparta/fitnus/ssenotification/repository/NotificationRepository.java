@@ -1,7 +1,8 @@
 package com.sparta.fitnus.ssenotification.repository;
 
 import com.sparta.fitnus.ssenotification.entity.SseNotification;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,10 +12,10 @@ public interface NotificationRepository extends JpaRepository<SseNotification, L
     Long countUnreadNotifications(Long userId);
 
     @Query("SELECT n FROM notifications n WHERE n.userId = :userId AND n.isRead = false ORDER BY n.timestamp DESC ")
-    List<SseNotification> findUnreadNotificationsByUserId(Long userId);
+    Page<SseNotification> findUnreadNotificationsByUserId(Long userId, Pageable pageable);
 
     @Query("SELECT n FROM notifications n WHERE n.userId = :userId ORDER BY n.timestamp DESC")
-    List<SseNotification> findAllByUserId(Long userId);
+    Page<SseNotification> findAllByUserId(Long userId, Pageable pageable);
 
     boolean existsByUserIdAndMessage(Long userId, String message);
 }
