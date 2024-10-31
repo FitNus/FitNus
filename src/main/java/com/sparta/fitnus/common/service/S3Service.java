@@ -1,21 +1,20 @@
 package com.sparta.fitnus.common.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final AmazonS3 amazonS3;
+    private final S3Client s3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String AWS_BUCKET;
@@ -29,24 +28,34 @@ public class S3Service {
         // 고유한 파일 이름 생성
         String fileName = generateFileName(file);
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        PutObjectRequest putObjectRequest = new PutObjectRequest(AWS_BUCKET, fileName,
-                file.getInputStream(), metadata);
-
-        amazonS3.putObject(putObjectRequest);
+        try {
+            // S3에 파일 업로드
+            s3Client.putObject(
+                    software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+                            .bucket(AWS_BUCKET)
+                            .key(fileName)
+                            .contentType(file.getContentType())
+                            .build(),
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        } catch (S3Exception e) {
+            throw new IllegalArgumentException("S3에 파일 업로드를 실패했습니다.");
+        }
 
         return getPublicUrl(fileName);
     }
 
     public void deleteFile(String fileUrl) {
+        // 파일 URL에서 S3 키 이름 추출
+        String key = extractKeyFromUrl(fileUrl);
+
         // S3에서 파일 삭제
-        String splitString = ".com/";
-        String fileName = fileUrl.substring(
-                fileUrl.lastIndexOf(splitString) + splitString.length());
-        amazonS3.deleteObject(new DeleteObjectRequest(AWS_BUCKET, fileName));
+        software.amazon.awssdk.services.s3.model.DeleteObjectRequest deleteObjectRequest =
+                software.amazon.awssdk.services.s3.model.DeleteObjectRequest.builder()
+                        .bucket(AWS_BUCKET)
+                        .key(key)
+                        .build();
+
+        s3Client.deleteObject(deleteObjectRequest);
     }
 
     // 파일 검증 로직
@@ -82,5 +91,9 @@ public class S3Service {
 
     private String getPublicUrl(String fileName) {
         return String.format("https://%s.s3.%s.amazonaws.com/%s", AWS_BUCKET, AWS_REGION, fileName);
+    }
+
+    private String extractKeyFromUrl(String fileUrl) {
+        return fileUrl.substring(fileUrl.indexOf(".com/") + 5);
     }
 }
