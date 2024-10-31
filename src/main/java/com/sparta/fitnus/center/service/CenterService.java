@@ -27,9 +27,9 @@ public class CenterService {
      * @return centerRepository
      */
     public CenterResponse getCenter(Long centerId) {
-        return centerRepository.findById(centerId)
-                .map(CenterResponse::new)
-                .orElseThrow(CenterNotFoundException::new);
+        Center center = centerRepository.findCenterById(centerId);
+
+        return new CenterResponse(center);
     }
 
     /***
