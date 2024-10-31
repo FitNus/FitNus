@@ -1,5 +1,6 @@
 package com.sparta.fitnus.schedule.service;
 
+import com.sparta.fitnus.common.exception.DuplicateNotificationException;
 import com.sparta.fitnus.ssenotification.entity.SseMessageName;
 import com.sparta.fitnus.ssenotification.repository.NotificationRepository;
 import com.sparta.fitnus.ssenotification.service.SseNotificationService;
@@ -17,7 +18,6 @@ public class ScheduleMessageService {
     private final TaskScheduler taskScheduler;
     private final SseNotificationService sseNotificationService;
     private final NotificationRepository notificationRepository;
-
 
     /**
      * 일정 알림을 시작 1시간 전에 예약하는 메서드.
@@ -45,11 +45,12 @@ public class ScheduleMessageService {
         // 동일한 메시지의 알림이 이미 존재하는지 확인
         boolean exists = notificationRepository.existsByUserIdAndMessage(userId, message);
 
-        if (!exists) {
-            // 알림을 저장하고 전송
-            sseNotificationService.broadcast(SseMessageName.MESSAGE, userId, "일정 알림", message, LocalDateTime.now());
-        } else {
-            System.out.println("이미 존재하는 알림입니다.");
+        if (exists) {
+            // 이미 존재하는 알림에 대한 예외 처리
+            throw new DuplicateNotificationException("이미 존재하는 알림입니다.");
         }
+
+        // 알림을 저장하고 전송
+        sseNotificationService.broadcast(SseMessageName.MESSAGE, userId, "일정 알림", message, LocalDateTime.now());
     }
 }

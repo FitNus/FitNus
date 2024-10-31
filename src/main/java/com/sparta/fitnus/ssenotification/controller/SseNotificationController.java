@@ -6,6 +6,8 @@ import com.sparta.fitnus.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.fitnus.user.entity.AuthUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,19 +41,17 @@ public class SseNotificationController {
      * @return ApiResponse<List < EventPayload>> 지정된 유형에 맞는 알림 목록을 포함한 응답 객체
      */
     @GetMapping("/notifications")
-    public ApiResponse<List<EventPayload>> getUnreadNotifications(
+    public ApiResponse<List<EventPayload>> getNotifications(
         @AuthenticationPrincipal AuthUser authUser,
-        @RequestParam String type){
-        List<EventPayload> notifications;
+        @RequestParam String type,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size){
+
+        Pageable pageable = PageRequest.of(page-1, size);
         // type 값 검증 및 알림 목록 조회
-        switch (type.toLowerCase()) {
-            case "unread" -> notifications = sseNotificationServiceImpl.getUnreadNotifications(authUser.getId());
-            case "all" -> notifications = sseNotificationServiceImpl.getAllNotifications(authUser.getId());
-            default -> throw new IllegalArgumentException("Invalid type parameter. Allowed values are 'unread' or 'all'.");
-        }
+        List<EventPayload> notifications = sseNotificationServiceImpl.getNotifications(authUser.getId(), type, pageable);
         return ApiResponse.createSuccess(notifications);
     }
-
 
     /**
      * 특정 알림을 읽음 처리하는 엔드포인트
