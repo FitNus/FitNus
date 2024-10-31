@@ -33,7 +33,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
         //로그인,회원가입 필터 bypass
         String requestURI = request.getRequestURI();
-        if ("/api/v1/auth/login".equals(requestURI) || "/api/v1/auth/signup".equals(requestURI) || requestURI.startsWith("/api/v1/auth/kakao")) {
+        if (isBypassURI(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -113,6 +113,17 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
         // Access Token이 없는 경우, 필터 체인을 계속 진행
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isBypassURI(String requestURI) {
+        return requestURI.equals("/api/v1/auth/login") ||
+                requestURI.equals("/api/v1/auth/signup") ||
+                requestURI.startsWith("/api/v1/auth/kakao") ||
+                requestURI.equals("/kakao-auth-demo.html") ||
+                requestURI.equals("/login-success.html") ||
+                requestURI.startsWith("/static/") ||
+                requestURI.endsWith(".ico") ||//favicon.ico프론트 허용
+                requestURI.endsWith(".png");//이미지 허용
     }
 }
 
