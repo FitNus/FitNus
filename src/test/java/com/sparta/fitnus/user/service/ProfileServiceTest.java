@@ -290,7 +290,7 @@ public class ProfileServiceTest {
                 profileUpdateRequest);
 
         // Then
-        assertEquals("", response.getBio()); // 응답에서 바이오가 비워졌는지 확인
+        assertNull(response.getBio()); // 응답에서 바이오가 비워졌는지 확인
         assertEquals("oldNickname", response.getNickname()); // 응답에서 닉네임이 기존 값으로 유지되는지 확인
     }
 }
