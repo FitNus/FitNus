@@ -4,6 +4,7 @@ import com.sparta.fitnus.center.dto.request.CenterSaveRequest;
 import com.sparta.fitnus.center.dto.request.CenterUpdateRequest;
 import com.sparta.fitnus.center.dto.response.CenterResponse;
 import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.exception.CenterAccessDeniedException;
 import com.sparta.fitnus.center.exception.CenterNotFoundException;
 import com.sparta.fitnus.center.repository.CenterRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
@@ -127,5 +128,29 @@ class CenterServiceTest {
         verify(centerRepository, times(1)).findOwnerIdByCenterId(centerId);
     }
 
+//    @Test
+//    void deleteCenter_ValidOwner_DeletesCenter() {
+//        // given
+//        AuthUser authUser = new AuthUser(ownerId, UserRole.OWNER, "test@example.com", "TestUser");
+//        given(centerService.isValidOwnerInCenter(centerId)).willReturn(ownerId);
+//
+//        // when
+//        centerService.deleteCenter(authUser, centerId);
+//
+//        // then
+//        verify(centerRepository, times(1)).deleteById(centerId);
+//    }
 
+//    @Test
+//    void deleteCenter_InvalidOwner_ThrowsAccessDeniedException() {
+//        // given
+//        AuthUser authUser = new AuthUser(200L, UserRole.OWNER, "other@example.com", "OtherUser"); // 다른 사용자
+//        given(centerService.isValidOwnerInCenter(centerId)).willReturn(ownerId);
+//
+//        // when & then
+//        assertThrows(CenterAccessDeniedException.class, () ->
+//                centerService.deleteCenter(authUser, centerId)
+//        );
+//        verify(centerRepository, never()).deleteById(centerId);
+//    }
 }
