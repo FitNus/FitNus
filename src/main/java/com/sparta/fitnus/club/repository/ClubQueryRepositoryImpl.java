@@ -27,6 +27,15 @@ public class ClubQueryRepositoryImpl implements ClubQueryRepository {
             String place,
             Pageable pageable
     ) {
+        Long totalCount = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(club)
+                .where(
+                        clubNameContains(clubName),
+                        clubInfoContains(clubInfo),
+                        placeContains(place)
+                ).fetchOne();
+
         List<SearchClubResponse> searchClubResponses = jpaQueryFactory
                 .select(
                         Projections.constructor(
@@ -46,18 +55,8 @@ public class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .groupBy(club.id)
                 .orderBy(club.id.desc())
                 .fetch();
-
-        Long totalCount = jpaQueryFactory
-                .select(Wildcard.count)
-                .from(club)
-                .where(
-                        clubNameContains(clubName),
-                        clubInfoContains(clubInfo),
-                        placeContains(place)
-                ).fetchOne();
 
         return new PageImpl<>(searchClubResponses, pageable, totalCount);
     }

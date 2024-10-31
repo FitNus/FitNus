@@ -27,6 +27,15 @@ public class CenterQueryRepositoryImpl implements CenterQueryRepository {
             String fitnessName,
             Pageable pageable
     ) {
+        Long totalCount = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(center)
+                .leftJoin(center.fitnesses, fitness)
+                .where(
+                        centerNameContains(centerName),
+                        fitnessNameContains(fitnessName)
+                ).fetchOne();
+
         List<SearchCenterResponse> searchCenterResponse = jpaQueryFactory
                 .select(
                         Projections.constructor(
@@ -44,18 +53,8 @@ public class CenterQueryRepositoryImpl implements CenterQueryRepository {
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .groupBy(center.id, center.centerName, fitness.fitnessName)
                 .orderBy(center.id.desc())
                 .fetch();
-
-        Long totalCount = jpaQueryFactory
-                .select(Wildcard.count)
-                .from(center)
-                .leftJoin(center.fitnesses, fitness)
-                .where(
-                        centerNameContains(centerName),
-                        fitnessNameContains(fitnessName)
-                ).fetchOne();
 
         return new PageImpl<>(searchCenterResponse, pageable, totalCount);
     }
