@@ -2,6 +2,7 @@ package com.sparta.fitnus.fitness.controller;
 
 import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
+import com.sparta.fitnus.fitness.dto.request.FitnessGetAllRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
 import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.service.FitnessService;
@@ -34,8 +35,9 @@ public class FitnessController {
 
     // 다건조회
     @GetMapping("/v1/fitness")
-    public ApiResponse<List<FitnessResponse>> getAllFitness() {
-        return ApiResponse.createSuccess(fitnessService.getAllFitness());
+    public ApiResponse<List<FitnessResponse>> getAllFitness(@AuthenticationPrincipal AuthUser authuser,
+                                                            @RequestBody FitnessGetAllRequest request) {
+        return ApiResponse.createSuccess(fitnessService.getAllFitness(authuser, request.getCenterId()));
     }
 
     // 업데이트

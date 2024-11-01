@@ -1,6 +1,7 @@
 package com.sparta.fitnus.fitness.service;
 
 import com.sparta.fitnus.center.entity.Center;
+import com.sparta.fitnus.center.exception.CenterAccessDeniedException;
 import com.sparta.fitnus.center.service.CenterService;
 import com.sparta.fitnus.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.fitnus.fitness.dto.request.FitnessRequest;
@@ -8,6 +9,7 @@ import com.sparta.fitnus.fitness.dto.response.FitnessResponse;
 import com.sparta.fitnus.fitness.entity.Fitness;
 import com.sparta.fitnus.fitness.exception.AccessDeniedException;
 import com.sparta.fitnus.fitness.exception.FitnessNotFoundException;
+import com.sparta.fitnus.fitness.exception.FitnessgetAllAccessDeniedException;
 import com.sparta.fitnus.fitness.repository.FitnessRepository;
 import com.sparta.fitnus.user.entity.AuthUser;
 import java.util.List;
@@ -39,8 +41,8 @@ public class FitnessService {
     public FitnessResponse createFitness(AuthUser authUser, FitnessRequest request) {
 
         Center center = centerService.getCenterId(request.getCenterId());
-        if (!authUser.getId().equals(center.getOwnerId())) {
-            throw new AccessDeniedException();
+        if(!authUser.getId().equals(centerService.getCenterId(request.getCenterId()).getId())){
+            throw new FitnessgetAllAccessDeniedException();
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
@@ -61,10 +63,17 @@ public class FitnessService {
 
     /***
      * CRUD-GET(다건조회) : getAllFitness()의 기능입니다.
+     * 상세설명 : 해당 센터를 만든 센터장이, 자신이 등록한 운동종목을 전부 확인하는 메서드입니다.
+     * 예외처리 1) : 현재 로그인한 유저가, 센터를 만든 센터장인지 확인
      * @return List<FitnessResponse>
      */
-    public List<FitnessResponse> getAllFitness() {
-        return fitnessRepository.findAll().stream()
+    @Secured(UserRole.Authority.OWNER)
+    public List<FitnessResponse> getAllFitness(AuthUser authuser, Long id) {
+        // 예외처리 1)
+        if(!authuser.getId().equals(centerService.getCenterId(id).getId())){
+            throw new FitnessgetAllAccessDeniedException();
+        }
+        return fitnessRepository.findAllByCenterId(id).stream()
                 .map(FitnessResponse::new)
                 .collect(Collectors.toList());
     }
