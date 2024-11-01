@@ -100,7 +100,7 @@ public class JwtUtil {
             cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
             response.addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("Error encoding access token cookie value", e);
         }
     }
 
@@ -114,7 +114,7 @@ public class JwtUtil {
             cookie.setPath("/");             // 쿠키의 경로를 루트로 설정
             response.addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("Error encoding refresh token cookie value", e);
         }
     }
 
