@@ -1,1 +1,3 @@
 rootProject.name = 'FitNus'
+include 'module-batch'
+include 'module-common'
