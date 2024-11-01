@@ -1,0 +1,19 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':module-common')
+
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('jar') {
+    enabled = true
+}
