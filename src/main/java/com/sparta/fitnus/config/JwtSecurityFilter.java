@@ -44,6 +44,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         if (accessToken != null) {
             try {
                 // Access Token 유효성 검사
+                accessToken = jwtUtil.substringToken(accessToken);
                 if (jwtUtil.validateToken(accessToken)) {
                     log.info("Access token is valid, continuing request");
 
@@ -77,7 +78,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
                 // Redis에서 Refresh Token 조회
                 String refreshToken = redisUserService.getRefreshToken(userId.toString());
-
+                refreshToken = jwtUtil.substringToken(refreshToken);
                 // Refresh Token 유효성 검사
                 if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
                     log.info("Refresh token is valid. Issuing new access token.");

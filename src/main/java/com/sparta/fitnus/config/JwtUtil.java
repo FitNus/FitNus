@@ -9,7 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -19,6 +22,7 @@ import java.util.Date;
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_TOKEN_HEADER = "refreshToken";
+    public static final String BEARER_PREFIX = "Bearer ";
     private final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 60분
     private final long REFRESH_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000L; // 1일
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -37,7 +41,7 @@ public class JwtUtil {
     // Access Token 생성 (Bearer prefix 없이 쿠키에 저장)
     public String createAccessToken(Long userId, String email, String role, String nickname) {
         Date now = new Date();
-        return Jwts.builder()
+        return BEARER_PREFIX + Jwts.builder()
                 .setSubject(Long.toString(userId))  // 사용자 ID 설정
                 .claim("UserRole", role)  // 사용자 권한 추가
                 .claim("email", email)  // 이메일 추가
@@ -51,7 +55,7 @@ public class JwtUtil {
     // Refresh Token 생성
     public String createRefreshToken(Long userId) {
         Date now = new Date();
-        return Jwts.builder()
+        return BEARER_PREFIX + Jwts.builder()
                 .setSubject(Long.toString(userId))  // 사용자 ID 설정
                 .setIssuedAt(now)  // 발급 시간
                 .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION))  // 만료 시간 설정
@@ -87,20 +91,31 @@ public class JwtUtil {
 
     // Access Token을 쿠키에 저장 (Bearer prefix 없이)
     public void setTokenCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
-        cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
-        cookie.setMaxAge(24 * 60 * 60);  // Access Token 쿠키의 만료 시간 1일로 설정 (Access Token 만료 시간과는 별개)
-        cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
-        response.addCookie(cookie);
+        try {
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+
+            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
+            cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
+            cookie.setMaxAge(24 * 60 * 60);  // Access Token 쿠키의 만료 시간 1일로 설정 (Access Token 만료 시간과는 별개)
+            cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
+            response.addCookie(cookie);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     // Refresh Token 쿠키 설정
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
-        cookie.setHttpOnly(true);        // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
-        cookie.setMaxAge(1 * 24 * 60 * 60);  // Refresh Token 쿠키의 만료 시간 1일로 설정 (Refresh Token 만료 시간과는 별개)
-        cookie.setPath("/");             // 쿠키의 경로를 루트로 설정
-        response.addCookie(cookie);
+        try {
+            refreshToken = URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+            Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken);
+            cookie.setHttpOnly(true);        // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
+            cookie.setMaxAge(1 * 24 * 60 * 60);  // Refresh Token 쿠키의 만료 시간 1일로 설정 (Refresh Token 만료 시간과는 별개)
+            cookie.setPath("/");             // 쿠키의 경로를 루트로 설정
+            response.addCookie(cookie);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     // 쿠키에서 Access Token 추출
@@ -109,12 +124,29 @@ public class JwtUtil {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
-                    return cookie.getValue();  // 쿠키에서 JWT 토큰 값 반환
+                    try {
+                        // 쿠키 값 디코딩
+                        return java.net.URLDecoder.decode(cookie.getValue(), "utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        log.error("Error decoding token from cookie", e);
+                    }
                 }
             }
         }
         return null;  // 쿠키가 없으면 null 반환
     }
+
+    // Bearer prefix 제거
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue)) {
+            if (tokenValue.startsWith(BEARER_PREFIX)) {
+                return tokenValue.substring(BEARER_PREFIX.length());
+            }
+            return tokenValue;  // prefix가 없는 경우에도 예외 없이 그대로 반환
+        }
+        throw new NullPointerException("Not Found Token");
+    }
+
 
     public void clearAllCookies(HttpServletRequest request, HttpServletResponse response) {
         // 요청에서 모든 쿠키가져옴.
