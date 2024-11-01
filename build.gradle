@@ -9,7 +9,7 @@ repositories {
 }
 
 bootBuildImage {
-    imageName = 'fitnus:0.0.1-SNAPSHOT'
+    imageName = 'fitnus/fitnus-app'
 }
 
 subprojects {

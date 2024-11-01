@@ -42,7 +42,7 @@ dependencies {
 }
 
 bootBuildImage {
-    imageName = 'fitnus:0.0.1-SNAPSHOT'
+    imageName = 'fitnus/fitnus-app'
 }
 
 tasks.named('bootJar') {
