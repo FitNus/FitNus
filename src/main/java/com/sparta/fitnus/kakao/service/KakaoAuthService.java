@@ -4,7 +4,7 @@ import com.sparta.fitnus.config.JwtUtil;
 import com.sparta.fitnus.kakao.exception.KakaoAccountException;
 import com.sparta.fitnus.kakao.exception.KakaoApiException;
 import com.sparta.fitnus.kakao.exception.KakaoEmailException;
-import com.sparta.fitnus.user.dto.response.KakaoAuthResponse;
+import com.sparta.fitnus.user.dto.response.AuthTokenResponse;
 import com.sparta.fitnus.user.entity.User;
 import com.sparta.fitnus.user.enums.UserRole;
 import com.sparta.fitnus.user.repository.UserRepository;
@@ -40,7 +40,7 @@ public class KakaoAuthService {
     private String kakaoClientSecret;
 
     // 카카오 인증 처리
-    public KakaoAuthResponse handleKakaoAuth(String code) {
+    public AuthTokenResponse handleKakaoAuth(String code) {
         String accessToken = getAccessToken(code);
         String email = getEmailFromKakao(accessToken);
         User user = findOrCreateUser(email);
@@ -52,7 +52,7 @@ public class KakaoAuthService {
         redisUserService.saveTokens(String.valueOf(user.getId()), newAccessToken, refreshToken);
 
         // 결과 반환
-        return new KakaoAuthResponse(newAccessToken, refreshToken);
+        return new AuthTokenResponse(newAccessToken, refreshToken);
     }
 
     // Access Token 요청

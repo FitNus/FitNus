@@ -4,6 +4,7 @@ import com.sparta.fitnus.common.exception.NotFoundException;
 import com.sparta.fitnus.config.JwtUtil;
 import com.sparta.fitnus.user.dto.request.ChangePasswordRequest;
 import com.sparta.fitnus.user.dto.request.UserRequest;
+import com.sparta.fitnus.user.dto.response.AuthTokenResponse;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
@@ -185,5 +186,12 @@ public class UserService {
         }
     }
 
+    public AuthTokenResponse login(UserRequest userRequest) {
+        User user = checkLogin(userRequest);
+        String accessToken = createAccessToken(user);
+        String refreshToken = createRefreshToken(user);
+        redisUserService.saveTokens(String.valueOf(user.getId()), accessToken, refreshToken);
+        return new AuthTokenResponse(accessToken, refreshToken);
+    }
 }
 

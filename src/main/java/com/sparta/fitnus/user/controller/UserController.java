@@ -4,6 +4,7 @@ import com.sparta.fitnus.common.apipayload.ApiResponse;
 import com.sparta.fitnus.config.JwtUtil;
 import com.sparta.fitnus.user.dto.request.ChangePasswordRequest;
 import com.sparta.fitnus.user.dto.request.UserRequest;
+import com.sparta.fitnus.user.dto.response.AuthTokenResponse;
 import com.sparta.fitnus.user.dto.response.UserResponse;
 import com.sparta.fitnus.user.entity.AuthUser;
 import com.sparta.fitnus.user.entity.User;
@@ -35,15 +36,10 @@ public class UserController {
 
     @PostMapping("/v1/auth/login")
     public ApiResponse<String> login(@RequestBody UserRequest userRequest, HttpServletResponse response) {
-        //로그인 유저 db 유효 검증
-        User user = userService.checkLogin(userRequest);
-        String accessToken = userService.createAccessToken(user);
-        String refreshToken = userService.createRefreshToken(user);
-        //redis에 토큰 저장
-        userService.redisSaveTokens(user.getId(), accessToken, refreshToken);
+        AuthTokenResponse authTokenResponse = userService.login(userRequest);
         //쿠키에 accessToken와 refreshToken를 저장
-        jwtUtil.setTokenCookie(response, accessToken);
-        jwtUtil.setRefreshTokenCookie(response, refreshToken);
+        jwtUtil.setTokenCookie(response, authTokenResponse.getAccessToken());
+        jwtUtil.setRefreshTokenCookie(response, authTokenResponse.getRefreshToken());
         return ApiResponse.createSuccess(null);
     }
 

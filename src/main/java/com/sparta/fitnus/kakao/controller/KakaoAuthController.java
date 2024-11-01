@@ -2,7 +2,7 @@ package com.sparta.fitnus.kakao.controller;
 
 import com.sparta.fitnus.config.JwtUtil;
 import com.sparta.fitnus.kakao.service.KakaoAuthService;
-import com.sparta.fitnus.user.dto.response.KakaoAuthResponse;
+import com.sparta.fitnus.user.dto.response.AuthTokenResponse;
 import com.sparta.fitnus.user.service.RedisUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class KakaoAuthController {
 
     @GetMapping("/v1/auth/kakao/callback")
     public void kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
-        KakaoAuthResponse authResponse = kakaoAuthService.handleKakaoAuth(code);
+        AuthTokenResponse authResponse = kakaoAuthService.handleKakaoAuth(code);
         //쿠키에 토큰 저장
         jwtUtil.setTokenCookie(response, authResponse.getAccessToken());
         jwtUtil.setRefreshTokenCookie(response, authResponse.getRefreshToken());
