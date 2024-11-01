@@ -22,6 +22,9 @@ jobs:
       - name: gradlew 실행권한 부여
         run: chmod +x ./gradlew
 
+      - name: Build JAR
+        run: ./gradlew clean build bootJar
+
       - name: 도커 이미지 빌드
         run: ./gradlew bootBuildImage
 
