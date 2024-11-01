@@ -94,3 +94,4 @@ public class TimeslotService {
         return timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
     }
 }
+
