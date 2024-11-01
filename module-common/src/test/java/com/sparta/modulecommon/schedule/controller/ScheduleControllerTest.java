@@ -75,7 +75,7 @@ class ScheduleControllerTest {
             ClubScheduleRequest scheduleRequest = new ClubScheduleRequest();
 
             //when
-            ResultActions result = mockMvc.perform(post("/api/v1/schedules/club")
+            ResultActions result = mockMvc.perform(post("/api/v1/schedules/clubs")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(scheduleRequest)));
 
@@ -104,12 +104,12 @@ class ScheduleControllerTest {
         @Test
         void 모임_일정_수정_성공() throws Exception {
             //given
-            ClubScheduleRequest scheduleRequest = new ClubScheduleRequest();
+            ClubScheduleRequest clubScheduleRequest = new ClubScheduleRequest();
 
             //when
-            ResultActions result = mockMvc.perform(put("/api/v1/schedules/{id}/club", 1L)
+            ResultActions result = mockMvc.perform(put("/api/v1/schedules/{id}/clubs", 1L)
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(scheduleRequest)));
+                    .content(objectMapper.writeValueAsString(clubScheduleRequest)));
 
             //then
             result.andExpect(status().isOk());

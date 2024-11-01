@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sparta.modulecommon.config.JwtSecurityFilter;
 import com.sparta.modulecommon.fitness.dto.request.FitnessDeleteRequest;
+import com.sparta.modulecommon.fitness.dto.request.FitnessGetAllRequest;
 import com.sparta.modulecommon.fitness.dto.request.FitnessRequest;
 import com.sparta.modulecommon.fitness.service.FitnessService;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,9 +92,12 @@ class FitnessControllerTest {
         @Test
         void getAllFitness_성공() throws Exception {
             //given
+            FitnessGetAllRequest fitnessGetAllRequest = new FitnessGetAllRequest();
 
             //when
-            ResultActions result = mockMvc.perform(get("/api/v1/fitness"));
+            ResultActions result = mockMvc.perform(get("/api/v1/fitness")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(fitnessGetAllRequest)));
 
             //then
             result.andExpect(status().isOk());

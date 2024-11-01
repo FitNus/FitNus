@@ -2,8 +2,8 @@ package com.sparta.modulecommon.timeslot.service;
 
 import com.sparta.modulecommon.center.entity.Center;
 import com.sparta.modulecommon.center.service.CenterService;
-import com.sparta.modulecommon.common.exception.AccessDeniedException;
 import com.sparta.modulecommon.fitness.entity.Fitness;
+import com.sparta.modulecommon.fitness.exception.AccessDeniedException;
 import com.sparta.modulecommon.timeslot.dto.request.TimeslotRequest;
 import com.sparta.modulecommon.timeslot.entity.Timeslot;
 import com.sparta.modulecommon.timeslot.exception.TimeslotNotFoundException;
