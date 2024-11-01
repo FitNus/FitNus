@@ -6,7 +6,7 @@ import com.sparta.modulecommon.config.JwtSecurityFilter;
 import com.sparta.modulecommon.config.JwtUtil;
 import com.sparta.modulecommon.user.dto.request.ChangePasswordRequest;
 import com.sparta.modulecommon.user.dto.request.UserRequest;
-import com.sparta.modulecommon.user.entity.User;
+import com.sparta.modulecommon.user.dto.response.AuthTokenResponse;
 import com.sparta.modulecommon.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -85,14 +84,11 @@ class UserControllerTest {
         void login_성공() throws Exception {
             //given
             UserRequest userRequest = new UserRequest();
-            User mockUser = new User();
-            ReflectionTestUtils.setField(mockUser, "id", 1L);
             String accessToken = "mockAccessToken";
             String refreshToken = "mockRefreshToken";
+            AuthTokenResponse authTokenResponse = new AuthTokenResponse(accessToken, refreshToken);
 
-            given(userService.checkLogin(any(UserRequest.class))).willReturn(mockUser);
-            given(userService.createAccessToken(mockUser)).willReturn(accessToken);
-            given(userService.createRefreshToken(mockUser)).willReturn(refreshToken);
+            given(userService.login(any())).willReturn(authTokenResponse);
 
             //when
             ResultActions result = mockMvc.perform(post("/api/v1/auth/login")

@@ -2,11 +2,11 @@ package com.sparta.modulecommon.fitness.service;
 
 import com.sparta.modulecommon.center.entity.Center;
 import com.sparta.modulecommon.center.service.CenterService;
-import com.sparta.modulecommon.common.exception.AccessDeniedException;
 import com.sparta.modulecommon.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.modulecommon.fitness.dto.request.FitnessRequest;
 import com.sparta.modulecommon.fitness.dto.response.FitnessResponse;
 import com.sparta.modulecommon.fitness.entity.Fitness;
+import com.sparta.modulecommon.fitness.exception.AccessDeniedException;
 import com.sparta.modulecommon.fitness.exception.FitnessNotFoundException;
 import com.sparta.modulecommon.fitness.exception.FitnessgetAllAccessDeniedException;
 import com.sparta.modulecommon.fitness.repository.FitnessRepository;
