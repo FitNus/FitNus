@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.sparta.modulebatch.repository", // DataDBConfig가 어떤 패키지에서 동작하게 할 것인지
+        basePackages = {"com.sparta.modulecommon"},// DataDBConfig가 어떤 패키지에서 동작하게 할 것인지
         entityManagerFactoryRef = "dataEntityManager", // 작성한 dataEntityManager 명을 의미
         transactionManagerRef = "dataTransactionManager" // // 작성한 dataTransactionManager 명을 의미
 ) // JPA를 사용해서 특정한 패키지의 Entity에다가 값을 부여
@@ -35,7 +35,7 @@ public class DataDBConfig {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
         em.setDataSource(dataDBSource());
-        em.setPackagesToScan(new String[]{"com.sparta.modulebatch.entity"}); // Entity들이 모여질 패키지를 등록
+        em.setPackagesToScan(new String[]{"com.sparta.modulecommon"}); // Entity들이 모여질 패키지를 등록
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         HashMap<String, Object> properties = new HashMap<>();

@@ -15,18 +15,20 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "club")
 public class Club extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "leader_id", nullable = false)
     private Long leaderId;
 
-    @Column(unique = true)
+    @Column(name = "club_name", unique = true)
     private String clubName;
 
+    @Column(name = "club_info")
     private String clubInfo;
 
     private String place;

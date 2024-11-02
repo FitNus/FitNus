@@ -1,9 +1,6 @@
 package com.sparta.modulecommon.ssenotification.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,16 +9,24 @@ import java.time.LocalDateTime;
 @Getter
 @Entity(name = "notifications")
 @NoArgsConstructor
+@Table(name = "notifications")
 public class SseNotification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "event_type")
     private String eventType;
+
     private String message;
+
     private LocalDateTime timestamp;
+
+    @Column(name = "is_read")
     private boolean isRead; // 읽음 상태
 
     public SseNotification(Long userId, String eventType, String message, LocalDateTime timestamp) {

@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "schedule")
 public class Center extends Timestamped {
 
     @Id
@@ -22,12 +23,16 @@ public class Center extends Timestamped {
     private Long id;
 
     //센터장 id
+    @Column(name = "owner_id")
     private Long ownerId;
 
+    @Column(name = "center_name")
     private String centerName;
 
+    @Column(name = "open_time")
     private Integer openTime;
 
+    @Column(name = "close_time")
     private Integer closeTime;
 
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, orphanRemoval = true)

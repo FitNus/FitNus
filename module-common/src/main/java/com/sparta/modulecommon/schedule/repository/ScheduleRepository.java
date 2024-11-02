@@ -1,6 +1,9 @@
 package com.sparta.modulecommon.schedule.repository;
 
 import com.sparta.modulecommon.schedule.entity.Schedule;
+import com.sparta.modulecommon.settlement.dto.SettlementResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +24,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findAllByUserIdYearAndMonthAndDay(@Param("userId") long userId, @Param("year") int year, @Param("month") int month, @Param("day") Integer day);
 
     List<Schedule> findByUserIdAndClubIdIsNullAndStartTimeBetween(long userId, LocalDateTime startOfOctober, LocalDateTime endOfOctober);
+
+    @Query("SELECT new com.sparta.modulecommon.settlement.dto.SettlementResult(c.id, SUM(s.requiredCoupon)) " +
+            "FROM Schedule s " +
+            "LEFT JOIN Timeslot t ON s.timeslotId = t.id " +
+            "LEFT JOIN Fitness f ON t.fitness.id = f.id " +
+            "LEFT JOIN Center c ON f.center.id = c.id " +
+            "GROUP BY c.id")
+    Page<SettlementResult> findAllByTimeslotIdAndRequiredCoupon(Pageable pageable);
 }

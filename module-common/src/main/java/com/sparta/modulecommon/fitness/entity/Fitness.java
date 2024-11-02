@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "fitness")
 public class Fitness {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +19,10 @@ public class Fitness {
     @JoinColumn(name = "center_id")
     private Center center;
 
+    @Column(name = "fitness_name")
     private String fitnessName;
 
+    @Column(name = "required_coupon")
     private Integer requiredCoupon;
 
     public Fitness(FitnessRequest request, Center center) {
