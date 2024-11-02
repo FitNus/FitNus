@@ -11,7 +11,7 @@ dependencies {
 }
 
 tasks.named('bootJar') {
-    enabled = true
+    enabled = true // 나중에 false로 안바꾸면 대머리
 }
 
 tasks.named('jar') {
