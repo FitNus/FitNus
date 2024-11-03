@@ -8,6 +8,11 @@ repositories {
     mavenCentral()
 }
 
+//bootBuildImage {
+//
+//    imageName = 'fitnus'
+//}
+
 subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'

@@ -22,15 +22,15 @@ jobs:
       - name: gradlew 실행권한 부여
         run: chmod +x ./gradlew
 
-      - name: 도커 이미지 빌드
-        run: ./gradlew bootBuildImage
+      - name: Build JAR
+        run: ./gradlew build
 
       - name: AWS 자격 증명
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-region: ap-northeast-2
+          aws-region: us-east-1
 
       - name: ECR에 로그인
         id: ecr-login
@@ -38,13 +38,50 @@ jobs:
 
       - name: Build, tag, and push image to ECR
         env:
-          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry}}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{steps.ecr-login.outputs.registry}}
+          ECR_REPOSITORY: fitnus
           IMAGE_TAG: latest
         run: |
-          docker tag docker.io/library/FitNus-0.0.1-SNAPSHOT $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          REGION="us-east-1"
           
-      
+          docker build -t fitnus .
+          docker tag fitnus:latest 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
+          docker push 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
           
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Execute remote SSH commands on EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            REGION="us-east-1"
+            ECR_REPOSITORY="fitnus"
+            IMAGE_TAG="latest"
+            AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
+            
+            # Docker 컨테이너 중지 및 삭제 (기존 컨테이너가 있다면)
+            docker stop fitnus || true
+            docker rm fitnus || true
+            
+            # ECR에서 최신 이미지 가져오기
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 953923565421.dkr.ecr.us-east-1.amazonaws.com
+            docker pull 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
+            
+            # 새 컨테이너 실행
+            docker run -d --name fitnus -p 80:8080 \
+              -e SPRING_PROFILES_ACTIVE=local \
+              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+              -e S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }} \
+              -e S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }} \
+              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+              953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
 
