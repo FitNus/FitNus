@@ -30,6 +30,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "LEFT JOIN Timeslot t ON s.timeslotId = t.id " +
             "LEFT JOIN Fitness f ON t.fitness.id = f.id " +
             "LEFT JOIN Center c ON f.center.id = c.id " +
+            "WHERE s.startTime >= :settlementStartDateTime " +
+            "AND s.startTime <= :settlementEndDateTime " +
             "GROUP BY c.id")
-    Page<SettlementResult> findAllByTimeslotIdAndRequiredCoupon(Pageable pageable);
+    Page<SettlementResult> findAllByTimeslotIdAndRequiredCoupon(
+            @Param("settlementStartDateTime") LocalDateTime start,
+            @Param("settlementEndDateTime") LocalDateTime end,
+            Pageable pageable);
 }

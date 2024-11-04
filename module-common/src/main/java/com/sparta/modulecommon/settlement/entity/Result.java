@@ -1,6 +1,5 @@
 package com.sparta.modulecommon.settlement.entity;
 
-import com.sparta.modulecommon.settlement.dto.SettlementResult;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +14,18 @@ public class Result {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "center_id")
+    @Column(name = "center_id", unique = true)
     private Long centerId;
 
     @Column(name = "amount_to_pay")
-    private Long amountToPay;
+    private Double amountToPay;
 
-    private Result(SettlementResult settlementResult) {
-        this.centerId = settlementResult.getCenterId();
-        amountToPay = settlementResult.getSumOfCoupon();
+    private Result(long centerId, double amountToPay) {
+        this.centerId = centerId;
+        this.amountToPay = amountToPay;
     }
 
-    public static Result of(SettlementResult settlementResult) {
-        return new Result(settlementResult);
+    public static Result of(long centerId, double amountToPay) {
+        return new Result(centerId, amountToPay);
     }
 }
