@@ -2,12 +2,16 @@ package com.sparta.modulecommon.user.entity;
 
 
 import com.sparta.modulecommon.common.Timestamped;
+import com.sparta.modulecommon.kakao.entity.KakaoPayment;
 import com.sparta.modulecommon.user.dto.request.UserRequest;
 import com.sparta.modulecommon.user.enums.UserRole;
 import com.sparta.modulecommon.user.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -40,6 +44,10 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KakaoPayment> payments = new ArrayList<>();
+
 
     // 정팩매~~
     private User(UserRequest request, UserRole role) {
