@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  user:
+    build:
+      context: ./module-batch
+    ports:
+      - "8081:8081"
+    networks:
+      - fitnus-network
+
+  center:
+    build:
+      context: ./module-common
+    ports:
+      - "8082:8082"
+    networks:
+      - fitnus-network
+
+networks:
+  fitnus-network:
+    driver: bridge
