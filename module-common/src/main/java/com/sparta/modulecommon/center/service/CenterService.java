@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CenterService {
     private final CenterRepository centerRepository;
+    private final LocationService locationService;
 
     /***
      * CRUD-Get : getCenter()의 기능입니다.
@@ -41,11 +42,13 @@ public class CenterService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public CenterResponse createCenter(AuthUser authUser, CenterSaveRequest request) {
-        Center center = Center.of(request, authUser);
+        // 주소로부터 위도와 경도 가져오기
+        LocationService.LatLng latLng = locationService.getLatLngFromAddress(request.getAddress());
+
+        Center center = Center.of(request, authUser, latLng.latitude(), latLng.longitude());
         Center savedCenter = centerRepository.save(center);
         return new CenterResponse(savedCenter);
     }
-
 
     /***
      * CRUD-PATCH : updateCenter()의 기능입니다.
@@ -98,4 +101,6 @@ public class CenterService {
         return centerRepository.findById(id)
                 .orElseThrow(CenterNotFoundException::new);
     }
+
+
 }

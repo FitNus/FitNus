@@ -29,7 +29,6 @@ public class SseNotificationController {
     /**
      * 클라이언트의 이벤트 구독을 수락한다. text/event-stream은 SSE를 위한 Mime Type이다. 서버 -> 클라이언트로 이벤트를 보낼 수 있게된다.
      */
-//    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/sse/subscribe/users", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal AuthUser authUser){
         return sseNotificationServiceImpl.subscribe(authUser.getId());
