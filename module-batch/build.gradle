@@ -19,15 +19,15 @@ tasks.named('jar') {
     enabled = true
 }
 
-//String jarName = "module-batch.jar"
-//
-//tasks.named("bootJar") {
-//    bootJar.getArchiveFileName().set(jarName)
-//
-//    bootJar.doLast(task -> {
-//        copy(copySpec -> {
-//            copySpec.from("build/libs/" + jarName)
-//            copySpec.into("../build/libs")
-//        })
-//    })
-//}
+String jarName = "module-batch.jar"
+
+tasks.named("bootJar") {
+    bootJar.getArchiveFileName().set(jarName)
+
+    bootJar.doLast(task -> {
+        copy(copySpec -> {
+            copySpec.from("build/libs/" + jarName)
+            copySpec.into("../build/libs")
+        })
+    })
+}

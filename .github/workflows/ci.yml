@@ -1,3 +1,5 @@
+# .github/workflows/ci.yml
+
 name: FitNus CI
 
 on:
@@ -8,6 +10,7 @@ on:
 
 jobs:
   build:
+    name : Build and Test All Modules
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +22,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+
       - name: gradlew 실행권한 부여
         run: chmod +x ./gradlew
 
@@ -28,8 +32,8 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-            name: build-artifacts
-            path: build/libs/*.jar
+          name: build-artifacts
+          path: build/libs/*.jar
 
       - name: AWS 자격 증명
         uses: aws-actions/configure-aws-credentials@v1
@@ -49,7 +53,6 @@ jobs:
           IMAGE_TAG: latest
         run: |
           REGION="us-east-1"
-          
           docker build -t fitnus .
           docker tag fitnus:latest 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
           docker push 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest

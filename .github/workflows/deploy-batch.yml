@@ -1,13 +1,22 @@
 name: Deploy Module-batch
 
 on:
-  push:
-    branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
+  workflow_run:
+    workflows : ["FitNus CI"]
+    types:
+      - completed
+    push:
+      paths:
+        - 'module-batch/**'
+      branch:
+        - dev
+    pull_request:
+      paths:
+        - 'module-batch/**'
+      branches:
+        - dev
 
 jobs:
-
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
