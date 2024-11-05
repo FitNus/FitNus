@@ -46,13 +46,16 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Build and push Docker images using docker-compose
         env:
-          ECR_REGISTRY: ${{steps.ecr-login.outputs.registry}}
-          ECR_REPOSITORY: fitnus
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           IMAGE_TAG: latest
         run: |
           REGION="us-east-1"
-          docker build -t fitnus .
-          docker tag fitnus:latest 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
-          docker push 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
+          
+          # ECR 레지스트리 로그인
+          aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          
+          # Docker Compose로 모든 모듈 빌드 및 푸시
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml push
