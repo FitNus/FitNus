@@ -2,19 +2,19 @@ name: Deploy Module-common
 
 on:
   workflow_run:
-    workflows: [ "FitNus CI" ]
+    workflows: ["FitNus CI"]
     types:
       - completed
-    push:
-      paths:
-        - 'module-batch/**'
-      branch:
-        - dev
-    pull_request:
-      paths:
-        - 'module-batch/**'
-      branches:
-        - dev
+  push:
+    paths:
+      - 'module-common/**'
+    branches:
+      - dev
+  pull_request:
+    paths:
+      - 'module-common/**'
+    branches:
+      - dev
 
 jobs:
   deploy:
@@ -22,10 +22,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Download Build Artifacts
         uses: actions/download-artifact@v3
         with:
-            name: build-artifacts
+          name: build-artifacts # 업로드 시 사용한 아티팩트 이름과 동일하게 설정
+
+      - name: AWS 자격 증명 설정
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: ECR에 로그인
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker images using docker-compose
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        run: |
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml push
 
       - name: Execute remote SSH commands on EC2
         uses: appleboy/ssh-action@v0.1.6
@@ -40,20 +65,16 @@ jobs:
             IMAGE_TAG="latest"
             AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
             
-            # Docker 컨테이너 중지 및 삭제 (기존 컨테이너가 있다면)
-            docker stop fitnus || true
-            docker rm fitnus || true
+            # Docker Compose로 배포를 위한 디렉터리 생성 및 파일 전송
+            mkdir -p ~/deploy/module-common
+            rm -rf ~/deploy/module-common/docker-compose.yml
+            # GitHub에서 EC2로 docker-compose 파일 복사
+            scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/deploy/module-common/
+
+            cd ~/deploy/module-common
             
             # ECR에서 최신 이미지 가져오기
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 953923565421.dkr.ecr.us-east-1.amazonaws.com
-            docker pull 953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
-            
-            # 새 컨테이너 실행
-            docker run -d --name fitnus -p 81:8080 \
-              -e SPRING_PROFILES_ACTIVE=local \
-              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-              -e S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }} \
-              -e S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }} \
-              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
-              953923565421.dkr.ecr.us-east-1.amazonaws.com/fitnus:latest
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
 
+            # Docker Compose를 통해 새 컨테이너 실행
+            docker-compose -f docker-compose.yml up -d
