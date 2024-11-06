@@ -2,7 +2,7 @@ name: Deploy Module-common
 
 on:
   workflow_run:
-    workflows: ["FitNus CI"]
+    workflows: ["Build and Test All Modules"]
     types:
       - completed
 
