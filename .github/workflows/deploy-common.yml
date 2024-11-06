@@ -5,16 +5,6 @@ on:
     workflows: ["FitNus CI"]
     types:
       - completed
-  push:
-    paths:
-      - 'module-common/**'
-    branches:
-      - dev
-  pull_request:
-    paths:
-      - 'module-common/**'
-    branches:
-      - dev
 
 jobs:
   deploy:
