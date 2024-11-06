@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ["FitNus CI"]
     types:
-      - completed
+      - requested
 
 jobs:
   deploy:
