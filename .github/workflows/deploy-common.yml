@@ -64,6 +64,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push image to ECR
+        working-directory: ./module-common
         env:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
