@@ -2,7 +2,7 @@
 FROM gradle:7.3.3-jdk17 AS builder
 WORKDIR /app
 COPY . .
-RUN ./gradlew build -x test
+RUN ./gradlew :module-batch:build -x test
 
 # 2단계: 최종 실행 이미지 생성
 FROM openjdk:17-jdk-slim
