@@ -4,7 +4,7 @@
 FROM openjdk:17-jdk-slim
 
 # jar 파일을 컨테이너 내부에 복사
-COPY ~/module-common/build/libs/*.jar common.jar
+COPY /module-common/build/libs/*.jar common.jar
 
 # 외부 호스트 8080 포트로 노출
 EXPOSE 8080
