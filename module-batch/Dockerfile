@@ -2,7 +2,7 @@
 FROM gradle:7.6.0-jdk17 AS build
 WORKDIR /app
 COPY .. .
-RUN gradle :module-batch:bootJar --no-daemon
+RUN ./gradlew :module-batch:bootJar --no-daemon
 
 # 2단계: 최종 실행 이미지 생성
 FROM eclipse-temurin:17-jdk-jammy
