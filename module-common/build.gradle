@@ -41,10 +41,6 @@ dependencies {
 
 }
 
-bootBuildImage {
-    imageName = 'fitnus/fitnus-app'
-}
-
 tasks.named('bootJar') {
     enabled = true
 }
