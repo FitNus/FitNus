@@ -29,7 +29,7 @@ jobs:
         run: ./gradlew build -x test
 
       - name: Build JAR in common
-        run: ./module-common/gradlew build -x test
+        run: ./gradlew :module-common:build -x test
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
