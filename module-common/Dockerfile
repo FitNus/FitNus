@@ -10,4 +10,4 @@ WORKDIR /app
 COPY --from=build /app/common/build/libs/module-common-*.jar common.jar
 
 # 실행 명령어
-CMD ["java", "-jar", "common.jar"]
+ENTRYPOINT ["java", "-jar", "common.jar"]

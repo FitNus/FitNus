@@ -10,4 +10,4 @@ WORKDIR /app
 COPY --from=build /app/build/libs/module-batch-*.jar batch.jar
 
 # 실행 명령어
-CMD ["java", "-jar", "batch.jar"]
+ENTRYPOINT ["java", "-jar", "batch.jar"]
