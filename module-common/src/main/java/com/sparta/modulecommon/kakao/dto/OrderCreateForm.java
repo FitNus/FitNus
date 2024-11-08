@@ -1,12 +1,16 @@
 package com.sparta.modulecommon.kakao.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class OrderCreateForm {
-    private final String name;
-    private final int totalPrice;
+    private final int quantity;
+
+    @JsonCreator
+    public OrderCreateForm(@JsonProperty("quantity") int quantity) {
+        this.quantity = quantity;
+    }
 }
 

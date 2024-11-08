@@ -21,13 +21,11 @@ public class KakaoPayController {
 
     @PostMapping("/v1/kakaopay/ready")
     public @ResponseBody KakaoPayReadyResponse payReady(@RequestBody OrderCreateForm orderCreateForm, @AuthenticationPrincipal AuthUser authUser) {
-        String name = orderCreateForm.getName();
-        int totalPrice = orderCreateForm.getTotalPrice();
+        int quantity = orderCreateForm.getQuantity();
 
-        log.info("주문 상품 이름: " + name);
-        log.info("주문 금액: " + totalPrice);
+        log.info("주문 수량: " + quantity);
 
-        KakaoPayReadyResponse readyResponse = kakaoPayService.payReady(name, totalPrice, authUser.getId());
+        KakaoPayReadyResponse readyResponse = kakaoPayService.payReady(quantity, authUser.getId());
         SessionUtils.addAttribute("tid", readyResponse.getTid());
         log.info("결제 고유번호: " + readyResponse.getTid());
         log.info("세션에서 가져온 tid: " + SessionUtils.getStringAttributeValue("tid"));
@@ -42,12 +40,12 @@ public class KakaoPayController {
         log.info("결제 고유번호: " + tid);
 
         kakaoPayService.payApprove(tid, pgToken, authUser.getId());
-        return "redirect:/order/completed";
+        return "redirect:/api/order/completed";
     }
 
     @GetMapping("/order/completed")
     public String orderCompleted() {
-        return "redirect:order_complete.html"; // Thymeleaf를 사용하여 order_complete.html 페이지를 렌더링
+        return "redirect:/order_complete.html"; // Directs to the HTML in static folder
     }
 }
 

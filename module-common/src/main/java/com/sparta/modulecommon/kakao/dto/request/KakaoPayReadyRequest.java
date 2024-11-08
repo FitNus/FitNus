@@ -14,9 +14,9 @@ public class KakaoPayReadyRequest {
     private final String partnerUserId;
 
     @JsonProperty("item_name")
-    private final String itemName;
+    private final String itemName = "FitNus Coupon";
 
-    private final int quantity = 1;
+    private final int quantity;
 
     @JsonProperty("total_amount")
     private final int totalAmount;
@@ -36,9 +36,19 @@ public class KakaoPayReadyRequest {
     @JsonProperty("cancel_url")
     private final String cancelUrl = "http://localhost:8080/kakaopay/cancel";
 
-    public KakaoPayReadyRequest(String itemName, int totalAmount, String userId) {
+    public KakaoPayReadyRequest(int quantity, String userId) {
         this.partnerUserId = userId;
-        this.itemName = itemName;
-        this.totalAmount = totalAmount;
+        this.quantity = quantity;
+        this.totalAmount = calculateTotalAmount(quantity);
+    }
+
+    private int calculateTotalAmount(int quantity) {
+        if (quantity == 220) {
+            return 200000;
+        } else if (quantity == 345) {
+            return 300000;
+        } else {
+            return quantity * 1000;
+        }
     }
 }

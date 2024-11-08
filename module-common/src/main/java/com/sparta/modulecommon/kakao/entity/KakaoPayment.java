@@ -31,14 +31,14 @@ public class KakaoPayment extends Timestamped {
     @Column(nullable = false)
     private String status; // 결제 상태 (예: COMPLETED, FAILED 등)
 
-    public KakaoPayment(User user, String tid, int amount, String status) {
+    @Column(nullable = false)
+    private int coupon;
+
+    public KakaoPayment(User user, String tid, int amount, String status, int coupon) {
         this.user = user;
         this.tid = tid;
         this.amount = amount;
         this.status = status;
-    }
-
-    public void updateStatus(String status) {
-        this.status = status;
+        this.coupon = coupon;
     }
 }

@@ -29,12 +29,12 @@ public class KakaoPayService {
     private final UserRepository userRepository;
     private final KakaoPaymentRepository kakaoPaymentRepository;
 
-    public KakaoPayReadyResponse payReady(String name, int totalPrice, Long userId) {
+    public KakaoPayReadyResponse payReady(int quantity, Long userId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", AUTHORIZATION_KEY);
         headers.add("Content-Type", "application/json");
 
-        KakaoPayReadyRequest readyRequest = new KakaoPayReadyRequest(name, totalPrice, String.valueOf(userId));
+        KakaoPayReadyRequest readyRequest = new KakaoPayReadyRequest(quantity, String.valueOf(userId));
 
         HttpEntity<KakaoPayReadyRequest> requestEntity = new HttpEntity<>(readyRequest, headers);
         ResponseEntity<KakaoPayReadyResponse> response = restTemplate.postForEntity(KAKAO_PAY_READY_URL, requestEntity, KakaoPayReadyResponse.class);
@@ -67,7 +67,8 @@ public class KakaoPayService {
                     user,
                     tid,
                     approveResponse.getAmount().getTotal(),    // 총 결제 금액
-                    "COMPLETED"
+                    "COMPLETED",
+                    approveResponse.getQuantity()
             );
             kakaoPaymentRepository.save(payment);
         } else {
