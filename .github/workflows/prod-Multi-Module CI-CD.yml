@@ -5,15 +5,18 @@ name: Multi-Module Build and Deploy
 on:
   push:
     branches:
-      - dev
+      - main
   pull_request:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 jobs:
   changes:
     runs-on: ubuntu-latest
+    env:
+      SPRING_PROFILES_ACTIVE: "prod"
+
     outputs:
       common: ${{ steps.filter.outputs.common }}
       batch: ${{ steps.filter.outputs.batch }}

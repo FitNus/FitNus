@@ -2,34 +2,29 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: ${PROD_DB_URL}               # 운영 환경에 맞는 DB URL
-    username: ${PROD_DB_USERNAME}     # 운영 환경 DB 사용자 이름
-    password: ${PROD_DB_PASSWORD}     # 운영 환경 DB 비밀번호
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB             # 운영 환경에서는 파일 업로드 크기 증가
-      max-request-size: 10MB
+  data:
+    redis:
+      host: ${PROD_REDIS_HOST}
+      port: ${PROD_REDIS_PORT}
 
   jpa:
     hibernate:
-      ddl-auto: none                  # 운영 환경에서는 데이터베이스 구조 변경 방지
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        show_sql: false               # 운영 환경에서는 SQL 로그 비활성화
-        format_sql: false
-        use_sql_comments: false
+      ddl-auto: none  # 운영 환경에서는 데이터베이스 구조 자동 변경 방지
+    show_sql: false
+    format_sql: false
 
 jwt:
   secret:
-    key: ${PROD_JWT_SECRET_KEY}       # 운영 환경에 맞는 JWT 비밀 키
+    key: ${PROD_JWT_SECRET_KEY}
 
 slack:
   webhook:
-    token: ${PROD_SLACK_WEBHOOK_TOKEN} # 운영 환경의 슬랙 웹훅 토큰
+    token: ${PROD_SLACK_WEBHOOK_TOKEN}
 
 cloud:
   aws:
@@ -41,23 +36,5 @@ cloud:
     s3:
       bucket: ${PROD_AWS_BUCKET_NAME}
 
----
-spring:
-  data:
-    redis:
-      host: ${PROD_REDIS_HOST}        # 운영 환경 Redis 호스트
-      port: ${PROD_REDIS_PORT}        # 운영 환경 Redis 포트
-
-admin:
-  token: ${PROD_ADMIN_TOKEN}          # 운영 환경에 맞는 관리자 토큰
-
-owner:
-  token: ${PROD_OWNER_TOKEN}          # 운영 환경에 맞는 소유자 토큰
-
-kakao:
-  client:
-    id: ${PROD_KAKAO_CLIENT_ID}
-    secret: ${PROD_KAKAO_CLIENT_SECRET}
-    redirect: ${PROD_KAKAO_REDIRECT_URL}
-  api:
-    key: ${PROD_KAKAO_REST_API_KEY}
+server:
+  port: 8080
