@@ -7,6 +7,7 @@ import com.sparta.modulecommon.center.service.CenterService;
 import com.sparta.modulecommon.common.apipayload.ApiResponse;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +46,11 @@ public class CenterController {
         return ApiResponse.createSuccess(centerService.getCenter(id));
     }
 
-
+    @GetMapping("v1/centers/nearby")
+    public List<CenterResponse> getNearbyCenters(
+        @RequestParam double longitude,
+        @RequestParam double latitude,
+        @RequestParam double radius){
+        return centerService.findNearbyCenters(longitude, latitude,radius);
+    }
 }
