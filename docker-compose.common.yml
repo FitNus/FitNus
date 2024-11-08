@@ -3,8 +3,7 @@ version: '3.8'
 services:
   module-common:
     build:
-      context: ./module-common
-      dockerfile: Dockerfile
+      dockerfile: ./module-common/Dockerfile
     image: "${COMMON_REPOSITORY_URI}:latest"
     container_name: module-common
     ports:

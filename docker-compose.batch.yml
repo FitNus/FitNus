@@ -3,8 +3,7 @@ version: '3.8'
 services:
   module-batch:
     build:
-      context: ./module-batch
-      dockerfile: Dockerfile
+      dockerfile: ./module-batch/Dockerfile
     image: "${BATCH_REPOSITORY_URI}:latest"
     container_name: module-batch
     ports:
