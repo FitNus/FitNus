@@ -48,9 +48,9 @@ public class CenterController {
 
     @GetMapping("v1/centers/nearby")
     public List<CenterResponse> getNearbyCenters(
-        @RequestParam double longitude,
-        @RequestParam double latitude,
-        @RequestParam double radius){
+        @RequestParam Double longitude,
+        @RequestParam Double latitude,
+        @RequestParam Double radius){
         return centerService.findNearbyCenters(longitude, latitude,radius);
     }
 }

@@ -17,7 +17,7 @@ public class CenterRedisRepository implements CenterCacheRepository{
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void saveGeoLocation(String key, double longitude, double latitude, Long id) {
+    public void saveGeoLocation(String key, Double longitude, Double latitude, Long id) {
         redisTemplate.opsForGeo().add(
             "centers",  //redis 키
             new Point(longitude, latitude), //경도, 위도
@@ -26,7 +26,7 @@ public class CenterRedisRepository implements CenterCacheRepository{
     }
 
     @Override
-    public GeoResults<GeoLocation<String>> findCentersWithinRadius(double longitude, double latitude, double radius) {
+    public GeoResults<GeoLocation<String>> findCentersWithinRadius(Double longitude, Double latitude, Double radius) {
         // 사용자의 위치에서 지정된 반경 내의 센터 검색
         return redisTemplate.opsForGeo()
             .radius("centers",
