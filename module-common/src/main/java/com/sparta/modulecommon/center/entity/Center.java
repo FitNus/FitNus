@@ -38,8 +38,8 @@ public class Center extends Timestamped {
     @Column(name = "close_time")
     private Integer closeTime;
 
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fitness> fitnesses = new ArrayList<>();

@@ -109,7 +109,7 @@ public class CenterService {
      * @return
      */
     @Transactional
-    public List<CenterResponse> findNearbyCenters(double userLongitude, double userLatitude, double radius){
+    public List<CenterResponse> findNearbyCenters(Double userLongitude, Double userLatitude,  Double radius){
         //사용자의 위치에서 지정된 반경 내의 센터를 검색
         GeoResults<GeoLocation<String>> results = cacheRepository.findCentersWithinRadius(userLongitude, userLatitude, radius);
 

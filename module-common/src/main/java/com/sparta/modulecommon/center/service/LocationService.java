@@ -21,7 +21,6 @@ public class LocationService {
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
 
-
     public LatLng getLatLngFromAddress(String address) {
         String url = "https://dapi.kakao.com/v2/local/search/address.json?query=" + address;
 
@@ -46,5 +45,5 @@ public class LocationService {
         throw new LocationNotFoundException();
     }
 
-    public record LatLng(double latitude, double longitude) {}
+    public record LatLng(Double latitude, Double longitude) {}
 }
