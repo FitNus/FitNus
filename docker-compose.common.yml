@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  module-common:
+    build:
+      dockerfile: ./module-common/Dockerfile
+    image: "${COMMON_REPOSITORY_URI}:latest"
+    container_name: module-common
+    ports:
+      - "8082:8082"  # 외부 포트 8082를 내부 8080 포트로 매핑

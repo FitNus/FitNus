@@ -1,0 +1,40 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DEV_DB_URL}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST}
+      port: ${DEV_REDIS_PORT}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show_sql: true
+    format_sql: true
+
+jwt:
+  secret:
+    key: ${DEV_JWT_SECRET_KEY}
+
+slack:
+  webhook:
+    token: ${DEV_SLACK_WEBHOOK_TOKEN}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${DEV_AWS_ACCESS_KEY}
+      secret-key: ${DEV_AWS_SECRET_KEY}
+    region:
+      static: ${DEV_AWS_REGION}
+    s3:
+      bucket: ${DEV_AWS_BUCKET_NAME}
+
+server:
+  port: 8081

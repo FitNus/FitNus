@@ -1,0 +1,40 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${PROD_REDIS_HOST}
+      port: ${PROD_REDIS_PORT}
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # 운영 환경에서는 데이터베이스 구조 자동 변경 방지
+    show_sql: false
+    format_sql: false
+
+jwt:
+  secret:
+    key: ${PROD_JWT_SECRET_KEY}
+
+slack:
+  webhook:
+    token: ${PROD_SLACK_WEBHOOK_TOKEN}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${PROD_AWS_ACCESS_KEY}
+      secret-key: ${PROD_AWS_SECRET_KEY}
+    region:
+      static: ${PROD_AWS_REGION}
+    s3:
+      bucket: ${PROD_AWS_BUCKET_NAME}
+
+server:
+  port: 8080

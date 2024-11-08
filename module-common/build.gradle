@@ -7,13 +7,6 @@ repositories {
     mavenCentral()
 }
 
-// module-common에서 module-batch 참조(클래스 파일 참조하기 위함)
-//project(':module-common') {
-//    dependencies {
-//        implementation project(':module-batch')
-//    }
-//}
-
 dependencies {
     // jwt
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
@@ -48,18 +41,17 @@ dependencies {
 
 }
 
-bootBuildImage {
-    imageName = 'fitnus/fitnus-app'
-}
-
 tasks.named('bootJar') {
     enabled = true
 }
 
 tasks.named('jar') {
-    enabled = true
+    enabled = false
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+String jarName = "module-common.jar"
+
