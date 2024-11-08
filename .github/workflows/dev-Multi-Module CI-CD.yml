@@ -67,14 +67,7 @@ jobs:
           docker-compose -f docker-compose.batch.yml build
           docker-compose -f docker-compose.batch.yml push
 
-      - name: Deploy Batch to ECS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
-          --service batch-service --force-new-deployment
+      
 
   build-and-deploy-common:
     needs: changes
@@ -110,11 +103,3 @@ jobs:
           docker-compose -f docker-compose.common.yml build
           docker-compose -f docker-compose.common.yml push
 
-      - name: Deploy Common to ECS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
-          --service common-service --force-new-deployment
