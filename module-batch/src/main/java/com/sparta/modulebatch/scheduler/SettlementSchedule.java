@@ -18,8 +18,8 @@ public class SettlementSchedule {
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
 
-    @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Seoul")
-    public void runFirstJob() throws Exception {
+    @Scheduled(cron = "0 0 4 1 * ?", zone = "Asia/Seoul")
+    public void runSettlementJob() throws Exception {
 
         System.out.println("Settlement Job Start");
 
@@ -30,6 +30,21 @@ public class SettlementSchedule {
                 .addString("date", date)
                 .toJobParameters();
 
-        jobLauncher.run(jobRegistry.getJob("firstJob"), jobParameters);
+        jobLauncher.run(jobRegistry.getJob("settlementJob"), jobParameters);
+    }
+
+    @Scheduled(cron = "0 1 0 * * ?", zone = "Asia/Seoul")
+    public void runFirstJob() throws Exception {
+
+        System.out.println("History Job Start");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+        String date = dateFormat.format(new Date());
+
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("date", date)
+                .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("historyJob"), jobParameters);
     }
 }
