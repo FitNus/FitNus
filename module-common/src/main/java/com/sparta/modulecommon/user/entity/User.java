@@ -1,6 +1,5 @@
 package com.sparta.modulecommon.user.entity;
 
-
 import com.sparta.modulecommon.common.Timestamped;
 import com.sparta.modulecommon.kakao.entity.KakaoPayment;
 import com.sparta.modulecommon.user.dto.request.UserRequest;
@@ -10,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +48,30 @@ public class User extends Timestamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KakaoPayment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserCoupon> userCoupons = new ArrayList<>();
+
+    // 쿠폰 추가 메서드
+    public void addCoupon(int quantity) {
+        UserCoupon userCoupon = new UserCoupon(this, quantity); // UserCoupon 생성 시 this(User)를 전달
+        this.userCoupons.add(userCoupon);
+    }
+
+    // 전체 쿠폰 수량 계산 (사용하지 않은 모든 쿠폰의 수량을 합산)
+    public int getTotalCoupons() {
+        return userCoupons.stream()
+                .mapToInt(UserCoupon::getRemainingQuantity)
+                .sum();
+    }
+
+    // 만료된 쿠폰의 남은 수량을 전체 수량에서 차감
+    public void expireCoupons(LocalDateTime currentDate) {
+        for (UserCoupon coupon : userCoupons) {
+            if (coupon.getExpirationDate().isBefore(currentDate) && coupon.getRemainingQuantity() > 0) {
+                coupon.expire(); // 남은 수량을 0으로 설정
+            }
+        }
+    }
 
     // 정팩매~~
     private User(UserRequest request, UserRole role) {
@@ -102,4 +126,3 @@ public class User extends Timestamped {
         this.status = UserStatus.BANNED;
     }
 }
-

@@ -3,16 +3,19 @@ package com.sparta.modulecommon.user.controller;
 import com.sparta.modulecommon.common.apipayload.ApiResponse;
 import com.sparta.modulecommon.config.JwtUtil;
 import com.sparta.modulecommon.user.dto.request.ChangePasswordRequest;
+import com.sparta.modulecommon.user.dto.request.CouponUsageRequest;
 import com.sparta.modulecommon.user.dto.request.UserRequest;
 import com.sparta.modulecommon.user.dto.response.AuthTokenResponse;
 import com.sparta.modulecommon.user.dto.response.UserResponse;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import com.sparta.modulecommon.user.entity.User;
 import com.sparta.modulecommon.user.enums.UserRole;
+import com.sparta.modulecommon.user.service.CouponService;
 import com.sparta.modulecommon.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final CouponService couponService;
 
     @PostMapping("/v1/auth/signup")
     public ApiResponse<UserResponse> signup(@RequestBody UserRequest userRequest) {
@@ -69,6 +73,16 @@ public class UserController {
     @PutMapping("/v1/admin/{userId}/deactivate")
     public ApiResponse<String> deactivateUser(@PathVariable Long userId, @AuthenticationPrincipal AuthUser authUser) {
         return ApiResponse.createSuccess(userService.deactivateUser(userId, authUser));
+    }
+
+    @PostMapping("v1/user/use-coupons")
+    public ApiResponse<String> useCoupons(@RequestBody CouponUsageRequest request, @AuthenticationPrincipal AuthUser authUser) {
+        try {
+            couponService.useCoupons(authUser.getId(), request.getQuantity());
+            return ApiResponse.createSuccess(null);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @GetMapping("/v1/user/info")

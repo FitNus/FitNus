@@ -27,6 +27,7 @@ public class KakaoPayController {
 
         KakaoPayReadyResponse readyResponse = kakaoPayService.payReady(quantity, authUser.getId());
         SessionUtils.addAttribute("tid", readyResponse.getTid());
+        SessionUtils.addAttribute("quantity", quantity);
         log.info("결제 고유번호: " + readyResponse.getTid());
         log.info("세션에서 가져온 tid: " + SessionUtils.getStringAttributeValue("tid"));
 
@@ -36,18 +37,27 @@ public class KakaoPayController {
     @GetMapping("/v1/kakaopay/completed") // 수정된 경로
     public String payCompleted(@RequestParam("pg_token") String pgToken, @AuthenticationPrincipal AuthUser authUser) {
         String tid = SessionUtils.getStringAttributeValue("tid");
+        int quantity = Integer.parseInt(SessionUtils.getStringAttributeValue("quantity"));
         log.info("결제 승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);
+        log.info("주문 수량: " + quantity);
 
-        kakaoPayService.payApprove(tid, pgToken, authUser.getId());
-        return "redirect:/api/order/completed";
+        boolean isSuccessful = kakaoPayService.handlePaymentAndAddCoupon(tid, pgToken, authUser.getId(), quantity);
+
+        if (isSuccessful) {
+            return "redirect:/api/order/completed";
+        } else {
+            return "redirect:/order/failed";
+        }
     }
 
     @GetMapping("/order/completed")
     public String orderCompleted() {
-        return "redirect:/order_complete.html"; // Directs to the HTML in static folder
+        return "redirect:/order_complete.html"; // HTML 파일로 리디렉션
+    }
+
+    @GetMapping("/order/failed")
+    public String orderFailed() {
+        return "redirect:/order_failed.html"; // HTML 파일로 리디렉션
     }
 }
-
-
-

@@ -15,6 +15,7 @@ public class UserResponse {
     private LocalDateTime modifiedAt;
     private UserRole role;
     private UserStatus status;
+    private int totalCoupons;
 
     public UserResponse(User user) {
         this.id = user.getId();
@@ -23,5 +24,6 @@ public class UserResponse {
         this.modifiedAt = user.getModifiedAt();
         this.role = user.getUserRole();
         this.status = user.getStatus();
+        this.totalCoupons = user.getTotalCoupons();
     }
 }
