@@ -20,6 +20,3 @@ cloud:
       static: ${AWS_REGION}
     s3:
       bucket: ${AWS_BUCKET_NAME}
-
-server:
-  port: 8080
