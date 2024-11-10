@@ -54,7 +54,7 @@ public class Center extends Timestamped {
 
     // 정팩메
     public static Center of(CenterSaveRequest request, AuthUser authUser, double latitude, double longitude) {
-        Center center =  new Center(request, authUser);
+        Center center = new Center(request, authUser);
         center.latitude = latitude;
         center.longitude = longitude;
         return center;
