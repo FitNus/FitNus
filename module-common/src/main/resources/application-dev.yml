@@ -47,6 +47,12 @@ spring:
     redis:
       host: ${DEV_REDIS_HOST}        # 개발 환경 Redis 호스트
       port: ${DEV_REDIS_PORT}        # 개발 환경 Redis 포트
+  kafka:
+    bootstrap-servers: ${KAFKA_PORT}
+    consumer:
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
 
 admin:
   token: ${DEV_ADMIN_TOKEN}          # 개발 환경에 맞는 관리자 토큰
@@ -61,3 +67,5 @@ kakao:
     redirect: ${DEV_KAKAO_REDIRECT_URL}
   api:
     key: ${DEV_KAKAO_REST_API_KEY}
+
+
