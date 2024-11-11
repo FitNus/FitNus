@@ -6,20 +6,27 @@ import com.sparta.modulecommon.center.dto.response.CenterResponse;
 import com.sparta.modulecommon.center.entity.Center;
 import com.sparta.modulecommon.center.exception.CenterAccessDeniedException;
 import com.sparta.modulecommon.center.exception.CenterNotFoundException;
+import com.sparta.modulecommon.center.repository.CenterCacheRepository;
 import com.sparta.modulecommon.center.repository.CenterRepository;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import com.sparta.modulecommon.user.enums.UserRole;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CenterService {
     private final CenterRepository centerRepository;
+    private final LocationService locationService;
+    private final CenterCacheRepository cacheRepository;
 
     /***
      * CRUD-Get : getCenter()의 기능입니다.
@@ -41,11 +48,16 @@ public class CenterService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public CenterResponse createCenter(AuthUser authUser, CenterSaveRequest request) {
-        Center center = Center.of(request, authUser);
+        // 주소로부터 위도와 경도 가져오기
+        LocationService.LatLng latLng = locationService.getLatLngFromAddress(request.getAddress());
+        Center center = Center.of(request, authUser, latLng.latitude(), latLng.longitude());
         Center savedCenter = centerRepository.save(center);
+
+        //Redis에 센터 위치 정보 저장
+        cacheRepository.saveGeoLocation("centers", latLng.longitude(), latLng.latitude(), center.getId());
+
         return new CenterResponse(savedCenter);
     }
-
 
     /***
      * CRUD-PATCH : updateCenter()의 기능입니다.
@@ -89,6 +101,34 @@ public class CenterService {
         centerRepository.deleteById(centerId);
     }
 
+    /**
+     * 사용자 주위 센터 검색
+     * @param userLongitude
+     * @param userLatitude
+     * @param radius
+     * @return
+     */
+    @Transactional
+    public List<CenterResponse> findNearbyCenters(Double userLongitude, Double userLatitude,  Double radius){
+        //사용자의 위치에서 지정된 반경 내의 센터를 검색
+        GeoResults<GeoLocation<String>> results = cacheRepository.findCentersWithinRadius(userLongitude, userLatitude, radius);
+
+        //결과를 CenterResponse로 변환하여 반환
+        List<CenterResponse> nearbyCenters = new ArrayList<>();
+        for(GeoResult<GeoLocation<String>> result : results){
+            String centerId = result.getContent().getName();
+
+            //데이터베이스에서 센터 ID로 센터 정보를 가져와 CenterResponse로 변환
+            Center center = centerRepository.findById(Long.parseLong(centerId))
+                .orElse(null);
+
+            if(center != null){
+                nearbyCenters.add(new CenterResponse(center));
+            }
+        }
+        return nearbyCenters;
+    }
+
     public Long isValidOwnerInCenter(Long centerId) {
         return centerRepository.findOwnerIdByCenterId(centerId).orElseThrow(CenterNotFoundException::new);
     }
@@ -98,4 +138,5 @@ public class CenterService {
         return centerRepository.findById(id)
                 .orElseThrow(CenterNotFoundException::new);
     }
+
 }

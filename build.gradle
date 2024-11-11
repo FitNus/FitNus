@@ -8,11 +8,6 @@ repositories {
     mavenCentral()
 }
 
-//bootBuildImage {
-//
-//    imageName = 'fitnus'
-//}
-
 subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
@@ -54,7 +49,7 @@ tasks.named('test') {
 }
 
 tasks.named('bootJar') {
-    enabled = false // 루트 프로젝트에서는 중복된 실행 가능한 JAR 파일을 생성하는 것을 방지
+    enabled = true // 루트 프로젝트에서는 중복된 실행 가능한 JAR 파일을 생성하는 것을 방지
 }
 
 tasks.named('jar') {

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CenterSaveRequest {
     private String centerName;
+    private String address;
     private Integer openTime;
     private Integer closeTime;
 }

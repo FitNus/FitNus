@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "schedule")
+@Table(name = "center")
 public class Center extends Timestamped {
 
     @Id
@@ -29,25 +29,35 @@ public class Center extends Timestamped {
     @Column(name = "center_name")
     private String centerName;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "open_time")
     private Integer openTime;
 
     @Column(name = "close_time")
     private Integer closeTime;
 
+    private Double latitude;
+    private Double longitude;
+
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fitness> fitnesses = new ArrayList<>();
 
     public Center(CenterSaveRequest request, AuthUser authUser) {
         this.centerName = request.getCenterName();
+        this.address = request.getAddress();
         this.openTime = request.getOpenTime();
         this.closeTime = request.getCloseTime();
         this.ownerId = authUser.getId();
     }
 
     // 정팩메
-    public static Center of(CenterSaveRequest request, AuthUser authUser) {
-        return new Center(request, authUser);
+    public static Center of(CenterSaveRequest request, AuthUser authUser, double latitude, double longitude) {
+        Center center = new Center(request, authUser);
+        center.latitude = latitude;
+        center.longitude = longitude;
+        return center;
     }
 
     // 메소드

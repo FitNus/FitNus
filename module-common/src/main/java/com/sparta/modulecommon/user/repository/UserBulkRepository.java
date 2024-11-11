@@ -17,13 +17,15 @@ public class UserBulkRepository {
 
     @Transactional
     public void saveAll(List<User> userList) {
-        String sql = "INSERT INTO user (nickname) VALUES (?)";
+        String sql = "INSERT INTO user (nickname, email, password) VALUES (?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 userList,
                 userList.size(),
                 (PreparedStatement ps, User user) -> {
                     ps.setString(1, user.getNickname());
+                    ps.setString(2, user.getEmail());
+                    ps.setString(3, user.getPassword());
                 });
     }
 }

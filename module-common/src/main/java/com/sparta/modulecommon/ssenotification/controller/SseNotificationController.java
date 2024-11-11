@@ -2,17 +2,21 @@ package com.sparta.modulecommon.ssenotification.controller;
 
 import com.sparta.modulecommon.common.apipayload.ApiResponse;
 import com.sparta.modulecommon.ssenotification.dto.EventPayload;
+import com.sparta.modulecommon.ssenotification.service.NotificationService;
 import com.sparta.modulecommon.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.modulecommon.user.entity.AuthUser;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,11 +24,11 @@ import java.util.List;
 public class SseNotificationController {
 
     private final SseNotificationServiceImpl sseNotificationServiceImpl;
+    private final NotificationService notificationService;
 
     /**
      * 클라이언트의 이벤트 구독을 수락한다. text/event-stream은 SSE를 위한 Mime Type이다. 서버 -> 클라이언트로 이벤트를 보낼 수 있게된다.
      */
-    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/sse/subscribe/users", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal AuthUser authUser){
         return sseNotificationServiceImpl.subscribe(authUser.getId());
@@ -45,8 +49,13 @@ public class SseNotificationController {
 
         Pageable pageable = PageRequest.of(page-1, size);
         // type 값 검증 및 알림 목록 조회
-        List<EventPayload> notifications = sseNotificationServiceImpl.getNotifications(authUser.getId(), type, pageable);
+        List<EventPayload> notifications = notificationService.getNotifications(authUser.getId(), type, pageable);
         return ApiResponse.createSuccess(notifications);
+    }
+
+    @GetMapping("/notifications/unread")
+    public ApiResponse<Long> getUnreadCount(@AuthenticationPrincipal AuthUser authUser){
+        return ApiResponse.createSuccess(notificationService.getUnreadNotificationsCount(authUser.getId()));
     }
 
     /**
@@ -56,7 +65,7 @@ public class SseNotificationController {
      */
     @PatchMapping("/notifications/{id}/read")
     public ApiResponse<String> markAsRead(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long id) {
-        return ApiResponse.createSuccess(sseNotificationServiceImpl.markAsRead(authUser.getId(), id));
+        return ApiResponse.createSuccess(notificationService.markAsRead(authUser.getId(), id));
     }
 }
 

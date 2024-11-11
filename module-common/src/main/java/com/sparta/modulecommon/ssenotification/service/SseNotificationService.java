@@ -8,5 +8,4 @@ import java.time.LocalDateTime;
 public interface SseNotificationService {
     SseEmitter subscribe(Long userId);
     void broadcast(SseMessageName name, Long userId, String eventType, String message, LocalDateTime timeStamp);
-    String markAsRead(Long currentUserId, Long notificationId);
 }

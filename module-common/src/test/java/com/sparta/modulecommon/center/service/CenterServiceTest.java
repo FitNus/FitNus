@@ -31,7 +31,7 @@ class CenterServiceTest {
     private CenterService centerService;
 
     private AuthUser authUser = new AuthUser(1L, UserRole.OWNER, "test@example.com", "TestUser");
-    private CenterSaveRequest request = new CenterSaveRequest("Center-Name", 9, 22);
+    private CenterSaveRequest request = new CenterSaveRequest("Center-Name", "test", 9, 22);
     private CenterUpdateRequest updateRequest = new CenterUpdateRequest("Updated Center", 10, 23);
     private final Long centerId = 1L; // 공통 ID 설정
     private final Long ownerId = 100L;

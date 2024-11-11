@@ -1,12 +1,12 @@
 package com.sparta.modulebatch.batch;
 
-import com.sparta.modulebatch.util.SettlementChunkListener;
-import com.sparta.modulebatch.util.SettlementPartitioner;
-import com.sparta.modulebatch.util.SettlementStepExecutionListener;
-import com.sparta.modulecommon.center.dto.SettlementResult;
-import com.sparta.modulecommon.center.entity.Settlement;
+import com.sparta.modulebatch.util.HistoryChunkListener;
+import com.sparta.modulebatch.util.HistoryPartitioner;
+import com.sparta.modulebatch.util.HistoryStepExecutionListener;
+import com.sparta.modulecommon.center.dto.HistoryInfo;
+import com.sparta.modulecommon.center.entity.History;
 import com.sparta.modulecommon.center.repository.HistoryRepository;
-import com.sparta.modulecommon.center.repository.SettlementRepository;
+import com.sparta.modulecommon.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -37,60 +37,59 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Map;
 import java.util.concurrent.Future;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class settlementBatch {
+public class HistoryBatch {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+    private final ScheduleRepository scheduleRepository;
     private final HistoryRepository historyRepository;
-    private final SettlementRepository settlementRepository;
 
     @Bean
-    public Job settlementJob() {
-        return new JobBuilder("settlementJob", jobRepository)
-                .start(settlementMasterStep())
+    public Job historyJob() {
+        return new JobBuilder("historyJob", jobRepository)
+                .start(historyMasterStep())
                 .build();
     }
 
     @Bean
-    public Step settlementMasterStep() {
-        return new StepBuilder("settlementMasterStep", jobRepository)
-                .partitioner("settlementSlaveStep", settlementPartitioner())
-                .step(settlementSlaveStep())
-                .partitionHandler(settlementPartitionHandler())
+    public Step historyMasterStep() {
+        return new StepBuilder("historyMasterStep", jobRepository)
+                .partitioner("historySlaveStep", historyPartitioner())
+                .step(historySlaveStep())
+                .partitionHandler(historyPartitionHandler())
                 .build();
     }
 
     @Bean
-    public Partitioner settlementPartitioner() {
+    public Partitioner historyPartitioner() {
         LocalDate now = LocalDate.now().minusDays(1);
-        LocalDateTime startDateTime = now.with(TemporalAdjusters.firstDayOfMonth()).atTime(LocalTime.MIN);
-        LocalDateTime endDateTime = now.with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
-        return new SettlementPartitioner(startDateTime, endDateTime);
+        return new HistoryPartitioner(
+                now.atTime(LocalTime.MIN),
+                now.atTime(LocalTime.MAX));
     }
 
     @Bean
-    public PartitionHandler settlementPartitionHandler() {
+    public PartitionHandler historyPartitionHandler() {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
         handler.setGridSize(4);
-        handler.setTaskExecutor(settlementTaskExecutor());
-        handler.setStep(settlementSlaveStep());
+        handler.setTaskExecutor(historyTaskExecutor());
+        handler.setStep(historySlaveStep());
         return handler;
     }
 
     @Bean
-    public Step settlementSlaveStep() {
-        return new StepBuilder("settlementSlaveStep", jobRepository)
-                .<SettlementResult, Future<Settlement>>chunk(1000, platformTransactionManager)
-                .reader(settlementReader(null, null))
-                .processor(asyncSettlementProcessor())
-                .writer(asyncSettlementWriter())
+    public Step historySlaveStep() {
+        return new StepBuilder("historyWorkerStep", jobRepository)
+                .<HistoryInfo, Future<History>>chunk(1000, platformTransactionManager)
+                .reader(historyReader(null, null))
+                .processor(asyncHistoryProcessor())
+                .writer(asyncHistoryWriter())
                 .faultTolerant()
                 .retry(DataAccessException.class)
                 .retry(TransientDataAccessException.class)
@@ -99,19 +98,19 @@ public class settlementBatch {
                 .skipLimit(10)
                 .noSkip(IllegalArgumentException.class)
                 .noSkip(NullPointerException.class)
-                .listener(new SettlementChunkListener())
-                .listener(new SettlementStepExecutionListener())
-                .taskExecutor(settlementTaskExecutor())
+                .listener(new HistoryChunkListener())
+                .listener(new HistoryStepExecutionListener())
+                .taskExecutor(historyTaskExecutor())
                 .build();
     }
 
     @Bean
-    public TaskExecutor settlementTaskExecutor() {
+    public TaskExecutor historyTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
         executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2);
         executor.setQueueCapacity(1000);
-        executor.setThreadNamePrefix("settlement-async-");
+        executor.setThreadNamePrefix("history-async-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
         return executor;
@@ -119,53 +118,54 @@ public class settlementBatch {
 
     @Bean
     @StepScope
-    public RepositoryItemReader<SettlementResult> settlementReader(
+    public RepositoryItemReader<HistoryInfo> historyReader(
             @Value("#{stepExecutionContext[startTime]}") LocalDateTime startTime,
             @Value("#{stepExecutionContext[endTime]}") LocalDateTime endTime) {
-        return new RepositoryItemReaderBuilder<SettlementResult>()
-                .name("settlementReader")
+        return new RepositoryItemReaderBuilder<HistoryInfo>()
+                .name("historyReader")
                 .pageSize(1000)
-                .methodName("findAllCalculated")
-                .repository(historyRepository)
+                .methodName("findAll")
+                .repository(scheduleRepository)
                 .arguments(startTime, endTime)
-                .sorts(Map.of("h.centerId", Sort.Direction.ASC))
+                .sorts(Map.of("s.startTime", Sort.Direction.ASC))
                 .build();
     }
 
     @Bean
-    public AsyncItemProcessor<SettlementResult, Settlement> asyncSettlementProcessor() {
-        AsyncItemProcessor<SettlementResult, Settlement> asyncItemProcessor = new AsyncItemProcessor<>();
-        asyncItemProcessor.setDelegate(settlementProcessor());
-        asyncItemProcessor.setTaskExecutor(settlementTaskExecutor());
+    public AsyncItemProcessor<HistoryInfo, History> asyncHistoryProcessor() {
+        AsyncItemProcessor<HistoryInfo, History> asyncItemProcessor = new AsyncItemProcessor<>();
+        asyncItemProcessor.setDelegate(historyProcessor());
+        asyncItemProcessor.setTaskExecutor(historyTaskExecutor());
         return asyncItemProcessor;
     }
 
+
     @Bean
-    public ItemProcessor<SettlementResult, Settlement> settlementProcessor() {
+    public ItemProcessor<HistoryInfo, History> historyProcessor() {
         return item -> {
             try {
-                return Settlement.of(item);
+                return History.of(item);
             } catch (Exception e) {
-                log.error("Error processing settlement item: {}", item, e);
+                log.error("Error processing history item: {}", item, e);
                 throw e;
             }
         };
     }
 
     @Bean
-    public AsyncItemWriter<Settlement> asyncSettlementWriter() {
-        AsyncItemWriter<Settlement> asyncItemWriter = new AsyncItemWriter<>();
-        asyncItemWriter.setDelegate(settlementWriter());
+    public AsyncItemWriter<History> asyncHistoryWriter() {
+        AsyncItemWriter<History> asyncItemWriter = new AsyncItemWriter<>();
+        asyncItemWriter.setDelegate(historyWriter());
         return asyncItemWriter;
     }
 
     @Bean
-    public ItemWriter<Settlement> settlementWriter() {
+    public ItemWriter<History> historyWriter() {
         return items -> {
             try {
-                settlementRepository.saveAll(items);
+                historyRepository.saveAll(items);
             } catch (Exception e) {
-                log.error("Error writing settlement items: {}", items, e);
+                log.error("Error writing history items: {}", items, e);
                 throw e;
             }
         };

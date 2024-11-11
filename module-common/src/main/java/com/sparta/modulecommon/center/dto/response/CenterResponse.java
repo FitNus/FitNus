@@ -10,6 +10,7 @@ public class CenterResponse {
 
     private final Long id;
     private final String centerName;
+    private final String address;
     private final Integer openTime;
     private final Integer closeTime;
 
@@ -17,6 +18,7 @@ public class CenterResponse {
     public CenterResponse(Center center) {
         this.id = center.getId();
         this.centerName = center.getCenterName();
+        this.address = center.getAddress();
         this.openTime = center.getOpenTime();
         this.closeTime = center.getCloseTime();
     }
