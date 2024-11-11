@@ -47,6 +47,13 @@ spring:
     redis:
       host: ${PROD_REDIS_HOST}        # 운영 환경 Redis 호스트
       port: ${PROD_REDIS_PORT}        # 운영 환경 Redis 포트
+  kafka:
+    bootstrap-servers: ${KAFKA_PORT}
+    consumer:
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+
 
 admin:
   token: ${PROD_ADMIN_TOKEN}          # 운영 환경에 맞는 관리자 토큰
@@ -61,3 +68,4 @@ kakao:
     redirect: ${PROD_KAKAO_REDIRECT_URL}
   api:
     key: ${PROD_KAKAO_REST_API_KEY}
+

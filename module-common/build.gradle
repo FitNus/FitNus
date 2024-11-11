@@ -19,6 +19,13 @@ dependencies {
     //aws s3
     implementation 'software.amazon.awssdk:s3:2.20.0'
 
+    //actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
     // ParameterObject
     implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
