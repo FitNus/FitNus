@@ -63,7 +63,6 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:5173"); // 허용할 도메인
-//        configuration.addAllowedOrigin("http://localhost:8080"); // API 서버 포트
         configuration.addAllowedHeader("*"); // 모든 헤더 허용
         configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
