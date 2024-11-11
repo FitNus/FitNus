@@ -33,7 +33,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(jwtSecurityFilter, SecurityContextHolderAwareRequestFilter.class)
@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 "/static/**",             // 정적 리소스 경로
                                 "/images/**",
                                 "/css/**",                // CSS 파일
-                                "/js/**"                  // JS 파일
+                                "/js/**"               // JS 파일
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

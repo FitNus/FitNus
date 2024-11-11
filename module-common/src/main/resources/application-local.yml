@@ -43,3 +43,10 @@ kakao:
     redirect: ${KAKAO_REDIRECT_URL}
   api:
     key: ${KAKAO_REST_API_KEY}
+
+kakaopay:
+  secret: ${KAKAOPAY_SECRET}
+
+
+ 
+

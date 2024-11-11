@@ -98,6 +98,12 @@ public class JwtUtil {
             cookie.setHttpOnly(true);  // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
             cookie.setMaxAge(24 * 60 * 60);  // Access Token 쿠키의 만료 시간 1일로 설정 (Access Token 만료 시간과는 별개)
             cookie.setPath("/");  // 쿠키의 경로를 루트로 설정
+            cookie.setSecure(true);
+            cookie.setDomain("localhost");
+            // Set-Cookie 헤더에 SameSite 속성 추가
+            response.addHeader("Set-Cookie", cookie.getName() + "=" + cookie.getValue() +
+                    "; HttpOnly; Max-Age=" + cookie.getMaxAge() + "; Path=" + cookie.getPath() +
+                    "; Secure; SameSite=Strict");
             response.addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
             log.error("Error encoding access token cookie value", e);
@@ -112,6 +118,13 @@ public class JwtUtil {
             cookie.setHttpOnly(true);        // XSS 공격 방지를 위해 HttpOnly 설정. HttpOnly로 설정하여 JavaScript에서 접근 불가
             cookie.setMaxAge(1 * 24 * 60 * 60);  // Refresh Token 쿠키의 만료 시간 1일로 설정 (Refresh Token 만료 시간과는 별개)
             cookie.setPath("/");             // 쿠키의 경로를 루트로 설정
+            cookie.setSecure(true);
+            cookie.setDomain("localhost");
+            // Set-Cookie 헤더에 SameSite 속성 추가
+            response.addHeader("Set-Cookie", cookie.getName() + "=" + cookie.getValue() +
+                    "; HttpOnly; Max-Age=" + cookie.getMaxAge() + "; Path=" + cookie.getPath() +
+                    "; Secure; SameSite=Strict");
+            response.addCookie(cookie);
             response.addCookie(cookie);
         } catch (UnsupportedEncodingException e) {
             log.error("Error encoding refresh token cookie value", e);
