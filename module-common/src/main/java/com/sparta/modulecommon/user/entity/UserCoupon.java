@@ -31,6 +31,9 @@ public class UserCoupon {
     @Column(nullable = false)
     private LocalDateTime expirationDate;
 
+    @Version
+    private Long version; // 낙관적 락을 위한 버전 필드 추가
+
     public UserCoupon(User user, int quantity) {
         this.user = user;  // user를 직접 설정
         this.quantity = quantity;
