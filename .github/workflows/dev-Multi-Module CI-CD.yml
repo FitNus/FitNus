@@ -67,7 +67,7 @@ jobs:
           docker-compose -f docker-compose.batch.yml build
           docker-compose -f docker-compose.batch.yml push
 
-      
+        
 
   build-and-deploy-common:
     needs: changes
