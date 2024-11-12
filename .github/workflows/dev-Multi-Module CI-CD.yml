@@ -73,12 +73,12 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           BATCH_REPOSITORY_URI: ${{ secrets.BATCH_REPOSITORY_URI }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" "$EC2_USER@$EC2_HOST" << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" -t "$EC2_USER@$EC2_HOST"
             docker pull $BATCH_REPOSITORY_URI:latest
             docker stop batch-container || true
             docker rm batch-container || true
             docker run -d --name batch-container -p 8081:8081 $BATCH_REPOSITORY_URI:latest
-          EOF
+          
 
         
 
@@ -98,7 +98,7 @@ jobs:
           if ! docker-compose --version; then
             curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
-          fi
+          
 
       - name: Log in to Amazon ECR
         env:
@@ -122,12 +122,12 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           COMMON_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" "$EC2_USER@$EC2_HOST" << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" -t "$EC2_USER@$EC2_HOST"
             docker pull $COMMON_REPOSITORY_URI:latest
             docker stop common-container || true
             docker rm common-container || true
             docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI:latest
-          EOF
+          
           
       
 
