@@ -4,6 +4,7 @@ import com.sparta.modulecommon.user.entity.User;
 import com.sparta.modulecommon.user.entity.UserCoupon;
 import com.sparta.modulecommon.user.repository.UserCouponRepository;
 import com.sparta.modulecommon.user.repository.UserRepository;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,27 +41,30 @@ public class CouponService {
 
     @Transactional
     public void useCoupons(Long userId, int quantity) {
-        User user = userRepository.findUserById(userId);
+        try {
+            User user = userRepository.findUserById(userId);
+            int remainingQuantity = quantity;
 
-        int remainingQuantity = quantity;
-
-        for (UserCoupon coupon : user.getUserCoupons()) {
-            int availableCoupons = coupon.getRemainingQuantity();
-            log.info("현재 쿠폰 수량: {}, 사용 요청 수량: {}", availableCoupons, remainingQuantity);
-            if (availableCoupons >= remainingQuantity) {
-                coupon.useCoupon(remainingQuantity);
-                remainingQuantity = 0;
-                break;
-            } else {
-                coupon.useCoupon(availableCoupons);
-                remainingQuantity -= availableCoupons;
+            for (UserCoupon coupon : user.getUserCoupons()) {
+                int availableCoupons = coupon.getRemainingQuantity();
+                log.info("현재 쿠폰 수량: {}, 사용 요청 수량: {}", availableCoupons, remainingQuantity);
+                if (availableCoupons >= remainingQuantity) {
+                    coupon.useCoupon(remainingQuantity);
+                    remainingQuantity = 0;
+                    break;
+                } else {
+                    coupon.useCoupon(availableCoupons);
+                    remainingQuantity -= availableCoupons;
+                }
             }
-        }
 
-        if (remainingQuantity > 0) {
-            throw new IllegalArgumentException("보유한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + user.getTotalCoupons());
-        }
+            if (remainingQuantity > 0) {
+                throw new IllegalArgumentException("보유한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + user.getTotalCoupons());
+            }
 
-        userRepository.save(user);
+            userRepository.save(user);
+        } catch (OptimisticLockException e) {
+            throw new RuntimeException("쿠폰 사용 중 충돌이 발생했습니다. 다시 시도해주세요.");
+        }
     }
 }
