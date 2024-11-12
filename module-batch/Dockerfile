@@ -1,7 +1,7 @@
 # 1단계: Gradle 빌드 이미지 설정
 FROM gradle:7.6.0-jdk17 AS builder
 WORKDIR /app
-COPY .. .
+COPY . .
 RUN ./gradlew :module-batch:bootJar --no-daemon
 
 
