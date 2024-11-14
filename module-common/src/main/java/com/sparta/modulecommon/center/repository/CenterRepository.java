@@ -3,14 +3,11 @@ package com.sparta.modulecommon.center.repository;
 import com.sparta.modulecommon.center.entity.Center;
 import com.sparta.modulecommon.center.exception.CenterNotFoundException;
 import io.lettuce.core.dynamic.annotation.Param;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
-@Repository
-public interface CenterRepository extends JpaRepository<Center, Long>, CenterQueryRepository {
+public interface CenterRepository extends JpaRepository<Center, Long> {
 
     default Center findCenterById(Long id) {
         return findById(id).orElseThrow(
