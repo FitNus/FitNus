@@ -15,4 +15,5 @@ public class TimeslotRequest {
     private Long centerId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Integer maxPeople;
 }

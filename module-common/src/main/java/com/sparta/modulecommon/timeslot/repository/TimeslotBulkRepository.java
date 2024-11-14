@@ -17,7 +17,7 @@ public class TimeslotBulkRepository {
 
     @Transactional
     public void saveAll(List<Timeslot> timeslotList) {
-        String sql = "INSERT INTO timeslot (fitness_id, start_time) VALUES (?, ?)";
+        String sql = "INSERT INTO timeslot (fitness_id, start_time, max_people, current_people) VALUES (?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 timeslotList,
@@ -25,6 +25,7 @@ public class TimeslotBulkRepository {
                 (PreparedStatement ps, Timeslot timeslot) -> {
                     ps.setLong(1, timeslot.getFitness().getId());
                     ps.setObject(2, timeslot.getStartTime());
+                    ps.setInt(3, timeslot.getMaxPeople());
                 });
     }
 }

@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -91,7 +91,7 @@ public class HistoryBatch {
                 .processor(asyncHistoryProcessor())
                 .writer(asyncHistoryWriter())
                 .faultTolerant()
-                .retry(DataAccessException.class)
+                .retry(DataAccessResourceFailureException.class)
                 .retry(TransientDataAccessException.class)
                 .retryLimit(3)
                 .skip(Exception.class)

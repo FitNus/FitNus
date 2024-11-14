@@ -24,6 +24,9 @@ public class Timeslot {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+    @Column(name = "max_people")
+    private Integer maxPeople;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fitness_id", nullable = false)
     private Fitness fitness;
@@ -32,10 +35,10 @@ public class Timeslot {
         startTime = request.getStartTime();
         endTime = request.getEndTime();
         this.fitness = fitness;
+        maxPeople = request.getMaxPeople();
     }
 
     public static Timeslot of(TimeslotRequest request, Fitness fitness) {
         return new Timeslot(request, fitness);
     }
-
 }

@@ -61,7 +61,7 @@ class TimeslotServiceTest {
     void createTimeslot_InvalidOwner_ThrowsAccessDeniedException() {
         // given
         AuthUser anotherUser = new AuthUser(200L, UserRole.OWNER, "other@example.com", "OtherUser");
-        TimeslotRequest request = new TimeslotRequest(fitnessId, centerId, LocalDateTime.of(2024, 11, 1, 9, 0), LocalDateTime.of(2024, 11, 1, 10, 0));
+        TimeslotRequest request = new TimeslotRequest(fitnessId, centerId, LocalDateTime.of(2024, 11, 1, 9, 0), LocalDateTime.of(2024, 11, 1, 10, 0), 50);
 
         given(centerService.getCenterId(centerId)).willReturn(center);
 

@@ -17,7 +17,7 @@ public class UserBulkRepository {
 
     @Transactional
     public void saveAll(List<User> userList) {
-        String sql = "INSERT INTO user (nickname, email, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO user (nickname, email, password, user_role) VALUES (?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 userList,
@@ -26,6 +26,7 @@ public class UserBulkRepository {
                     ps.setString(1, user.getNickname());
                     ps.setString(2, user.getEmail());
                     ps.setString(3, user.getPassword());
+                    ps.setString(4, user.getUserRole().getUserRole());
                 });
     }
 }
