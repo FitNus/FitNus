@@ -1,6 +1,7 @@
 package com.sparta.modulecommon.fitness.service;
 
 import com.sparta.modulecommon.center.entity.Center;
+import com.sparta.modulecommon.center.entity.CenterSearch;
 import com.sparta.modulecommon.center.service.CenterService;
 import com.sparta.modulecommon.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.modulecommon.fitness.dto.request.FitnessRequest;
@@ -10,15 +11,15 @@ import com.sparta.modulecommon.fitness.exception.AccessDeniedException;
 import com.sparta.modulecommon.fitness.exception.FitnessNotFoundException;
 import com.sparta.modulecommon.fitness.exception.FitnessgetAllAccessDeniedException;
 import com.sparta.modulecommon.fitness.repository.FitnessRepository;
+import com.sparta.modulecommon.search.service.SearchService;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import com.sparta.modulecommon.user.enums.UserRole;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -28,6 +29,7 @@ public class FitnessService {
 
     private final FitnessRepository fitnessRepository;
     private final CenterService centerService;
+    private final SearchService searchService;
 
     /***
      * CRUD-POST : createFitness()의 기능입니다.
@@ -38,13 +40,13 @@ public class FitnessService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public FitnessResponse createFitness(AuthUser authUser, FitnessRequest request) {
-
         Center center = centerService.getCenterId(request.getCenterId());
-        if(!authUser.getId().equals(centerService.getCenterId(request.getCenterId()).getId())){
+        if (!authUser.getId().equals(centerService.getCenterId(request.getCenterId()).getId())) {
             throw new FitnessgetAllAccessDeniedException();
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
+        searchService.saveFitnessName(new CenterSearch(center));
         return new FitnessResponse(savedfitness);
     }
 
@@ -69,7 +71,7 @@ public class FitnessService {
     @Secured(UserRole.Authority.OWNER)
     public List<FitnessResponse> getAllFitness(AuthUser authuser, Long id) {
         // 예외처리 1)
-        if(!authuser.getId().equals(centerService.getCenterId(id).getId())){
+        if (!authuser.getId().equals(centerService.getCenterId(id).getId())) {
             throw new FitnessgetAllAccessDeniedException();
         }
         return fitnessRepository.findAllByCenterId(id).stream()
@@ -87,7 +89,7 @@ public class FitnessService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
-                                         FitnessRequest fitnessRequest) {
+            FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }

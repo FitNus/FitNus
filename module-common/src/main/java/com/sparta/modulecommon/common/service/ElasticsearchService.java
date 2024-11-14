@@ -15,4 +15,8 @@ public class ElasticsearchService {
     public void saveCenterSearch(CenterSearch centerSearch) {
         elasticsearchRestTemplate.save(centerSearch);
     }
+
+    public void saveFitnessName(CenterSearch centerSearch) {
+        elasticsearchRestTemplate.save(centerSearch);
+    }
 }

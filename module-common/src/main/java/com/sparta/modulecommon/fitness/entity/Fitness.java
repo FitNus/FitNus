@@ -2,7 +2,15 @@ package com.sparta.modulecommon.fitness.entity;
 
 import com.sparta.modulecommon.center.entity.Center;
 import com.sparta.modulecommon.fitness.dto.request.FitnessRequest;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "fitness")
 public class Fitness {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +38,7 @@ public class Fitness {
         this.center = center;
         this.fitnessName = request.getFitnessName();
         this.requiredCoupon = request.getRequiredCoupon();
+        center.getFitnesses().add(this);
     }
 
     public static Fitness of(FitnessRequest request, Center center) {
