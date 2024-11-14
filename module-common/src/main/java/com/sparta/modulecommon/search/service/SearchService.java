@@ -6,7 +6,6 @@ import com.sparta.modulecommon.common.service.ElasticsearchService;
 import com.sparta.modulecommon.search.dto.response.SearchCenterResponse;
 import com.sparta.modulecommon.search.dto.response.SearchClubResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -71,8 +70,8 @@ public class SearchService {
                     .operator(Operator.OR));
         }
         if (fitnessName != null && !fitnessName.isEmpty()) {
-            boolQuery.should(QueryBuilders.multiMatchQuery(fitnessName, "fitnesses.fitnessName")
-                    .field("fitnesses.fitnessName.ngram")
+            boolQuery.must(QueryBuilders.multiMatchQuery(fitnessName, "fitnessName")
+                    .field("fitnessName.ngram")
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                     .fuzziness(Fuzziness.AUTO)
                     .operator(Operator.OR));
@@ -103,7 +102,7 @@ public class SearchService {
                                 .isEmpty() ? hit.getContent().getFitnessName()
                                 : List.of("피트니스 정보가 없습니다.")
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
         // Page로 변환해서 반환
         return new PageImpl<>(responseList, pageable, searchHits.getTotalHits());
@@ -112,5 +111,10 @@ public class SearchService {
     // 센터 생성 시 Elasticsearch에 정보 저장
     public void saveCenterSearch(CenterSearch centerSearch) {
         elasticsearchService.saveCenterSearch(centerSearch);  // ElasticsearchService 호출
+    }
+
+    // 피트니스 생성 시 Elasticsearch에 정보 저장
+    public void saveFitnessName(CenterSearch centerSearch) {
+        elasticsearchService.saveFitnessName(centerSearch);
     }
 }
