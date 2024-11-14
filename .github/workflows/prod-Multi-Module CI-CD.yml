@@ -28,10 +28,8 @@ jobs:
           filters: |
             common:
               - 'module-common/**'
-              - 'docker-compose.common.yml'
             batch:
               - 'module-batch/**'
-              - 'docker-compose.batch.yml'
 
   build-and-deploy-batch:
     needs: changes
@@ -41,15 +39,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :module-batch:build
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Check Docker Compose Version and Install if Needed
-        run: |
-          if ! docker-compose --version; then
-            curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
-          fi
 
       - name: Log in to Amazon ECR
         env:
@@ -59,22 +54,29 @@ jobs:
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.BATCH_REPOSITORY_URI }}
 
-      - name: Build and Push Batch Image
+      # Docker 이미지를 빌드하고 멀티 플랫폼으로 푸시
+      - name: Build and push multi-platform image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./module-batch/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.BATCH_REPOSITORY_URI }}:latest
+
+      - name: Deploy Batch to EC2
         env:
+          EC2_HOST: ${{ secrets.EC2_HOST }} #EC2 HOST 종류 선택
+          EC2_USER: ${{ secrets.EC2_USER }}
           BATCH_REPOSITORY_URI: ${{ secrets.BATCH_REPOSITORY_URI }}
         run: |
-          set -e
-          docker-compose -f docker-compose.batch.yml build
-          docker-compose -f docker-compose.batch.yml push
-
-      - name: Deploy Batch to ECS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
-          --service batch-service --force-new-deployment
+          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" -t "$EC2_USER@$EC2_HOST" << 'EOF'
+            docker pull $BATCH_REPOSITORY_URI:latest
+            docker stop batch-container || true
+            docker rm batch-container || true
+            docker run -d --name batch-container -p 8081:8081 $BATCH_REPOSITORY_URI:latest
+          EOF
+    
 
   build-and-deploy-common:
     needs: changes
@@ -83,6 +85,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :module-batch:build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -102,19 +108,25 @@ jobs:
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.COMMON_REPOSITORY_URI }}
 
-      - name: Build and Push Common Image
-        env:
-          COMMON_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
-        run: |
-          set -e
-          docker-compose -f docker-compose.common.yml build
-          docker-compose -f docker-compose.common.yml push
+      # Docker 이미지를 빌드하고 멀티 플랫폼으로 푸시
+      - name: Build and push multi-platform image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./module-batch/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:latest
 
-      - name: Deploy Common to ECS
+      - name: Deploy Batch to EC2
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          EC2_HOST: ${{ secrets.EC2_HOST }} #EC2 HOST 종류 선택
+          EC2_USER: ${{ secrets.EC2_USER }}
+          BATCH_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
         run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
-          --service common-service --force-new-deployment
+          ssh -o StrictHostKeyChecking=no -i "/home/ubuntu/private-key.pem" -t "$EC2_USER@$EC2_HOST" << 'EOF'
+            docker pull $BATCH_REPOSITORY_URI:latest
+            docker stop batch-container || true
+            docker rm batch-container || true
+            docker run -d --name batch-container -p 8082:8082 $BATCH_REPOSITORY_URI:latest
+          EOF

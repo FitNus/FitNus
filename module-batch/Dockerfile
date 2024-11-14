@@ -8,7 +8,7 @@ RUN ./gradlew :module-batch:bootJar --no-daemon
 # 2단계: 최종 실행 이미지 생성
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-COPY --from=builder /app/module-batch/build/libs/module-batch-*.jar batch.jar
+COPY --from=builder /app/*.jar batch.jar
 
 # 실행 명령어
 ENTRYPOINT ["java", "-jar", "batch.jar"]
