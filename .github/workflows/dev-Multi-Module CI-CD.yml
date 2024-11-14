@@ -15,7 +15,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     env:
-      SPRING_PROFILES_ACTIVE: "dev"  # 개발 파이프라인에서는 dev, 운영 파이프라인에서는 prod로 설정
+      SPRING_PROFILES_ACTIVE: "dev"
 
     outputs:
       common: ${{ steps.filter.outputs.common }}
@@ -77,12 +77,12 @@ jobs:
 
       - name: Deploy Batch to EC2
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_HOST: ${{ secrets.EC2_HOST }} #EC2 HOST 종류 선택
           EC2_USER: ${{ secrets.EC2_USER }}
           BATCH_REPOSITORY_URI: ${{ secrets.BATCH_REPOSITORY_URI }}
         run: |
           ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST"
-            docker pull $BATCH_REPOSITORY_URI:latest
+            docker pull $BATCH_REPOSITORY_URI
             docker stop batch-container || true
             docker rm batch-container || true
             docker run -d --name batch-container -p 8081:8081 $BATCH_REPOSITORY_URI
@@ -139,7 +139,7 @@ jobs:
           COMMON_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
         run: |
           ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST"
-            docker pull $COMMON_REPOSITORY_URI:latest
+            docker pull $COMMON_REPOSITORY_URI
             docker stop common-container || true
             docker rm common-container || true
             docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI
