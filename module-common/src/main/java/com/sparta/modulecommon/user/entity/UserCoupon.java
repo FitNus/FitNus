@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "user_coupon")
 public class UserCoupon {
 
     @Id
@@ -22,13 +23,13 @@ public class UserCoupon {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
+    @Column(name = "used_quantity", nullable = false)
     private int usedQuantity = 0;
 
-    @Column(nullable = false)
+    @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate;
 
-    @Column(nullable = false)
+    @Column(name = "expiration_date", nullable = false)
     private LocalDateTime expirationDate;
 
     @Version

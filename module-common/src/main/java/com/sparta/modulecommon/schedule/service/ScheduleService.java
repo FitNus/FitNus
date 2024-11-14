@@ -2,6 +2,7 @@ package com.sparta.modulecommon.schedule.service;
 
 import com.sparta.modulecommon.club.entity.Club;
 import com.sparta.modulecommon.club.service.ClubService;
+import com.sparta.modulecommon.common.annotation.DistributedLock;
 import com.sparta.modulecommon.schedule.dto.request.ClubScheduleRequest;
 import com.sparta.modulecommon.schedule.dto.request.FitnessScheduleRequest;
 import com.sparta.modulecommon.schedule.dto.response.ScheduleListResponse;
@@ -41,18 +42,24 @@ public class ScheduleService {
      * @param fitnessScheduleRequest : 타임슬롯 ID를 담고 있는 DTO
      * @return ScheduleResponse : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO
      */
+    @DistributedLock(key = "'timeslot:' + #fitnessScheduleRequest.timeslotId")
     @Transactional
     public ScheduleResponse createFitnessSchedule(AuthUser authUser, FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
-        isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
-        Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
-        Schedule savedSchedule = scheduleRepository.save(newSchedule);
+        if (timeslot.getMaxPeople() > scheduleRepository.countByTimeslotId(timeslot.getId()) + 1) {
+            isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
-        // 알림 예약 (시작 시간 1시간 전)
-        scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime());
+            Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
+            Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
-        return new ScheduleResponse(savedSchedule);
+            // 알림 예약 (시작 시간 1시간 전)
+            scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime());
+
+            return new ScheduleResponse(savedSchedule);
+        } else {
+            return null;
+        }
     }
 
     @Transactional
@@ -81,6 +88,7 @@ public class ScheduleService {
     public ScheduleResponse updateFitnessSchedule(AuthUser authUser, long scheduleId, FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
+//        isFullTimeslot(timeslot);
 
         Schedule schedule = isValidSchedule(scheduleId);
         isScheduleOwner(authUser.getId(), schedule);

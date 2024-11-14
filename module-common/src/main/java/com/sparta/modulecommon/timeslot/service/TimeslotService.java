@@ -80,11 +80,11 @@ public class TimeslotService {
      */
     @Secured(UserRole.Authority.OWNER)
     @Transactional
-    public void deleteTimeslot(AuthUser authUser, Long timeslotId, TimeslotDeleteRequest request){
+    public void deleteTimeslot(AuthUser authUser, Long timeslotId, TimeslotDeleteRequest request) {
         if (timeslotRepository.findById(timeslotId).isEmpty()) {
             throw new TimeslotNotFoundException();
         }
-        if (!authUser.getId().equals(request.getCenterId())){
+        if (!authUser.getId().equals(request.getCenterId())) {
             throw new AccessDeniedException();
         }
         timeslotRepository.deleteById(timeslotId);

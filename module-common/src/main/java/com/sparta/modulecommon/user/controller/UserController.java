@@ -75,7 +75,7 @@ public class UserController {
         return ApiResponse.createSuccess(userService.deactivateUser(userId, authUser));
     }
 
-    @PostMapping("v1/user/use-coupons")
+    @PostMapping("/v1/user/use-coupons")
     public ApiResponse<String> useCoupons(@RequestBody CouponUsageRequest request, @AuthenticationPrincipal AuthUser authUser) {
         try {
             couponService.useCoupons(authUser.getId(), request.getQuantity());

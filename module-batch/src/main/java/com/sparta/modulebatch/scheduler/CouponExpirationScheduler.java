@@ -1,4 +1,4 @@
-package com.sparta.modulecommon.user.scheduler;
+package com.sparta.modulebatch.scheduler;
 
 import com.sparta.modulecommon.user.service.CouponService;
 import lombok.RequiredArgsConstructor;

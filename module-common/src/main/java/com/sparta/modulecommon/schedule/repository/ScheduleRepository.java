@@ -39,4 +39,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("historyStartDateTime") LocalDateTime start,
             @Param("historyEndDateTime") LocalDateTime end,
             Pageable pageable);
+
+    Integer countByTimeslotId(long timeslotId);
 }

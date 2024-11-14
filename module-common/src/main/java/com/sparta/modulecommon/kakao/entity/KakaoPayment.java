@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "kakaoPayment")
+@Table(name = "kakao_payment")
 public class KakaoPayment extends Timestamped {
 
     @Id
