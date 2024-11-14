@@ -1,5 +1,14 @@
 package com.sparta.modulecommon.schedule.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.sparta.modulecommon.club.entity.Club;
 import com.sparta.modulecommon.club.service.ClubService;
 import com.sparta.modulecommon.fitness.entity.Fitness;
@@ -17,6 +26,9 @@ import com.sparta.modulecommon.timeslot.entity.Timeslot;
 import com.sparta.modulecommon.timeslot.service.TimeslotService;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import com.sparta.modulecommon.user.enums.UserRole;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,19 +36,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
@@ -93,7 +92,7 @@ class ScheduleServiceTest {
             given(scheduleRepository.existsByUserIdAndStartTime(anyLong(), any())).willReturn(false);
             given(scheduleRepository.save(any())).willReturn(schedule);
 
-            scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime());
+            scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(), schedule.getId());
 
             // when
             ScheduleResponse result = scheduleService.createFitnessSchedule(authUser, scheduleRequest);

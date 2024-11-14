@@ -50,10 +50,13 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_PORT}
     consumer:
+      group-id: notification-group
       auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
-
 admin:
   token: ${DEV_ADMIN_TOKEN}          # 개발 환경에 맞는 관리자 토큰
 

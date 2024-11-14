@@ -54,7 +54,7 @@ public class ScheduleService {
             Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
             // 알림 예약 (시작 시간 1시간 전)
-            scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime());
+            scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(), savedSchedule.getId());
 
             return new ScheduleResponse(savedSchedule);
         } else {
@@ -71,7 +71,7 @@ public class ScheduleService {
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
         // 알림 예약 (시작 시간 1시간 전)
-        scheduleMessageService.scheduleNotification(authUser.getId(), club.getDate());
+        scheduleMessageService.scheduleNotification(authUser.getId(), club.getDate(), savedSchedule.getId());
 
         return new ScheduleResponse(savedSchedule);
     }
@@ -153,33 +153,33 @@ public class ScheduleService {
         List<Schedule> scheduleList = scheduleRepository.findAllByUserIdYearAndMonthAndDay(authUser.getId(), year, month, day);
 
         List<ScheduleResponse> scheduleResponseList = scheduleList.stream()
-                .map(ScheduleResponse::new)
-                .toList();
+            .map(ScheduleResponse::new)
+            .toList();
 
         int sum = scheduleList.stream()
-                .mapToInt(Schedule::getRequiredCoupon)
-                .sum();
+            .mapToInt(Schedule::getRequiredCoupon)
+            .sum();
 
         return new ScheduleListResponse(scheduleResponseList, sum);
     }
 
     @Transactional
     public void copySchedule(AuthUser authUser, Integer yearToCopy
-            , Integer monthToCopy, Integer copiedYear, Integer copiedMonth) {
+        , Integer monthToCopy, Integer copiedYear, Integer copiedMonth) {
         LocalDate startDateToCopy = LocalDate.of(yearToCopy, monthToCopy, 1);
         LocalDate endDateToCopy = LocalDate.of(yearToCopy, monthToCopy, startDateToCopy.lengthOfMonth());
         LocalDate copiedStartDate = LocalDate.of(copiedYear, copiedMonth, 1);
         LocalDate copiedEndDate = LocalDate.of(copiedYear, copiedMonth, copiedStartDate.lengthOfMonth());
 
         List<Schedule> scheduleToCopyList = scheduleRepository
-                .findByUserIdAndClubIdIsNullAndStartTimeBetween(
-                        authUser.getId(),
-                        LocalDateTime.of(startDateToCopy, LocalTime.MIN),
-                        LocalDateTime.of(endDateToCopy, LocalTime.MAX));
+            .findByUserIdAndClubIdIsNullAndStartTimeBetween(
+                authUser.getId(),
+                LocalDateTime.of(startDateToCopy, LocalTime.MIN),
+                LocalDateTime.of(endDateToCopy, LocalTime.MAX));
 
         LocalDate originalDate = scheduleToCopyList.get(0).getStartTime().toLocalDate();
         LocalDate originalLastDate = scheduleToCopyList
-                .get(scheduleToCopyList.size() - 1).getStartTime().toLocalDate();
+            .get(scheduleToCopyList.size() - 1).getStartTime().toLocalDate();
         LocalDate newDate = copiedStartDate.with(originalDate.getDayOfWeek());
 
         if (newDate.isBefore(copiedStartDate)) {
@@ -196,8 +196,8 @@ public class ScheduleService {
             }
 
             Schedule newSchedule = Schedule.fromOldSchedule(
-                    schedule,
-                    newStartTime);
+                schedule,
+                newStartTime);
             scheduleRepository.save(newSchedule);
         }
     }

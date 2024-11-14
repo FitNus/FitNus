@@ -52,13 +52,13 @@ public class SecurityConfig {
                                 "/static/**",             // 정적 리소스 경로
                                 "/images/**",
                                 "/css/**",                // CSS 파일
-                                "/js/**"               // JS 파일
+                                "/js/**",               // JS 파일
+                                "/api/v1/notifications/subscribe" // SSE 알림 구독 경로 허용
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
     }
-
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
