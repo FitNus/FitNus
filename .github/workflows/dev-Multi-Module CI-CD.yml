@@ -85,7 +85,7 @@ jobs:
             docker pull $BATCH_REPOSITORY_URI
             docker stop batch-container || true
             docker rm batch-container || true
-            docker run -d --name batch-container -p 8081:8081 $BATCH_REPOSITORY_URI
+            docker run -d --name batch-container -p 8081:8081
           
 
   build-and-deploy-common:
@@ -142,7 +142,7 @@ jobs:
             docker pull $COMMON_REPOSITORY_URI
             docker stop common-container || true
             docker rm common-container || true
-            docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI
+            docker run -d --name common-container -p 8082:8082
           
           
       
