@@ -1,5 +1,13 @@
 package com.sparta.modulecommon.center.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.sparta.modulecommon.center.dto.request.CenterSaveRequest;
 import com.sparta.modulecommon.center.dto.request.CenterUpdateRequest;
 import com.sparta.modulecommon.center.dto.response.CenterResponse;
@@ -8,18 +16,13 @@ import com.sparta.modulecommon.center.exception.CenterNotFoundException;
 import com.sparta.modulecommon.center.repository.CenterRepository;
 import com.sparta.modulecommon.user.entity.AuthUser;
 import com.sparta.modulecommon.user.enums.UserRole;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CenterServiceTest {
@@ -41,7 +44,8 @@ class CenterServiceTest {
     void getCenter_ValidId_ReturnsCenterResponse() {
         // given: centerId로 조회할 Center 객체 생성 및 반환값 설정
         Center center = new Center(request, authUser); // 필요한 기본 정보만 설정된 Center 객체
-        ReflectionTestUtils.setField(center, "id", 1L); // CenterId는 autoincrement로 생성되는거니까, 테스트에선 내가 직접 setField로 집어넣어줘야 함.
+        ReflectionTestUtils.setField(center, "id",
+                1L); // CenterId는 autoincrement로 생성되는거니까, 테스트에선 내가 직접 setField로 집어넣어줘야 함.
 
         given(centerRepository.findCenterById(1L)).willReturn(center);
 
@@ -124,7 +128,8 @@ class CenterServiceTest {
         given(centerRepository.findOwnerIdByCenterId(centerId)).willReturn(Optional.empty());
 
         // when & then
-        assertThrows(CenterNotFoundException.class, () -> centerService.isValidOwnerInCenter(centerId));
+        assertThrows(CenterNotFoundException.class,
+                () -> centerService.isValidOwnerInCenter(centerId));
         verify(centerRepository, times(1)).findOwnerIdByCenterId(centerId);
     }
 
