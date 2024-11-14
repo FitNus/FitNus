@@ -37,23 +37,27 @@ public class AuctionService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @KafkaListener(topics = "auction-bids", groupId = "auction-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(
+            topics = "auction-bids",
+            groupId = "auction-group",
+            containerFactory = "kafkaListenerContainerFactory"
+    )
     public void handleBidMessage(BidMessage bidMessage, Acknowledgment ack) {
+        log.info("Received bid message from Kafka: auctionId={}, bidderId={}, amount={}",
+                bidMessage.getAuctionId(),
+                bidMessage.getBidderId(),
+                bidMessage.getBidAmount());
+
         try {
-            log.info("Received bid message: auctionId={}, bidderId={}, amount={}",
-                    bidMessage.getAuctionId(),
-                    bidMessage.getBidderId(),
-                    bidMessage.getBidAmount());
-
             placeBid(bidMessage.getAuctionId(), bidMessage.getBidderId(), bidMessage.getBidAmount());
-
             ack.acknowledge();  // 수동 커밋 수행
-            log.info("Successfully processed bid message from Kafka");
+            log.info("Successfully processed bid message and acknowledged.");
         } catch (Exception e) {
             log.error("Failed to process bid message from Kafka", e);
             // 실패 시 커밋하지 않음
         }
     }
+
 
     @Transactional
     @Retryable(value = OptimisticLockingFailureException.class, maxAttempts = 3)
@@ -69,10 +73,10 @@ public class AuctionService {
         }
 
         User user = userRepository.findUserById(userId);
-        int userCouponBalance = user.getTotalCoupons();
-        if (userCouponBalance < bidAmount) {
-            throw new IllegalArgumentException("사용한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + userCouponBalance);
-        }
+//        int userCouponBalance = user.getTotalCoupons();
+//        if (userCouponBalance < bidAmount) {
+//            throw new IllegalArgumentException("사용한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + userCouponBalance);
+//        }
         if (auction.getHighestBid() != 0 && bidAmount <= auction.getHighestBid()) {
             throw new IllegalArgumentException("현재 최고 입찰가보다 높은 금액을 입력해주세요.");
         }
