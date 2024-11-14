@@ -12,7 +12,7 @@ import com.sparta.modulecommon.member.dto.request.MemberRejectRequest;
 import com.sparta.modulecommon.member.dto.request.MemberRequest;
 import com.sparta.modulecommon.member.entity.Member;
 import com.sparta.modulecommon.member.service.MemberService;
-import com.sparta.modulecommon.ssenotification.entity.SseMessageName;
+import com.sparta.modulecommon.ssenotification.kafka.NotificationProducer;
 import com.sparta.modulecommon.ssenotification.service.SseNotificationServiceImpl;
 import com.sparta.modulecommon.user.dto.response.ProfileResponse;
 import com.sparta.modulecommon.user.entity.AuthUser;
@@ -24,8 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,6 +34,7 @@ public class MemberApplicantService {
     private final MemberService memberService;
     private final UserService userService;
     private final SseNotificationServiceImpl sseNotificationServiceImpl;
+    private final NotificationProducer notificationProducer;
 
     /**
      * 멤버 가입신청
@@ -55,11 +54,10 @@ public class MemberApplicantService {
         MemberApplicant memberApplicant = MemberApplicant.of(authUser.getId(), club);
         memberApplicantsRepository.save(memberApplicant);
 
-        sseNotificationServiceImpl.broadcast(SseMessageName.MESSAGE,
+        notificationProducer.sendClubNotification(
             club.getLeaderId(),
-            "가입 신청",
             authUser.getNickname() + " 님이 모임에 가입 신청을 했습니다.",
-            LocalDateTime.now()
+            club.getId()
         );  // 모임 리더에게 알림 전송
     }
 
