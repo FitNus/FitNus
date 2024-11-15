@@ -18,7 +18,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
@@ -68,7 +67,7 @@ public class KafkaConfig {
     @Bean
     public NewTopic notificationTopic() {
         return TopicBuilder.name("notification")
-            .partitions(2)
+            .partitions(3)
             .replicas(1)
             .build();
     }
@@ -85,8 +84,8 @@ public class KafkaConfig {
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
         kafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
-        kafkaListenerContainerFactory.setConcurrency(2); // 파티션 수와 맞춰서 설정
-        kafkaListenerContainerFactory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
+        kafkaListenerContainerFactory.setConcurrency(3); // 파티션 수와 맞춰서 설정
+//        kafkaListenerContainerFactory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
 
         return kafkaListenerContainerFactory;
     }
