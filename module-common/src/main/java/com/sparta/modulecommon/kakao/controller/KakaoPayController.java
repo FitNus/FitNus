@@ -61,5 +61,3 @@ public class KakaoPayController {
         return "redirect:/order_failed.html"; // HTML 파일로 리디렉션
     }
 }
-
-
