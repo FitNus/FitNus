@@ -14,4 +14,3 @@ public class SessionUtils {
         return attribute != null ? attribute.toString() : null;
     }
 }
-
