@@ -5,12 +5,36 @@ services:
     build:
       context: ./module-batch
       dockerfile: Dockerfile
-    image: "${BATCH_REPOSITORY_URI}/module-batch:latest"
     container_name: module-batch
     ports:
-      - "8081:8080"  # 외부 포트 8081을 내부 8080 포트로 매핑
+      - "8081:8081"  # 외부 포트 8081을 내부 8080 포트로 매핑
     environment:
-      SPRING_PROFILES_ACTIVE: "batch"
+      SPRING_PROFILES_ACTIVE: "local"
+      SERVER_PORT : ${SERVER_PORT}
+      JWT_SECRET_KEY : ${JWT_SECRET_KEY}
+      LOCAL_DB_URL : ${LOCAL_DB_URL}
+      META_DB_URL : ${META_DB_URL}
+      LOCAL_DB_USERNAME : ${LOCAL_DB_USERNAME}
+      LOCAL_DB_PASSWORD : ${LOCAL_DB_PASSWORD}
+      ADMIN_TOKEN : ${ADMIN_TOKEN}
+      OWNER_TOKEN : ${OWNER_TOKEN}
+      SLACK_WEBHOOK_TOKEN : ${SLACK_WEBHOOK_TOKEN}
+      SLACK_CHANNEL : ${SLACK_CHANNEL}
+      AWS_ACCESS_KEY : ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY : ${AWS_SECRET_KEY}
+      AWS_BUCKET_NAME : ${AWS_BUCKET_NAME}
+      AWS_REGION : ${AWS_REGION}
+      KAKAO_CLIENT_ID : ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET : ${KAKAO_CLIENT_SECRET}
+      KAKAO_REDIRECT_URL : ${KAKAO_REDIRECT_URL}
+      KAKAO_REST_API_KEY : ${KAKAO_REST_API_KEY}
+      KAKAOPAY_SECRET : ${KAKAOPAY_SECRET}
+      KAFKA_PORT : ${KAFKA_PORT}
+      BATCH_REPOSITORY_URI : ${BATCH_REPOSITORY_URI}
+      COMMON_REPOSITORY_URI : ${COMMON_REPOSITORY_URI}
+      ELASTIC_URIS : ${ELASTIC_URIS}
+      ELASTIC_USERNAME : ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD : ${ELASTIC_PASSWORD}
 
     networks:
       - fitnus-network  # 네트워크 설정 추가
@@ -19,12 +43,36 @@ services:
     build:
       context: ./module-common
       dockerfile: Dockerfile
-    image: "${COMMON_REPOSITORY_URI}/module-common:latest"
     container_name: module-common
     ports:
-      - "8082:8080"  # 외부 포트 8082를 내부 8080 포트로 매핑
+      - "8082:8082"  # 외부 포트 8082를 내부 8080 포트로 매핑
     environment:
-      SPRING_PROFILES_ACTIVE: "common"
+      SPRING_PROFILES_ACTIVE: "batch"
+      SERVER_PORT: ${SERVER_PORT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      LOCAL_DB_URL: ${LOCAL_DB_URL}
+      META_DB_URL: ${META_DB_URL}
+      LOCAL_DB_USERNAME: ${LOCAL_DB_USERNAME}
+      LOCAL_DB_PASSWORD: ${LOCAL_DB_PASSWORD}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      OWNER_TOKEN: ${OWNER_TOKEN}
+      SLACK_WEBHOOK_TOKEN: ${SLACK_WEBHOOK_TOKEN}
+      SLACK_CHANNEL: ${SLACK_CHANNEL}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+      AWS_REGION: ${AWS_REGION}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      KAKAO_REDIRECT_URL: ${KAKAO_REDIRECT_URL}
+      KAKAO_REST_API_KEY: ${KAKAO_REST_API_KEY}
+      KAKAOPAY_SECRET: ${KAKAOPAY_SECRET}
+      KAFKA_PORT: ${KAFKA_PORT}
+      BATCH_REPOSITORY_URI: ${BATCH_REPOSITORY_URI}
+      COMMON_REPOSITORY_URI: ${COMMON_REPOSITORY_URI}
+      ELASTIC_URIS: ${ELASTIC_URIS}
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     networks:
       - fitnus-network  # 네트워크 설정 추가
 

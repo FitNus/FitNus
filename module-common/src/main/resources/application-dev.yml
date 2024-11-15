@@ -72,3 +72,5 @@ kakao:
     key: ${DEV_KAKAO_REST_API_KEY}
 
 
+redisson:
+  address: "redis://127.0.0.1:6379"
