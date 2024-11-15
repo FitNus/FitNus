@@ -2,10 +2,10 @@ package com.sparta.service.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sparta.common.config.JwtSecurityFilter;
 import com.sparta.service.member.dto.request.MemberDeportRequest;
 import com.sparta.service.member.dto.request.MemberRequest;
 import com.sparta.service.member.service.MemberService;
-import com.sparta.user.config.JwtSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -2,11 +2,11 @@ package com.sparta.service.fitness.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sparta.common.config.JwtSecurityFilter;
 import com.sparta.service.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.service.fitness.dto.request.FitnessGetAllRequest;
 import com.sparta.service.fitness.dto.request.FitnessRequest;
 import com.sparta.service.fitness.service.FitnessService;
-import com.sparta.user.config.JwtSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

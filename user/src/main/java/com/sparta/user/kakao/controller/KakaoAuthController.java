@@ -1,9 +1,9 @@
 package com.sparta.user.kakao.controller;
 
-import com.sparta.user.config.JwtUtil;
+import com.sparta.common.config.JwtUtil;
+import com.sparta.common.config.RedisUserService;
 import com.sparta.user.kakao.service.KakaoAuthService;
 import com.sparta.user.user.dto.response.AuthTokenResponse;
-import com.sparta.user.user.service.RedisUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

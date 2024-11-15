@@ -1,4 +1,4 @@
-package com.sparta.user.config;
+package com.sparta.common.config;
 
 import com.sparta.common.dto.AuthUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

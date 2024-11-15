@@ -2,8 +2,8 @@ package com.sparta.service.search.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sparta.common.config.JwtSecurityFilter;
 import com.sparta.service.search.service.SearchService;
-import com.sparta.user.config.JwtSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,7 @@
-package com.sparta.user.config;
+package com.sparta.common.config;
 
 import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
-import com.sparta.user.user.service.RedisUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

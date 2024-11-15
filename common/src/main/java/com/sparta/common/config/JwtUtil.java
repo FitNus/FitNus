@@ -1,4 +1,4 @@
-package com.sparta.user.config;
+package com.sparta.common.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

@@ -2,9 +2,9 @@ package com.sparta.service.club.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sparta.common.config.JwtSecurityFilter;
 import com.sparta.service.club.dto.request.ClubRequest;
 import com.sparta.service.club.service.ClubService;
-import com.sparta.user.config.JwtSecurityFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
