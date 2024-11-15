@@ -69,7 +69,7 @@ jobs:
           file: ./module-common/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.BATCH_REPOSITORY_URI }}:${{IMAGE_TAG}}
+          tags: ${{ secrets.BATCH_REPOSITORY_URI }}:${{secrets.IMAGE_TAG}}
 
       - name: Start SSH Agent and Add Key
         uses: webfactory/ssh-agent@v0.5.3
@@ -128,7 +128,7 @@ jobs:
           file: ./module-common/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:${{IMAGE_TAG}}
+          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:${{secrets.IMAGE_TAG}}
 
       - name: Start SSH Agent and Add Key
         uses: webfactory/ssh-agent@v0.5.3
@@ -140,7 +140,7 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           COMMON_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
-          IMAGE_TAG : ${{IMAGE_TAG}}
+          IMAGE_TAG : ${{secrets.IMAGE_TAG}}
         run: |
           ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST"
             docker pull $COMMON_REPOSITORY_URI:$IMAGE_TAG
