@@ -43,3 +43,4 @@ src/main/.DS_Store
 
 ### ENV ###
 .env
+prod.env

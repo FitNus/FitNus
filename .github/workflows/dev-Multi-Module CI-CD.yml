@@ -146,7 +146,7 @@ jobs:
             docker pull $COMMON_REPOSITORY_URI:$IMAGE_TAG
             docker stop common-container || true
             docker rm common-container || true
-            docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI:/$IMAGE_TAG
+            docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI:$IMAGE_TAG
           
           
       
