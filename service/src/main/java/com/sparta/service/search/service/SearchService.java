@@ -4,6 +4,7 @@ import com.sparta.service.center.entity.CenterSearch;
 import com.sparta.service.club.repository.ClubRepository;
 import com.sparta.service.search.dto.response.SearchCenterResponse;
 import com.sparta.service.search.dto.response.SearchClubResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -13,15 +14,17 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
 import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class SearchService {
     private final ElasticsearchService elasticsearchService;
 
     public Page<SearchClubResponse> searchClubs(String clubName, String clubInfo, String place,
-                                                int page, int size) {
+            int page, int size) {
 
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("modifiedAt").descending());
 
@@ -89,15 +92,32 @@ public class SearchService {
 
         // 검색된 결과를 DTO로 변환하여 반환
         List<SearchCenterResponse> responseList = searchHits.stream()
-                .map(hit -> new SearchCenterResponse(
-                        hit.getContent().getId(),
-                        hit.getContent().getCenterName(),
-                        hit.getContent().getAddress(),
-                        hit.getContent().getFitnessName() != null && !hit.getContent()
-                                .getFitnessName()
-                                .isEmpty() ? hit.getContent().getFitnessName()
-                                : List.of("피트니스 정보가 없습니다.")
-                ))
+                .map(hit -> {
+                    List<String> fitnesses = hit.getContent().getFitnessName();
+
+                    // 검색어가 없거나 비어있으면 모든 피트니스 반환
+                    if (fitnessName == null || fitnessName.isEmpty()) {
+                        return new SearchCenterResponse(
+                                hit.getContent().getId(),
+                                hit.getContent().getCenterName(),
+                                hit.getContent().getAddress(),
+                                !fitnesses.isEmpty() ? fitnesses : List.of("피트니스 정보가 없습니다.")
+                        );
+                    }
+
+                    // 검색어와 일치하는 피트니스만 필터링
+                    List<String> matchedFitnesses = fitnesses.stream()
+                            .filter(fitness -> fitness.contains(fitnessName))
+                            .toList();
+
+                    return new SearchCenterResponse(
+                            hit.getContent().getId(),
+                            hit.getContent().getCenterName(),
+                            hit.getContent().getAddress(),
+                            !matchedFitnesses.isEmpty() ? matchedFitnesses
+                                    : List.of("피트니스 정보가 없습니다.")
+                    );
+                })
                 .toList();
 
         // Page로 변환해서 반환
