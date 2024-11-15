@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카카오 로그인</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .message {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .logo-img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .kakao-login-img {
+            width: 183px; /* 원하는 이미지 크기로 조정 */
+            height: 45px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 이미지 추가 -->
+    <img src="images/U-Jeans.png" alt="Logo" class="logo-img">
+    <h1>카카오 로그인</h1>
+    <!-- 카카오 로그인 이미지 버튼 -->
+    <img src="images/kakao_login_medium_narrow.png" alt="카카오 로그인" class="kakao-login-img" id="kakaoLoginBtn">
+    <div class="footer">© 2024 Fitnus</div>
+</div>
+
+<script>
+    document.getElementById("kakaoLoginBtn").addEventListener("click", function () {
+        // 서버의 signup-login 엔드포인트 호출하여 카카오 로그인 페이지로 이동
+        fetch("http://localhost:8080/api/v1/auth/kakao/signup-login")
+            .then(response => response.text())
+            .then(redirectUrl => {
+                // 카카오 로그인 URL로 리디렉션
+                window.location.href = redirectUrl;
+            })
+            .catch(error => {
+                console.error("카카오 로그인 요청 실패:", error);
+                alert("로그인 요청 중 오류가 발생했습니다. 다시 시도해 주세요.");
+            });
+    });
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ jobs:
 
     outputs:
       common: ${{ steps.filter.outputs.common }}
-      batch: ${{ steps.filter.outputs.batch }}
+      batch: ${{ steps.filter.outputs.job }}
     steps:
       - uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
