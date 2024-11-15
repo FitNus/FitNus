@@ -1,7 +1,5 @@
-package com.sparta.notification.config;
+package com.sparta.common.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -13,13 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableKafka
@@ -29,7 +27,7 @@ public class KafkaConfig {
     private String KAFKA_ADDRESS;
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(){
+    public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -37,7 +35,7 @@ public class KafkaConfig {
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> myconfig = new HashMap<>();
         myconfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-            KAFKA_ADDRESS);
+                KAFKA_ADDRESS);
         myconfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         myconfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         // 안정성 및 재시도 설정
@@ -53,7 +51,7 @@ public class KafkaConfig {
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> myConfig = new HashMap<>();
         myConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-            KAFKA_ADDRESS);
+                KAFKA_ADDRESS);
         myConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         myConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         myConfig.put(JsonDeserializer.TRUSTED_PACKAGES, "*"); // 신뢰할 패키지 설정
@@ -67,26 +65,35 @@ public class KafkaConfig {
     @Bean
     public NewTopic notificationTopic() {
         return TopicBuilder.name("notification")
-            .partitions(3)
-            .replicas(1)
-            .build();
+                .partitions(3)
+                .replicas(1)
+                .build();
     }
 
     @Bean
-    public NewTopic auctionTopic() {
+    public NewTopic auctionBidTopic() {
         return TopicBuilder.name("auction-bids")
-            .partitions(3)
-            .replicas(1)
-            .build();
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic auctionResultTopic() {
+        return TopicBuilder.name("auction-results")
+                .partitions(3)
+                .replicas(1)
+                .build();
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
-        kafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
-        kafkaListenerContainerFactory.setConcurrency(3); // 파티션 수와 맞춰서 설정
-//        kafkaListenerContainerFactory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
-
-        return kafkaListenerContainerFactory;
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(3); // 파티션 수에 맞게 조정
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
+        factory.getContainerProperties().setPollTimeout(3000); // 메시지 폴링 타임아웃 조정 (필요시 조정 가능)
+        return factory;
     }
+
 }

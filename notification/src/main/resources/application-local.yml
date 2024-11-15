@@ -63,7 +63,3 @@ kakao:
 
 kakaopay:
   secret: ${KAKAOPAY_SECRET}
-
-
- 
-
