@@ -127,11 +127,3 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 requestURI.endsWith(".png");//이미지 허용
     }
 }
-
-
-
-
-
-
-
-

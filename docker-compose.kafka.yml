@@ -1,0 +1,36 @@
+version: '2.4'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-app
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-app
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-app:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-app:29092,OUTSIDE://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+  kafka-ui:
+      image: provectuslabs/kafka-ui:latest
+      platform: linux/amd64
+      container_name: kafka-ui-app
+      ports:
+        - "8089:8089"
+      environment:
+        KAFKA_CLUSTERS_0_NAME: local
+        KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-app:29092
+        KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper-app:2181
+        KAFKA_CLUSTERS_0_READONLY: "false"
+        SERVER_PORT: 8089
