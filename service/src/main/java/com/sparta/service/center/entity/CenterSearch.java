@@ -4,7 +4,6 @@ import com.sparta.service.fitness.entity.Fitness;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -59,7 +58,6 @@ public class CenterSearch {
         this.latitude = center.getLatitude();
         this.longitude = center.getLongitude();
         this.location = new GeoPoint(center.getLatitude(), center.getLongitude());
-        Hibernate.initialize(center.getFitnesses());
         this.fitnessName = center.getFitnesses().stream()
                 .map(Fitness::getFitnessName)
                 .toList();
