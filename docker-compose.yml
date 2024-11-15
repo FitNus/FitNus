@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  module-batch:
+  batch:
     build:
-      context: ./module-batch
+      context: ./batch
       dockerfile: Dockerfile
-    image: "${BATCH_REPOSITORY_URI}/module-batch:latest"
-    container_name: module-batch
+    image: "${ECR_REGISTRY}/batch:latest"
+    container_name: batch
     ports:
       - "8081:8080"  # 외부 포트 8081을 내부 8080 포트로 매핑
     environment:
@@ -15,12 +15,12 @@ services:
     networks:
       - fitnus-network  # 네트워크 설정 추가
 
-  module-common:
+  common:
     build:
-      context: ./module-common
+      context: ./common
       dockerfile: Dockerfile
-    image: "${COMMON_REPOSITORY_URI}/module-common:latest"
-    container_name: module-common
+    image: "${ECR_REGISTRY}/common:latest"
+    container_name: common
     ports:
       - "8082:8080"  # 외부 포트 8082를 내부 8080 포트로 매핑
     environment:
