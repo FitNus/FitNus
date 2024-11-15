@@ -2,8 +2,8 @@ package com.sparta.user.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sparta.user.config.JwtSecurityFilter;
-import com.sparta.user.config.JwtUtil;
+import com.sparta.common.config.JwtSecurityFilter;
+import com.sparta.common.config.JwtUtil;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
 import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.user.user.dto.response.AuthTokenResponse;

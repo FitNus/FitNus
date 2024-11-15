@@ -49,7 +49,7 @@ public class CenterController {
         return ApiResponse.createSuccess(centerService.getCenter(id));
     }
 
-    @GetMapping("v1/centers/nearby")
+    @GetMapping("/v1/centers/nearby")
     public List<CenterResponse> getNearbyCenters(
             @RequestParam Double longitude,
             @RequestParam Double latitude,

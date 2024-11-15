@@ -1,14 +1,14 @@
 package com.sparta.user.kakao.service;
 
+import com.sparta.common.config.JwtUtil;
+import com.sparta.common.config.RedisUserService;
 import com.sparta.common.enums.UserRole;
-import com.sparta.user.config.JwtUtil;
 import com.sparta.user.kakao.exception.KakaoAccountException;
 import com.sparta.user.kakao.exception.KakaoApiException;
 import com.sparta.user.kakao.exception.KakaoEmailException;
 import com.sparta.user.user.dto.response.AuthTokenResponse;
 import com.sparta.user.user.entity.User;
 import com.sparta.user.user.repository.UserRepository;
-import com.sparta.user.user.service.RedisUserService;
 import com.sparta.user.user.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;

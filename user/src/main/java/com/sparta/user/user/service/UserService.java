@@ -1,10 +1,11 @@
 package com.sparta.user.user.service;
 
+import com.sparta.common.config.JwtUtil;
+import com.sparta.common.config.RedisUserService;
 import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
 import com.sparta.common.enums.UserStatus;
 import com.sparta.common.exception.NotFoundException;
-import com.sparta.user.config.JwtUtil;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
 import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.user.user.dto.response.AuthTokenResponse;

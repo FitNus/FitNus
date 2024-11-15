@@ -1,4 +1,4 @@
-package com.sparta.user.user.service;
+package com.sparta.common.config;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;

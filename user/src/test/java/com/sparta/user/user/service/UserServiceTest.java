@@ -1,5 +1,6 @@
 package com.sparta.user.user.service;
 
+import com.sparta.common.config.RedisUserService;
 import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
 import com.sparta.common.enums.UserStatus;

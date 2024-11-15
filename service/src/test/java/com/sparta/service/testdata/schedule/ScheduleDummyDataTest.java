@@ -9,10 +9,10 @@
 //import com.sparta.service.schedule.repository.ScheduleBulkRepository;
 //import com.sparta.service.timeslot.entity.Timeslot;
 //import com.sparta.service.timeslot.repository.TimeslotBulkRepository;
-//import com.sparta.user.config.JwtUtil;
+//import com.sparta.common.config.JwtUtil;
 //import com.sparta.user.user.entity.User;
 //import com.sparta.user.user.repository.UserBulkRepository;
-//import com.sparta.user.user.service.RedisUserService;
+//import com.sparta.common.config.RedisUserService;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;

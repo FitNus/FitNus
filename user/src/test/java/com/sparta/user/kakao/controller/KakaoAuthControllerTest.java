@@ -2,11 +2,11 @@ package com.sparta.user.kakao.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sparta.user.config.JwtSecurityFilter;
-import com.sparta.user.config.JwtUtil;
+import com.sparta.common.config.JwtSecurityFilter;
+import com.sparta.common.config.JwtUtil;
+import com.sparta.common.config.RedisUserService;
 import com.sparta.user.kakao.service.KakaoAuthService;
 import com.sparta.user.user.dto.response.AuthTokenResponse;
-import com.sparta.user.user.service.RedisUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

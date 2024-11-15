@@ -2,7 +2,7 @@ package com.sparta.user.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sparta.user.config.JwtSecurityFilter;
+import com.sparta.common.config.JwtSecurityFilter;
 import com.sparta.user.user.dto.request.ProfileUpdateRequest;
 import com.sparta.user.user.service.ProfileService;
 import org.junit.jupiter.api.BeforeEach;

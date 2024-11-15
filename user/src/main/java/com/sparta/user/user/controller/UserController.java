@@ -1,9 +1,9 @@
 package com.sparta.user.user.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
+import com.sparta.common.config.JwtUtil;
 import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
-import com.sparta.user.config.JwtUtil;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
 import com.sparta.user.user.dto.request.CouponUsageRequest;
 import com.sparta.user.user.dto.request.UserRequest;
