@@ -1,4 +1,4 @@
-package com.sparta.modulecommon.auction;
+package com.sparta.auction.auction;
 
 public enum AuctionStatus {
     PENDING,    // 경매 시작 전

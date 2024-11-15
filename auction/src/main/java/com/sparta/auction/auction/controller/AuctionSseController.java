@@ -1,7 +1,7 @@
-package com.sparta.modulecommon.auction.controller;
+package com.sparta.auction.auction.controller;
 
-import com.sparta.modulecommon.auction.dto.AuctionResultMessage;
-import com.sparta.modulecommon.auction.dto.BidMessage;
+import com.sparta.auction.auction.dto.AuctionResultMessage;
+import com.sparta.auction.auction.dto.BidMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.annotation.KafkaListener;

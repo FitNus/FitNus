@@ -1,6 +1,6 @@
-package com.sparta.modulecommon.auction.event;
+package com.sparta.auction.auction.event;
 
-import com.sparta.modulecommon.auction.dto.BidMessage;
+import com.sparta.auction.auction.dto.BidMessage;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

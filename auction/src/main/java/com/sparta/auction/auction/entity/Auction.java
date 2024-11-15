@@ -1,7 +1,7 @@
-package com.sparta.modulecommon.auction.entity;
+package com.sparta.auction.auction.entity;
 
-import com.sparta.modulecommon.auction.AuctionStatus;
-import com.sparta.modulecommon.user.entity.User;
+import com.sparta.auction.auction.AuctionStatus;
+import com.sparta.user.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

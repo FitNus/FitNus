@@ -1,7 +1,7 @@
-package com.sparta.modulecommon.auction.repository;
+package com.sparta.auction.auction.repository;
 
-import com.sparta.modulecommon.auction.AuctionStatus;
-import com.sparta.modulecommon.auction.entity.Auction;
+import com.sparta.auction.auction.AuctionStatus;
+import com.sparta.auction.auction.entity.Auction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -1,13 +1,13 @@
-package com.sparta.modulecommon.auction.service;
+package com.sparta.auction.auction.service;
 
-import com.sparta.modulecommon.auction.AuctionStatus;
-import com.sparta.modulecommon.auction.dto.AuctionResultMessage;
-import com.sparta.modulecommon.auction.dto.BidMessage;
-import com.sparta.modulecommon.auction.entity.Auction;
-import com.sparta.modulecommon.auction.repository.AuctionRepository;
-import com.sparta.modulecommon.user.entity.User;
-import com.sparta.modulecommon.user.repository.UserRepository;
-import com.sparta.modulecommon.user.service.CouponService;
+import com.sparta.auction.auction.AuctionStatus;
+import com.sparta.auction.auction.dto.AuctionResultMessage;
+import com.sparta.auction.auction.dto.BidMessage;
+import com.sparta.auction.auction.entity.Auction;
+import com.sparta.auction.auction.repository.AuctionRepository;
+import com.sparta.user.user.entity.User;
+import com.sparta.user.user.repository.UserRepository;
+import com.sparta.user.user.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

@@ -1,4 +1,4 @@
-package com.sparta.modulecommon.auction.dto;
+package com.sparta.auction.auction.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

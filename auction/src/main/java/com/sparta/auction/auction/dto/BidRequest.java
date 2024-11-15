@@ -1,4 +1,4 @@
-package com.sparta.modulecommon.auction.dto;
+package com.sparta.auction.auction.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

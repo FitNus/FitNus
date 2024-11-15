@@ -1,12 +1,12 @@
-package com.sparta.modulecommon.auction.controller;
+package com.sparta.auction.auction.controller;
 
-import com.sparta.modulecommon.auction.dto.AuctionRequest;
-import com.sparta.modulecommon.auction.dto.BidRequest;
-import com.sparta.modulecommon.auction.entity.Auction;
-import com.sparta.modulecommon.auction.service.AuctionService;
-import com.sparta.modulecommon.common.apipayload.ApiResponse;
-import com.sparta.modulecommon.user.entity.AuthUser;
-import com.sparta.modulecommon.user.enums.UserRole;
+import com.sparta.auction.auction.dto.AuctionRequest;
+import com.sparta.auction.auction.dto.BidRequest;
+import com.sparta.auction.auction.entity.Auction;
+import com.sparta.auction.auction.service.AuctionService;
+import com.sparta.common.apipayload.ApiResponse;
+import com.sparta.common.dto.AuthUser;
+import com.sparta.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
