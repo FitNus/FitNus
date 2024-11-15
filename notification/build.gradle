@@ -1,0 +1,25 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':common')
+
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('jar') {
+    enabled = true
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+String jarName = "notification.jar"

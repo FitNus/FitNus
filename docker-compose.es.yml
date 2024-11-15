@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # 메모리 설정 (필요시 조정)
+    ports:
+      - "9200:9200"  # Elasticsearch REST API 접속
+      - "9300:9300"  # 클러스터 통신 포트
+    networks:
+      - elastic-network
+    volumes:
+      - data:/usr/share/elasticsearch/data  # 데이터 영속화
+    command: >
+      bash -c '
+        bin/elasticsearch-plugin install --batch analysis-nori;
+        /usr/local/bin/docker-entrypoint.sh elasticsearch
+      '
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.3
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"  # Kibana 접속 포트
+    networks:
+      - elastic-network
+    depends_on:
+      - elasticsearch
+
+volumes:
+  data:
+    driver: local
+
+networks:
+  elastic-network:
+    driver: bridge
