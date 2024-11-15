@@ -11,4 +11,5 @@ public class BidMessage {
     private Long auctionId;
     private Long bidderId;
     private int bidAmount;
+    private int highestBid;
 }

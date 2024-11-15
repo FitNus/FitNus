@@ -28,7 +28,10 @@ public class Auction {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private int highestBid = 0;  // Long에서 int로 변경
+    private int highestBid = 0;
+
+    @Column(nullable = false)
+    private String product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "highest_bidder_id")
@@ -40,9 +43,10 @@ public class Auction {
     @Enumerated(EnumType.STRING)
     private AuctionStatus status = AuctionStatus.PENDING;
 
-    public Auction(LocalDateTime startTime, LocalDateTime endTime) {
+    public Auction(LocalDateTime startTime, LocalDateTime endTime, String product) {
         this.startTime = startTime;
         this.endTime = endTime;
+        this.product = product;
     }
 
     public boolean isAuctionOpen() {

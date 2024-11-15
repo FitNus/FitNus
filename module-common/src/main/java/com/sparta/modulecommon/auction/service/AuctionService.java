@@ -13,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -37,28 +35,6 @@ public class AuctionService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RedisTemplate<String, String> redisTemplate;
 
-    @KafkaListener(
-            topics = "auction-bids",
-            groupId = "auction-group",
-            containerFactory = "kafkaListenerContainerFactory"
-    )
-    public void handleBidMessage(BidMessage bidMessage, Acknowledgment ack) {
-        log.info("Received bid message from Kafka: auctionId={}, bidderId={}, amount={}",
-                bidMessage.getAuctionId(),
-                bidMessage.getBidderId(),
-                bidMessage.getBidAmount());
-
-        try {
-            placeBid(bidMessage.getAuctionId(), bidMessage.getBidderId(), bidMessage.getBidAmount());
-            ack.acknowledge();  // 수동 커밋 수행
-            log.info("Successfully processed bid message and acknowledged.");
-        } catch (Exception e) {
-            log.error("Failed to process bid message from Kafka", e);
-            // 실패 시 커밋하지 않음
-        }
-    }
-
-
     @Transactional
     @Retryable(value = OptimisticLockingFailureException.class, maxAttempts = 3)
     public void placeBid(Long auctionId, Long userId, int bidAmount) {
@@ -73,10 +49,12 @@ public class AuctionService {
         }
 
         User user = userRepository.findUserById(userId);
-//        int userCouponBalance = user.getTotalCoupons();
-//        if (userCouponBalance < bidAmount) {
-//            throw new IllegalArgumentException("사용한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + userCouponBalance);
-//        }
+
+        int userCouponBalance = user.getTotalCoupons();
+        if (userCouponBalance < bidAmount) {
+            throw new IllegalArgumentException("사용한 쿠폰 수량이 부족합니다. 현재 남은 수량: " + userCouponBalance);
+        }
+
         if (auction.getHighestBid() != 0 && bidAmount <= auction.getHighestBid()) {
             throw new IllegalArgumentException("현재 최고 입찰가보다 높은 금액을 입력해주세요.");
         }
@@ -89,62 +67,60 @@ public class AuctionService {
         sendBidMessage(auctionId, userId, bidAmount);
     }
 
-    // Kafka에 입찰 메시지 전송 메서드
-    private void sendBidMessage(Long auctionId, Long bidderId, int bidAmount) {
-        BidMessage bidMessage = new BidMessage(auctionId, bidderId, bidAmount);
+    public void sendBidMessage(Long auctionId, Long bidderId, int bidAmount) {
+        int highestBid = getHighestBidForAuction(auctionId); // 최고 입찰가 조회 메서드 호출
+        BidMessage bidMessage = new BidMessage(auctionId, bidderId, bidAmount, highestBid);
         kafkaTemplate.send("auction-bids", bidMessage);
-        log.info("Sent bid message to Kafka: auctionId={}, bidderId={}, amount={}", auctionId, bidderId, bidAmount);
+        log.info("Sent bid message to Kafka: auctionId={}, bidderId={}, amount={}, highestBid={}",
+                auctionId, bidderId, bidAmount, highestBid);
+    }
+
+    private int getHighestBidForAuction(Long auctionId) {
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 경매입니다."));
+        return auction.getHighestBid();
     }
 
     @Scheduled(fixedRate = 60000)
     @Transactional
-    public void checkAndFinishAuctions() {
+    public void checkAndUpdateAuctions() {
         LocalDateTime now = LocalDateTime.now();
-        log.info("Checking auctions for finish at {}", now);  // 로그 추가
+        log.info("Checking auctions for start or finish at {}", now);
 
-        List<Auction> auctions = auctionRepository.findByStatus(AuctionStatus.ACTIVE);
-
-        for (Auction auction : auctions) {
-            // 시작 시간이 지났는지 먼저 확인
-            if (now.isAfter(auction.getStartTime())) {
-                if (now.isBefore(auction.getEndTime())) {
-                    // 시작 시간은 지났지만 종료 시간은 아직 안된 경우
-                    auction.setStatus(AuctionStatus.ACTIVE);
-                    log.info("Auction {} activated at {}", auction.getId(), now);
-                } else {
-                    // 종료 시간도 지난 경우
-                    finishAuction(auction);
-                    log.info("Auction {} finished at {}", auction.getId(), now);
-                }
-                auctionRepository.save(auction);
-            }
-        }
-    }
-
-    @Scheduled(fixedRate = 60000)
-    @Transactional
-    public void checkAndStartAuctions() {
-        LocalDateTime now = LocalDateTime.now();
-        log.info("Checking pending auctions at {}", now);  // 로그 추가
-
-        List<Auction> pendingAuctions = auctionRepository
-                .findByStatus(AuctionStatus.PENDING);  // 모든 PENDING 상태의 경매를 가져옴
-
+        // PENDING 상태 경매 확인 및 시작 처리
+        List<Auction> pendingAuctions = auctionRepository.findByStatus(AuctionStatus.PENDING);
         for (Auction auction : pendingAuctions) {
-            log.info("Checking auction {}: startTime={}, now={}",
-                    auction.getId(), auction.getStartTime(), now);  // 로그 추가
-
+            log.info("Checking pending auction {}: startTime={}, now={}", auction.getId(), auction.getStartTime(), now);
             if (now.isAfter(auction.getStartTime())) {
-                auction.setStatus(AuctionStatus.ACTIVE);  // 직접 상태 변경
+                auction.setStatus(AuctionStatus.ACTIVE);
                 auctionRepository.save(auction);
                 log.info("Auction {} started", auction.getId());
             }
         }
+
+        // ACTIVE 상태 경매 확인 및 종료 처리
+        List<Auction> activeAuctions = auctionRepository.findByStatus(AuctionStatus.ACTIVE);
+        for (Auction auction : activeAuctions) {
+            log.info("Checking active auction {}: endTime={}, now={}", auction.getId(), auction.getEndTime(), now);
+            if (now.isAfter(auction.getEndTime())) {
+                finishAuction(auction);
+                log.info("Auction {} finished", auction.getId());
+                auctionRepository.save(auction);
+            }
+        }
     }
 
+    /**
+     * 경매를 종료하는 메서드로, Redis를 이용한 분산 잠금 메커니즘을 사용하여
+     * 동시에 여러 프로세스가 종료 작업을 수행하는 것을 방지.
+     *
+     * @param auction 종료할 경매 객체
+     */
     private void finishAuction(Auction auction) {
+        // Redis에 잠금 키 설정을 위한 고유한 키 생성
         String lockKey = "auction-finish:" + auction.getId();
         try {
+            // 잠금 시도 및 성공 시 lockKey에 "locked" 값을 10초 동안 설정하고, 실패 시 작업을 종료합니다.
             Boolean acquired = redisTemplate.opsForValue()
                     .setIfAbsent(lockKey, "locked", Duration.ofSeconds(10));
 
@@ -181,17 +157,18 @@ public class AuctionService {
                 );
             }
 
-            // 경매 상태를 명확히 FINISHED로 설정
+            // 경매 상태를 명확히 FINISHED로 설정 & DB저장
             auction.setStatus(AuctionStatus.FINISHED);
             auctionRepository.save(auction);
 
         } finally {
+            // 경매 종료 작업 완료 후 Redis에서 잠금 키를 삭제하여 잠금을 해제
             redisTemplate.delete(lockKey);
         }
     }
 
-    public Auction createAuction(LocalDateTime startTime, LocalDateTime endTime) {
-        Auction auction = new Auction(startTime, endTime);
+    public Auction createAuction(LocalDateTime startTime, LocalDateTime endTime, String product) {
+        Auction auction = new Auction(startTime, endTime, product);
         return auctionRepository.save(auction);
     }
 }

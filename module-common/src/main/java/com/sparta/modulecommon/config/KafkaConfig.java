@@ -65,14 +65,22 @@ public class KafkaConfig {
     @Bean
     public NewTopic notificationTopic() {
         return TopicBuilder.name("notification")
-                .partitions(1)
+                .partitions(3)
                 .replicas(1)
                 .build();
     }
 
     @Bean
-    public NewTopic auctionTopic() {
+    public NewTopic auctionBidTopic() {
         return TopicBuilder.name("auction-bids")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic auctionResultTopic() {
+        return TopicBuilder.name("auction-results")
                 .partitions(3)
                 .replicas(1)
                 .build();
@@ -83,7 +91,7 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3); // 파티션 수에 맞게 조정
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.BATCH);
         factory.getContainerProperties().setPollTimeout(3000); // 메시지 폴링 타임아웃 조정 (필요시 조정 가능)
         return factory;
     }
