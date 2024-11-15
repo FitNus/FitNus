@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/css/**",                // CSS 파일
                                 "/js/**",               // JS 파일
-                                "/api/v1/notifications/subscribe" // SSE 알림 구독 경로 허용
+                                "/api/v1/notifications/subscribe",
+                                "/api/v1/sse/subscribe/users"// SSE 알림 구독 경로 허용
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
