@@ -13,6 +13,7 @@ import com.sparta.user.user.service.CouponService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,8 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoPayService {
     private static final String KAKAO_PAY_READY_URL = "https://open-api.kakaopay.com/online/v1/payment/ready";
     private static final String KAKAO_PAY_APPROVE_URL = "https://open-api.kakaopay.com/online/v1/payment/approve";
-
-    private static final String AUTHORIZATION_KEY = "SECRET_KEY DEV6A131CBDCB515CBADC4CB66E22E29B6057E21";
-
+    @Value("${kakao.authorization.key}")
+    private String AUTHORIZATION_KEY;
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
     private final KakaoPaymentRepository kakaoPaymentRepository;
