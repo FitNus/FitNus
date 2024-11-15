@@ -15,7 +15,6 @@
             color: #333;
             margin: 0;
         }
-
         .container {
             text-align: center;
             background-color: #fff;
@@ -25,25 +24,21 @@
             max-width: 400px;
             width: 90%;
         }
-
         h1 {
             font-size: 24px;
             color: #4caf50;
             margin-bottom: 10px;
         }
-
         .message {
             font-size: 18px;
             color: #333;
             margin-bottom: 20px;
         }
-
         .footer {
             margin-top: 30px;
             font-size: 14px;
             color: #888;
         }
-
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -56,17 +51,14 @@
             text-decoration: none;
             margin: 5px;
         }
-
         .btn:hover {
             background-color: #45a049;
         }
-
         .logo-img {
             width: 100px;
             height: auto;
             margin-bottom: 20px;
         }
-
         #userInfoContainer, #paymentContainer, #couponUsageContainer {
             margin-top: 20px;
             padding: 15px;
@@ -76,13 +68,11 @@
             background-color: #f9f9f9;
             text-align: left;
         }
-
         #userInfoContainer h2, #paymentContainer h2, #couponUsageContainer h2 {
             font-size: 20px;
             color: #333;
             margin-top: 0;
         }
-
         .input-field {
             padding: 10px;
             width: 80px;
@@ -141,7 +131,7 @@
 
 <script>
     function logout() {
-        fetch('/api/v1/auth/logout', {
+        fetch('http://localhost:8082/api/v1/auth/logout', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -160,7 +150,7 @@
     }
 
     function getUserInfo() {
-        fetch('/api/v1/user/info', {
+        fetch('http://localhost:8082/api/v1/user/info', {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -209,7 +199,7 @@
             quantity: quantity
         };
 
-        fetch('/api/v1/kakaopay/ready', {
+        fetch('http://localhost:8082/api/v1/kakaopay/ready', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -234,7 +224,7 @@
     function useCoupons() {
         const usageQuantity = parseInt(document.getElementById("usageQuantityInput").value, 10);
 
-        fetch('/api/v1/user/use-coupons', {
+        fetch('http://localhost:8082/api/v1/user/use-coupons', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -257,5 +247,4 @@
             });
     }
 </script>
-</body>
-</html>
+</body

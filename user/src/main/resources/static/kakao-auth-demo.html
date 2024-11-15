@@ -70,7 +70,7 @@
 <script>
     document.getElementById("kakaoLoginBtn").addEventListener("click", function () {
         // 서버의 signup-login 엔드포인트 호출하여 카카오 로그인 페이지로 이동
-        fetch("http://localhost:8080/api/v1/auth/kakao/signup-login")
+        fetch("http://localhost:8082/api/v1/auth/kakao/signup-login")
             .then(response => response.text())
             .then(redirectUrl => {
                 // 카카오 로그인 URL로 리디렉션
