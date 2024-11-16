@@ -13,14 +13,13 @@ import com.sparta.service.fitness.exception.AccessDeniedException;
 import com.sparta.service.fitness.exception.FitnessNotFoundException;
 import com.sparta.service.fitness.exception.FitnessgetAllAccessDeniedException;
 import com.sparta.service.fitness.repository.FitnessRepository;
-import com.sparta.service.search.service.SearchService;
+import com.sparta.service.search.service.ElasticsearchService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -30,7 +29,7 @@ public class FitnessService {
 
     private final FitnessRepository fitnessRepository;
     private final CenterService centerService;
-    private final SearchService searchService;
+    private final ElasticsearchService elasticsearchService;
 
     /***
      * CRUD-POST : createFitness()의 기능입니다.
@@ -47,7 +46,7 @@ public class FitnessService {
         }
         Fitness fitness = Fitness.of(request, center);
         Fitness savedfitness = fitnessRepository.save(fitness);
-        searchService.saveFitnessName(new CenterSearch(center));
+        saveSearch(new CenterSearch(center));
         return new FitnessResponse(savedfitness);
     }
 
@@ -90,7 +89,7 @@ public class FitnessService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public FitnessResponse updateFitness(AuthUser authUser, Long fitnessId,
-                                         FitnessRequest fitnessRequest) {
+            FitnessRequest fitnessRequest) {
         if (fitnessRepository.findById(fitnessId).isEmpty()) {
             throw new FitnessNotFoundException();
         }
@@ -100,6 +99,7 @@ public class FitnessService {
         }
         Fitness fitness = isValidFitness(fitnessId);
         fitness.update(fitnessRequest);
+        saveSearch(new CenterSearch(center));
         return new FitnessResponse(fitness);
     }
 
@@ -120,10 +120,15 @@ public class FitnessService {
             throw new AccessDeniedException();
         }
         fitnessRepository.deleteById(fitnessId);
+        saveSearch(new CenterSearch(center));
     }
 
     public Fitness isValidFitness(Long fitnessId) {
         return fitnessRepository.findById(fitnessId).orElseThrow(FitnessNotFoundException::new);
+    }
+
+    private void saveSearch(CenterSearch centerSearch) {
+        elasticsearchService.saveSearch(centerSearch);
     }
 }
 

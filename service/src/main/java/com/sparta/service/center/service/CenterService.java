@@ -11,7 +11,9 @@ import com.sparta.service.center.exception.CenterAccessDeniedException;
 import com.sparta.service.center.exception.CenterNotFoundException;
 import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterRepository;
-import com.sparta.service.search.service.SearchService;
+import com.sparta.service.search.service.ElasticsearchService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.geo.GeoResult;
@@ -20,9 +22,6 @@ import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -33,7 +32,7 @@ public class CenterService {
     private final CenterRepository centerRepository;
     private final LocationService locationService;
     private final CenterCacheRepository cacheRepository;
-    private final SearchService searchService;
+    private final ElasticsearchService elasticsearchService;
 
     /***
      * CRUD-Get : getCenter()의 기능입니다.
@@ -76,8 +75,8 @@ public class CenterService {
             log.error("Redis에 위치 정보를 저장하는 중 오류 발생: {}", e.getMessage());
         }
 
-        // Elasticsearch에 센터 정보 저장
-        searchService.saveCenterSearch(new CenterSearch(center));  // SearchService에서 호출
+        // Elasticsearch에 저장
+        saveSearch(new CenterSearch(savedCenter));
 
         return new CenterResponse(savedCenter);
     }
@@ -94,7 +93,7 @@ public class CenterService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public CenterResponse updateCenter(AuthUser authUser, Long centerId,
-                                       CenterUpdateRequest updateRequest) {
+            CenterUpdateRequest updateRequest) {
         Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
 
@@ -103,6 +102,9 @@ public class CenterService {
         }
         Center center = centerRepository.findCenterById(centerId);
         center.update(updateRequest);
+
+        // Elasticsearch 업데이트
+        saveSearch(new CenterSearch(center));
 
         return new CenterResponse(center);
     }
@@ -123,6 +125,9 @@ public class CenterService {
             throw new CenterAccessDeniedException();
         }
         centerRepository.deleteById(centerId);
+
+        // Elasticsearch에서 삭제
+        deleteCenterSearch(centerId);
     }
 
     /**
@@ -135,7 +140,7 @@ public class CenterService {
      */
     @Transactional
     public List<CenterResponse> findNearbyCenters(Double userLongitude, Double userLatitude,
-                                                  Double radius) {
+            Double radius) {
         //사용자의 위치에서 지정된 반경 내의 센터를 검색
         GeoResults<GeoLocation<String>> results = cacheRepository.findCentersWithinRadius(
                 userLongitude, userLatitude, radius);
@@ -165,6 +170,15 @@ public class CenterService {
     public Center getCenterId(Long id) {
         return centerRepository.findById(id)
                 .orElseThrow(CenterNotFoundException::new);
+    }
+
+    // 엘라스틱서치 관련 private 메서드 추가
+    private void saveSearch(CenterSearch centerSearch) {
+        elasticsearchService.saveSearch(centerSearch);
+    }
+
+    private void deleteCenterSearch(Long centerId) {
+        elasticsearchService.deleteSearch(String.valueOf(centerId), CenterSearch.class);
     }
 
 }

@@ -123,14 +123,4 @@ public class SearchService {
         // Page로 변환해서 반환
         return new PageImpl<>(responseList, pageable, searchHits.getTotalHits());
     }
-
-    // 센터 생성 시 Elasticsearch에 정보 저장
-    public void saveCenterSearch(CenterSearch centerSearch) {
-        elasticsearchService.saveCenterSearch(centerSearch);  // ElasticsearchService 호출
-    }
-
-    // 피트니스 생성 시 Elasticsearch에 정보 저장
-    public void saveFitnessName(CenterSearch centerSearch) {
-        elasticsearchService.saveFitnessName(centerSearch);
-    }
 }
