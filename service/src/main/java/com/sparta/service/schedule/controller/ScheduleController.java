@@ -9,7 +9,15 @@ import com.sparta.service.schedule.dto.response.ScheduleResponse;
 import com.sparta.service.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +31,8 @@ public class ScheduleController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody FitnessScheduleRequest fitnessScheduleRequest
     ) {
-        return ApiResponse.createSuccess(scheduleService.createFitnessSchedule(authUser, fitnessScheduleRequest));
+        return ApiResponse.createSuccess(
+                scheduleService.createFitnessSchedule(authUser, fitnessScheduleRequest));
     }
 
     @PostMapping("/v1/schedules/clubs")
@@ -31,7 +40,8 @@ public class ScheduleController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody ClubScheduleRequest clubScheduleRequest
     ) {
-        return ApiResponse.createSuccess(scheduleService.createClubSchedule(authUser, clubScheduleRequest));
+        return ApiResponse.createSuccess(
+                scheduleService.createClubSchedule(authUser, clubScheduleRequest));
     }
 
     @PutMapping("/v1/schedules/{id}/fitness")
@@ -40,7 +50,8 @@ public class ScheduleController {
             @PathVariable long id,
             @RequestBody FitnessScheduleRequest fitnessScheduleRequest
     ) {
-        return ApiResponse.createSuccess(scheduleService.updateFitnessSchedule(authUser, id, fitnessScheduleRequest));
+        return ApiResponse.createSuccess(
+                scheduleService.updateFitnessSchedule(authUser, id, fitnessScheduleRequest));
     }
 
     @PutMapping("/v1/schedules/{id}/clubs")
@@ -49,7 +60,8 @@ public class ScheduleController {
             @PathVariable long id,
             @RequestBody ClubScheduleRequest clubScheduleRequest
     ) {
-        return ApiResponse.createSuccess(scheduleService.updateClubSchedule(authUser, id, clubScheduleRequest));
+        return ApiResponse.createSuccess(
+                scheduleService.updateClubSchedule(authUser, id, clubScheduleRequest));
     }
 
     @DeleteMapping("/v1/schedules/{id}")
@@ -68,7 +80,8 @@ public class ScheduleController {
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) Integer day
     ) {
-        return ApiResponse.createSuccess(scheduleService.getScheduleList(authUser, year, month, day));
+        return ApiResponse.createSuccess(
+                scheduleService.getScheduleList(authUser, year, month, day));
     }
 
     @PostMapping("/v1/schedules/copy")
@@ -80,6 +93,12 @@ public class ScheduleController {
             @RequestParam Integer copiedMonth
     ) {
         scheduleService.copySchedule(authUser, yearToCopy, monthToCopy, copiedYear, copiedMonth);
+        return ApiResponse.createSuccess(null);
+    }
+
+    @PostMapping("/v1/schedules/sync-elasticsearch")
+    public ApiResponse<Void> syncToElasticsearch() {
+        scheduleService.syncToElasticsearch();
         return ApiResponse.createSuccess(null);
     }
 }

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping("/search/clubs")
+    @GetMapping("/v1/search/clubs")
     public ApiResponse<Page<SearchClubResponse>> searchClubs(
             @RequestParam(required = false) String clubName,
             @RequestParam(required = false) String clubInfo,
@@ -30,7 +30,7 @@ public class SearchController {
                 searchService.searchClubs(clubName, clubInfo, place, page, size));
     }
 
-    @GetMapping("/search/centers")
+    @GetMapping("/v1/search/centers")
     public ApiResponse<Page<SearchCenterResponse>> searchCentersNearByLocation(
             @RequestParam(required = false) String centerName,
             @RequestParam(required = false) String fitnessName,
