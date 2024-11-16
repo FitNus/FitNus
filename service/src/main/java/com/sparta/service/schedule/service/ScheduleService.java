@@ -14,14 +14,9 @@ import com.sparta.service.schedule.exception.NotScheduleOwnerException;
 import com.sparta.service.schedule.exception.ScheduleAlreadyExistsException;
 import com.sparta.service.schedule.exception.ScheduleNotFoundException;
 import com.sparta.service.schedule.repository.ScheduleRepository;
-import com.sparta.service.schedule.repository.ScheduleSearchRepository;
+import com.sparta.service.search.service.ElasticsearchService;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.service.TimeslotService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,8 +51,7 @@ public class ScheduleService {
     private final ScheduleMessageService scheduleMessageService;
     private final ClubService clubService;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
-    private final ScheduleSearchRepository scheduleSearchRepository;
-    private final StringRedisTemplate redisTemplate;
+    private final ElasticsearchService elasticsearchService;
 
     /**
      * 일정 생성
@@ -77,6 +71,9 @@ public class ScheduleService {
             Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
             Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
+            // Elasticsearch에 저장
+            saveSearch(new ScheduleSearch(savedSchedule));
+
             // 알림 예약 (시작 시간 1시간 전)
             scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(),
                     savedSchedule.getId());
@@ -95,6 +92,9 @@ public class ScheduleService {
 
         Schedule newSchedule = Schedule.ofClub(authUser.getId(), club);
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
+
+        // Elasticsearch에 저장
+        saveSearch(new ScheduleSearch(savedSchedule));
 
         // 알림 예약 (시작 시간 1시간 전)
         scheduleMessageService.scheduleNotification(authUser.getId(), club.getDate(),
@@ -123,6 +123,9 @@ public class ScheduleService {
 
         schedule.updateFitnessSchedule(timeslot);
 
+        // Elasticsearch 업데이트
+        saveSearch(new ScheduleSearch(schedule));
+
         return new ScheduleResponse(schedule);
     }
 
@@ -137,6 +140,9 @@ public class ScheduleService {
 
         schedule.updateClubSchedule(club);
 
+        // Elasticsearch 업데이트
+        saveSearch(new ScheduleSearch(schedule));
+
         return new ScheduleResponse(schedule);
     }
 
@@ -150,6 +156,9 @@ public class ScheduleService {
     public void deleteSchedule(AuthUser authUser, long scheduleId) {
         Schedule schedule = isValidSchedule(scheduleId);
         isScheduleOwner(authUser.getId(), schedule);
+
+        // Elasticsearch에서 삭제
+        deleteScheduleSearch(scheduleId);
 
         scheduleRepository.delete(schedule);
     }
@@ -255,6 +264,9 @@ public class ScheduleService {
                     schedule,
                     newStartTime);
             scheduleRepository.save(newSchedule);
+
+            // Elasticsearch에 저장
+            saveSearch(new ScheduleSearch(newSchedule));
         }
     }
 
@@ -299,6 +311,14 @@ public class ScheduleService {
         if (day != null && !(day >= 1 && day <= 31)) {
             throw new IllegalArgumentException("잘못된 일 값입니다.");
         }
+    }
+
+    private void saveSearch(ScheduleSearch scheduleSearch) {
+        elasticsearchService.saveSearch(scheduleSearch);
+    }
+
+    private void deleteScheduleSearch(Long scheduleId) {
+        elasticsearchService.deleteSearch(String.valueOf(scheduleId), ScheduleSearch.class);
     }
 
     public void syncToElasticsearch() {
