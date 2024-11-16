@@ -17,7 +17,7 @@ public class CenterBulkRepository {
 
     @Transactional
     public void saveAll(List<Center> centerList) {
-        String sql = "INSERT INTO center (center_name, owner_id) VALUES (?, ?)";
+        String sql = "INSERT INTO center (center_name, owner_id, latitude, longitude) VALUES (?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 centerList,
@@ -25,6 +25,8 @@ public class CenterBulkRepository {
                 (PreparedStatement ps, Center center) -> {
                     ps.setString(1, center.getCenterName());
                     ps.setLong(2, center.getOwnerId());
+                    ps.setDouble(3, center.getLatitude());
+                    ps.setDouble(4, center.getLongitude());
                 });
     }
 }

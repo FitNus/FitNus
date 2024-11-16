@@ -1,10 +1,10 @@
-package com.sparta.common;
+package com.sparta.auction;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CommonApplicationTests {
+class AuctionApplicationTests {
 
     @Test
     void contextLoads() {

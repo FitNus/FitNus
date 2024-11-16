@@ -17,6 +17,7 @@ import com.sparta.service.schedule.repository.ScheduleRepository;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.service.TimeslotService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class ScheduleService {
     private final TimeslotService timeslotService;
     private final ScheduleMessageService scheduleMessageService;
     private final ClubService clubService;
+    private final StringRedisTemplate redisTemplate;
 
     /**
      * 일정 생성
@@ -46,10 +48,9 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponse createFitnessSchedule(AuthUser authUser, FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
+        isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
         if (timeslot.getMaxPeople() > scheduleRepository.countByTimeslotId(timeslot.getId()) + 1) {
-            isExistsSchedule(authUser.getId(), timeslot.getStartTime());
-
             Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
             Schedule savedSchedule = scheduleRepository.save(newSchedule);
 

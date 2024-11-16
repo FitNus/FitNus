@@ -62,9 +62,3 @@ kakao:
     key: ${KAKAO_REST_API_KEY}
   authorization:
     key: ${KAKAO_AUTHORIZATION_KEY}
-
-kakaopay:
-  secret: ${KAKAOPAY_SECRET}
-
- 
-
