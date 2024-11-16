@@ -17,7 +17,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Getter
 @NoArgsConstructor
 @Document(indexName = "center")
-@Setting(settingPath = "elasticsearch/elasticsearch-settings.json")
+@Setting(settingPath = "elasticsearch/center-settings.json")
 public class CenterSearch {
 
     @Id
