@@ -95,10 +95,4 @@ public class ScheduleController {
         scheduleService.copySchedule(authUser, yearToCopy, monthToCopy, copiedYear, copiedMonth);
         return ApiResponse.createSuccess(null);
     }
-
-    @PostMapping("/v1/schedules/sync-elasticsearch")
-    public ApiResponse<Void> syncToElasticsearch() {
-        scheduleService.syncToElasticsearch();
-        return ApiResponse.createSuccess(null);
-    }
 }

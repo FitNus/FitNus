@@ -20,17 +20,11 @@ import com.sparta.service.timeslot.service.TimeslotService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
@@ -319,66 +313,5 @@ public class ScheduleService {
 
     private void deleteScheduleSearch(Long scheduleId) {
         elasticsearchService.deleteSearch(String.valueOf(scheduleId), ScheduleSearch.class);
-    }
-
-    public void syncToElasticsearch() {
-        try {
-            log.info("Starting elasticsearch sync");
-
-            int batchSize = 1000;  // 한 번에 처리할 데이터 수
-            long totalCount = scheduleRepository.count();
-            int totalPages = (int) Math.ceil((double) totalCount / batchSize);
-
-            log.info("Total schedules to sync: {}", totalCount);
-
-            for (int page = 0; page < totalPages; page++) {
-                PageRequest pageRequest = PageRequest.of(page, batchSize);
-                Page<Schedule> schedulePage = scheduleRepository.findAll(pageRequest);
-
-                BulkRequest bulkRequest = new BulkRequest();
-
-                for (Schedule schedule : schedulePage.getContent()) {
-                    try {
-                        ScheduleSearch scheduleSearch = new ScheduleSearch(schedule);
-                        IndexRequest indexRequest = new IndexRequest("schedule")
-                                .id(schedule.getId().toString())
-                                .source(convertToMap(scheduleSearch));
-                        bulkRequest.add(indexRequest);
-                    } catch (Exception e) {
-                        log.error("Error processing schedule {}: {}", schedule.getId(),
-                                e.getMessage());
-                    }
-                }
-
-                if (bulkRequest.numberOfActions() > 0) {
-                    log.info("Syncing batch {} of {}", page + 1, totalPages);
-                    elasticsearchRestTemplate.execute(client ->
-                            client.bulk(bulkRequest, RequestOptions.DEFAULT)
-                    );
-                }
-            }
-
-            log.info("Sync completed successfully");
-
-        } catch (Exception e) {
-            log.error("Error during elasticsearch sync: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to sync data to Elasticsearch", e);
-        }
-    }
-
-    private Map<String, Object> convertToMap(ScheduleSearch scheduleSearch) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", scheduleSearch.getId());
-        map.put("userId", scheduleSearch.getUserId());
-        map.put("timeslotId", scheduleSearch.getTimeslotId());
-        map.put("clubId", scheduleSearch.getClubId());
-        map.put("scheduleName", scheduleSearch.getScheduleName());
-        map.put("startTime", scheduleSearch.getStartTime());  // toString() 제거
-        map.put("endTime", scheduleSearch.getEndTime());      // toString() 제거
-        map.put("requiredCoupon", scheduleSearch.getRequiredCoupon());
-        map.put("year", scheduleSearch.getYear());
-        map.put("month", scheduleSearch.getMonth());
-        map.put("day", scheduleSearch.getDay());
-        return map;
     }
 }
