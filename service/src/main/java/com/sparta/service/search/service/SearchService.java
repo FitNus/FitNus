@@ -33,7 +33,6 @@ public class SearchService {
 
     private final ClubRepository clubRepository;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
-    private final ElasticsearchService elasticsearchService;
 
     public Page<SearchClubResponse> searchClubs(String clubName, String clubInfo, String place,
             int page, int size) {
@@ -63,14 +62,14 @@ public class SearchService {
         // centerName이나 fitnessName이 null이 아닐 경우에만 조건 추가
         if (centerName != null && !centerName.isEmpty()) {
             boolQuery.must(QueryBuilders.multiMatchQuery(centerName, "centerName")
-                    .field("centerName.ngram")     // ngram 필드 추가(문자열을 작은 단위로 쪼개서 인덱싱하는 방식)
+                    .field("centerName.ngram", 2.0f)     // ngram 필드 추가(문자열을 작은 단위로 쪼개서 인덱싱하는 방식)
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                     .fuzziness(Fuzziness.AUTO)   // 퍼지 검색 추가(오타나 비슷한 단어를 허용하는 검색 방식)
                     .operator(Operator.OR));
         }
         if (fitnessName != null && !fitnessName.isEmpty()) {
             boolQuery.must(QueryBuilders.multiMatchQuery(fitnessName, "fitnessName")
-                    .field("fitnessName.ngram")
+                    .field("fitnessName.ngram", 2.0f)
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                     .fuzziness(Fuzziness.AUTO)
                     .operator(Operator.OR));
@@ -83,7 +82,9 @@ public class SearchService {
                 .withSort(SortBuilders // 정렬 조건 설정: 거리 기준으로 정렬을 설정
                         .geoDistanceSort("location", lat, lon)
                         .order(SortOrder.ASC)
-                        .unit(DistanceUnit.KILOMETERS));
+                        .unit(DistanceUnit.KILOMETERS))
+                .withFields("id", "centerName", "address", "fitnessName")  // 필요한 필드만 조회
+                .withRequestCache(true);
         NativeSearchQuery searchQuery = searchQueryBuilder.build();
 
         // 실제 검색 수행

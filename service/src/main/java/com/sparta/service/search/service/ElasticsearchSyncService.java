@@ -76,7 +76,7 @@ public class ElasticsearchSyncService {
         try {
             log.info("센터 동기화 시작");
 
-            int batchSize = 1000;  // 한 번에 처리할 데이터 수
+            int batchSize = 1000;
             long totalCount = centerRepository.count();
             int totalPages = (int) Math.ceil((double) totalCount / batchSize);
 
@@ -124,8 +124,8 @@ public class ElasticsearchSyncService {
         map.put("timeslotId", scheduleSearch.getTimeslotId());
         map.put("clubId", scheduleSearch.getClubId());
         map.put("scheduleName", scheduleSearch.getScheduleName());
-        map.put("startTime", scheduleSearch.getStartTime());  // toString() 제거
-        map.put("endTime", scheduleSearch.getEndTime());      // toString() 제거
+        map.put("startTime", scheduleSearch.getStartTime());
+        map.put("endTime", scheduleSearch.getEndTime());
         map.put("requiredCoupon", scheduleSearch.getRequiredCoupon());
         map.put("year", scheduleSearch.getYear());
         map.put("month", scheduleSearch.getMonth());
@@ -139,7 +139,13 @@ public class ElasticsearchSyncService {
         map.put("centerName", centerSearch.getCenterName());
         map.put("fitnessName", centerSearch.getFitnessName());
         map.put("address", centerSearch.getAddress());
-        map.put("location", centerSearch.getLocation());
+
+        // GeoPoint를 위도/경도 Map으로 변환
+        Map<String, Double> location = new HashMap<>();
+        location.put("lat", centerSearch.getLocation().getLat());
+        location.put("lon", centerSearch.getLocation().getLon());
+        map.put("location", location);
+
         map.put("latitude", centerSearch.getLatitude());
         map.put("longitude", centerSearch.getLongitude());
         return map;
