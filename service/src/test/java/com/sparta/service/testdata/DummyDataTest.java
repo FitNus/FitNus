@@ -6,6 +6,7 @@ import com.sparta.common.enums.UserRole;
 import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.repository.CenterBulkRepository;
 import com.sparta.service.center.repository.CenterCacheRepository;
+import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterRepository;
 import com.sparta.service.fitness.entity.Fitness;
 import com.sparta.service.fitness.repository.FitnessBulkRepository;
@@ -14,7 +15,10 @@ import com.sparta.service.schedule.repository.ScheduleBulkRepository;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.repository.TimeslotBulkRepository;
 import com.sparta.user.user.entity.User;
+import com.sparta.user.user.entity.UserCoupon;
+import com.sparta.user.user.entity.User;
 import com.sparta.user.user.repository.UserBulkRepository;
+import com.sparta.user.user.repository.UserCouponBulkRepository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,6 +28,14 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.springframework.data.geo.Point;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -57,31 +69,34 @@ public class DummyDataTest {
     @Autowired
     private RedisUserService redisUserService;
 
-//    @Test
-//    public void createTokenDummyTest() {
-//        try {
-//            FileWriter writer = new FileWriter("token_data.txt");
-//
-//            for (int i = 1; i <= 1000; i++) {
-//                Long userId = (long) i;  // 사용자 id
-//                String role = UserRole.USER.name();  // 역할
-//                String nickname = "헬창" + i;
-//                String email = "test" + "i" + "@test.com";
-//                String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
-//                String refreshToken = jwtUtil.createRefreshToken(userId);
-//                redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
-//                String aToken = jwtUtil.substringToken(accessToken);
-//                String rToken = jwtUtil.substringToken(refreshToken);
-//                String data = String.format("%s,%s\n", "Bearer%20" + aToken, "Bearer%20" + rToken);
-//
-//                writer.write(data);
-//            }
-//
-//            writer.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Autowired
+    private UserCouponBulkRepository userCouponBulkRepository;
+
+    @Test
+    public void createTokenDummyTest() {
+        try {
+            FileWriter writer = new FileWriter("token_data.txt");
+
+            for (int i = 1; i <= 1000; i++) {
+                Long userId = (long) i;  // 사용자 id
+                String role = UserRole.USER.name();  // 역할
+                String nickname = "헬창" + i;
+                String email = "test" + "i" + "@test.com";
+                String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
+                String refreshToken = jwtUtil.createRefreshToken(userId);
+                redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
+                String aToken = jwtUtil.substringToken(accessToken);
+                String rToken = jwtUtil.substringToken(refreshToken);
+                String data = String.format("%s,%s\n", "Bearer%20" + aToken, "Bearer%20" + rToken);
+
+                writer.write(data);
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void sseNotificationTest() {
