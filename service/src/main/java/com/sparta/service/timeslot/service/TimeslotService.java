@@ -91,10 +91,7 @@ public class TimeslotService {
     }
 
     public Timeslot isValidTimeslot(long timeslotId) {
-        Timeslot timeslot = timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
-
-
-        return timeslot;
+        return timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
     }
 }
 

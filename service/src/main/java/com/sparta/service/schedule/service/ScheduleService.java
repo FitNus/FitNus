@@ -1,6 +1,5 @@
 package com.sparta.service.schedule.service;
 
-import com.sparta.common.annotation.DistributedLock;
 import com.sparta.common.dto.AuthUser;
 import com.sparta.service.club.entity.Club;
 import com.sparta.service.club.service.ClubService;
@@ -17,9 +16,16 @@ import com.sparta.service.schedule.repository.ScheduleRepository;
 import com.sparta.service.search.service.ElasticsearchService;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.service.TimeslotService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +50,28 @@ public class ScheduleService {
     private final TimeslotService timeslotService;
     private final ScheduleMessageService scheduleMessageService;
     private final ClubService clubService;
+    private final StringRedisTemplate redisTemplate;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
     private final ElasticsearchService elasticsearchService;
+
+    private static final String CHECK_AND_INCREMENT_SCRIPT = """
+            local countKey = KEYS[1]
+            local maxPeople = tonumber(ARGV[1])
+            
+            local currentCount = redis.call('get', countKey)
+            if currentCount then
+                currentCount = tonumber(currentCount)
+            else
+                currentCount = 0
+            end
+            
+            if currentCount < maxPeople then
+                redis.call('incr', countKey)
+                return 1
+            else
+                return 0
+            end
+            """;
 
     /**
      * 일정 생성
@@ -54,14 +80,23 @@ public class ScheduleService {
      * @param fitnessScheduleRequest : 타임슬롯 ID를 담고 있는 DTO
      * @return ScheduleResponse : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO
      */
-    @DistributedLock(key = "'timeslot:' + #fitnessScheduleRequest.timeslotId")
     @Transactional
     public ScheduleResponse createFitnessSchedule(AuthUser authUser,
             FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
-        if (timeslot.getMaxPeople() > scheduleRepository.countByTimeslotId(timeslot.getId()) + 1) {
+        String countKey = "timeslot:count:" + timeslot.getId();
+
+        // Lua 스크립트 실행
+        DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>(CHECK_AND_INCREMENT_SCRIPT, Long.class);
+        Long result = redisTemplate.execute(
+                redisScript,
+                Collections.singletonList(countKey),
+                String.valueOf(timeslot.getMaxPeople())
+        );
+
+        if (result == 1) {
             Schedule newSchedule = Schedule.ofTimeslot(authUser.getId(), timeslot);
             Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
@@ -73,9 +108,9 @@ public class ScheduleService {
                     savedSchedule.getId());
 
             return new ScheduleResponse(savedSchedule);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     @Transactional
@@ -205,7 +240,7 @@ public class ScheduleService {
                 .withPageable(PageRequest.of(0, 100))
                 .withTrackTotalHits(true)
                 .build();
-        
+
         searchQuery.setRequestCache(true);    // Request Cache 활성화
 
         SearchHits<ScheduleSearch> searchHits = elasticsearchRestTemplate.search(
