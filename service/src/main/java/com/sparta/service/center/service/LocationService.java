@@ -1,7 +1,6 @@
 package com.sparta.service.center.service;
 
-import java.util.List;
-import java.util.Map;
+import com.sparta.service.center.repository.CenterCacheRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,64 +11,83 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class LocationService {
 
     private final RestTemplate restTemplate;
+    private final CenterCacheRepository cacheRepository;
 
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
 
+    /**
+     * 주소를 위도와 경도로 변환하고, 결과를 캐싱합니다.
+     *
+     * @param address 변환할 주소
+     * @return 위도와 경도 정보를 담은 LatLng 객체
+     */
     public LatLng getLatLngFromAddress(String address) {
+        // 1. 캐시에서 위도/경도 정보 조회
+        LatLng cachedLatLng = cacheRepository.getCachedLocation(address);
+        if (cachedLatLng != null) {
+            log.info("캐시에서 위치 정보 조회: {}", cachedLatLng);
+            return cachedLatLng;
+        }
+
+        // 2. 캐시에 없을 경우 Kakao API 호출
         String url = "https://dapi.kakao.com/v2/local/search/address.json?query=" + address;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + kakaoApiKey);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET,
-                entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
+        try {
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url, HttpMethod.GET, entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
+            Map<String, Object> responseBody = response.getBody();
 
-        Map<String, Object> responseBody = response.getBody();
+            // 3. API 응답에서 위도/경도 정보 추출
+            if (responseBody != null && !((List<?>) responseBody.get("documents")).isEmpty()) {
+                List<Map<String, Object>> documents = (List<Map<String, Object>>) responseBody.get("documents");
+                Map<String, Object> location = documents.get(0);
+                Map<String, Object> addressInfo = (Map<String, Object>) location.get("address");
 
-        // Kakao API 응답에서 "documents"가 존재하는지, 그 안에 위도/경도가 있는지 확인
-        if (responseBody != null && !((List<?>) responseBody.get("documents")).isEmpty()) {
-            List<Map<String, Object>> documents = (List<Map<String, Object>>) responseBody.get(
-                    "documents");
-            Map<String, Object> location = documents.get(0);
-            Map<String, Object> addressInfo = (Map<String, Object>) location.get("address");
+                String latitudeStr = (String) addressInfo.get("y");
+                String longitudeStr = (String) addressInfo.get("x");
 
-            String latitudeStr = (String) addressInfo.get("y");
-            String longitudeStr = (String) addressInfo.get("x");
+                // 4. 위도와 경도가 유효한지 검증
+                if (latitudeStr == null || longitudeStr == null) {
+                    log.error("위도 또는 경도 정보가 비어 있습니다. 주소: {}", address);
+                    throw new IllegalArgumentException("유효한 위도 또는 경도를 찾을 수 없습니다.");
+                }
 
-            // 위도와 경도가 비어 있거나 잘못된 형식인 경우 예외 처리
-            if (latitudeStr == null || latitudeStr.isEmpty() || longitudeStr == null
-                    || longitudeStr.isEmpty()) {
-                log.error("위도 또는 경도 정보가 비어 있습니다. 주소: {}", address);
-                throw new IllegalArgumentException("유효한 위도 또는 경도를 찾을 수 없습니다.");
-            }
-
-            try {
-                // 위도와 경도를 double로 변환
+                // 5. 위도와 경도를 double로 변환하고 LatLng 객체 생성
                 double latitude = Double.parseDouble(latitudeStr);
                 double longitude = Double.parseDouble(longitudeStr);
-                return new LatLng(latitude, longitude);
-            } catch (NumberFormatException e) {
-                // 숫자 형식이 잘못된 경우 예외 처리
-                log.error("위도 또는 경도 형식 오류. 주소: {}, 위도: {}, 경도: {}", address, latitudeStr,
-                        longitudeStr, e);
-                throw new IllegalArgumentException("위도 또는 경도의 형식이 잘못되었습니다.");
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                // 6. 변환 결과를 캐싱 (TTL: 1시간)
+                cacheRepository.cacheLocation(address, latLng, 3600);
+                log.info("위치 정보 캐싱 완료: {}", latLng);
+
+                return latLng;
+            } else {
+                log.error("Kakao API 응답에서 유효한 위치 정보를 찾을 수 없습니다. 주소: {}", address);
+                throw new IllegalArgumentException("주소에서 유효한 위치 정보를 찾을 수 없습니다.");
             }
+        } catch (Exception e) {
+            log.error("Kakao API 호출 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("Kakao API 호출 실패", e);
         }
-
-        // "documents"가 비어 있는 경우 또는 위도/경도를 찾을 수 없는 경우 예외 처리
-        log.error("주소에서 유효한 위치 정보를 찾을 수 없습니다. 주소: {}", address);
-        throw new IllegalArgumentException("주소에서 유효한 위치 정보를 찾을 수 없습니다.");
     }
 
-    public record LatLng(Double latitude, Double longitude) {
-
-    }
+    /**
+     * 위도와 경도 정보를 담는 Record 클래스
+     */
+    public record LatLng(Double latitude, Double longitude) {}
 }
