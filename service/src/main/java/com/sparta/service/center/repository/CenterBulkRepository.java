@@ -1,13 +1,12 @@
 package com.sparta.service.center.repository;
 
 import com.sparta.service.center.entity.Center;
+import java.sql.PreparedStatement;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.PreparedStatement;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class CenterBulkRepository {
 
     @Transactional
     public void saveAll(List<Center> centerList) {
-        String sql = "INSERT INTO center (center_name, owner_id, latitude, longitude) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO center (center_name, owner_id, latitude, longitude, location) VALUES (?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 centerList,
@@ -27,6 +26,7 @@ public class CenterBulkRepository {
                     ps.setLong(2, center.getOwnerId());
                     ps.setDouble(3, center.getLatitude());
                     ps.setDouble(4, center.getLongitude());
+                    ps.setObject(5, center.getLocation());
                 });
     }
 }

@@ -2,18 +2,20 @@ package com.sparta.service.testdata;
 
 import com.sparta.common.config.JwtUtil;
 import com.sparta.common.config.RedisUserService;
-import com.sparta.common.enums.UserRole;
+import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.repository.CenterBulkRepository;
 import com.sparta.service.fitness.repository.FitnessBulkRepository;
 import com.sparta.service.schedule.repository.ScheduleBulkRepository;
 import com.sparta.service.timeslot.repository.TimeslotBulkRepository;
 import com.sparta.user.user.repository.UserBulkRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import org.springframework.data.geo.Point;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 public class DummyDataTest {
@@ -65,62 +67,66 @@ public class DummyDataTest {
 //        }
 //    }
 
-    @Test
-    public void sseNotificationTest() {
-        try {
-            FileWriter writer = new FileWriter("sse_data.txt");
-            long timeslotId = 1;
-            for (int i = 1; i <= 30; i++) {
-                for (int j = 1; j <= 1000; j++, timeslotId++) {
-                    Long userId = (long) j;  // 사용자 id
-                    String role = UserRole.USER.name();  // 역할
-                    String nickname = "헬창" + j;
-                    String email = "test" + "i" + "@test.com";
-                    String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
-                    String refreshToken = jwtUtil.createRefreshToken(userId);
-                    redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
-                    String aToken = jwtUtil.substringToken(accessToken);
-                    String rToken = jwtUtil.substringToken(refreshToken);
-                    String data = String.format("%s,%s,%s\n", timeslotId, "Bearer%20" + aToken, "Bearer%20" + rToken);
+//    @Test
+//    public void sseNotificationTest() {
+//        try {
+//            FileWriter writer = new FileWriter("sse_data.txt");
+//            long timeslotId = 1;
+//            for (int i = 1; i <= 30; i++) {
+//                for (int j = 1; j <= 1000; j++, timeslotId++) {
+//                    Long userId = (long) j;  // 사용자 id
+//                    String role = UserRole.USER.name();  // 역할
+//                    String nickname = "헬창" + j;
+//                    String email = "test" + "i" + "@test.com";
+//                    String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
+//                    String refreshToken = jwtUtil.createRefreshToken(userId);
+//                    redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
+//                    String aToken = jwtUtil.substringToken(accessToken);
+//                    String rToken = jwtUtil.substringToken(refreshToken);
+//                    String data = String.format("%s,%s,%s\n", timeslotId, "Bearer%20" + aToken, "Bearer%20" + rToken);
+//
+//                    writer.write(data);
+//                }
+//            }
+//            writer.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-                    writer.write(data);
-                }
+    @Test
+    public void createCenterData() {
+        Random random = new Random();
+        double minLatitude = 33.11;
+        double maxLatitude = 38.61;
+        double minLongitude = 124.39;
+        double maxLongitude = 131.52;
+
+        int id = 1;
+
+        for (int i = 0; i < 200; i++) {
+            List<Center> centerList = new ArrayList<>();
+            for (int j = 0; j < 5000; j++, id++) {
+                Center center = new Center();
+                double randomLatitude =
+                        minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
+                double randomLongitude =
+                        minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+                ReflectionTestUtils.setField(center, "centerName", "헬스장" + (id + 1));
+                ReflectionTestUtils.setField(center, "ownerId", (long) id + 1);
+                ReflectionTestUtils.setField(center, "latitude", randomLatitude);
+                ReflectionTestUtils.setField(center, "longitude", randomLongitude);
+                ReflectionTestUtils.setField(center, "location",
+                        new Point(randomLatitude, randomLongitude));
+
+                centerList.add(center);
             }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            centerBulkRepository.saveAll(centerList);
         }
+
     }
 
-//    @Test
-//    public void createCenterData() {
-//        Random random = new Random();
-//        double minLatitude = 33.11;
-//        double maxLatitude = 38.61;
-//        double minLongitude = 124.39;
-//        double maxLongitude = 131.52;
-//        List<Center> centerList = new ArrayList<>();
-//
-//        int id = 1;
-//
-//        for (int i = 0; i < 200; i++) {
-//            for (int j = 0; j < 5000; j++, id++) {
-//                Center center = new Center();
-//                double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-//                double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
-//                ReflectionTestUtils.setField(center, "centerName", "헬스장" + (i + 1));
-//                ReflectionTestUtils.setField(center, "ownerId", (long) id + 1);
-//                ReflectionTestUtils.setField(center, "latitude", randomLatitude);
-//                ReflectionTestUtils.setField(center, "longitude", randomLongitude);
-//
-//                centerList.add(center);
-//            }
-//
-//            centerBulkRepository.saveAll(centerList);
-//        }
-//
-//    }
-//
 //    @Test
 //    public void createAllData() {
 //        Random random = new Random();
@@ -133,7 +139,8 @@ public class DummyDataTest {
 //        for (int i = 0; i < 5000; i++) {
 //            Center center = new Center();
 //            double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-//            double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+//            double randomLongitude =
+//                    minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
 //            ReflectionTestUtils.setField(center, "centerName", "헬스장" + (i + 1));
 //            ReflectionTestUtils.setField(center, "ownerId", (long) i + 1);
 //            ReflectionTestUtils.setField(center, "latitude", randomLatitude);
@@ -143,7 +150,7 @@ public class DummyDataTest {
 //        }
 //
 //        centerBulkRepository.saveAll(centerList);
-
+//
 //        List<Fitness> fitnessList = new ArrayList<>();
 //
 //        for (int i = 0; i < 5000; i++) {
@@ -207,9 +214,11 @@ public class DummyDataTest {
 //                Timeslot timeslot = timeslots.get((int) timeslotId);
 //                Schedule schedule = new Schedule();
 //                ReflectionTestUtils.setField(schedule, "userId", (long) i);
-//                ReflectionTestUtils.setField(schedule, "scheduleName", timeslot.getFitness().getFitnessName());
+//                ReflectionTestUtils.setField(schedule, "scheduleName",
+//                        timeslot.getFitness().getFitnessName());
 //                ReflectionTestUtils.setField(schedule, "startTime", timeslot.getStartTime());
-//                ReflectionTestUtils.setField(schedule, "requiredCoupon", timeslot.getFitness().getRequiredCoupon());
+//                ReflectionTestUtils.setField(schedule, "requiredCoupon",
+//                        timeslot.getFitness().getRequiredCoupon());
 //                ReflectionTestUtils.setField(schedule, "timeslotId", timeslotId);
 //
 //                scheduleList.add(schedule);
