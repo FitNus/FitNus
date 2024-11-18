@@ -47,6 +47,8 @@ public class SecurityConfig {
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/signup",
                                 "/api/v1/auth/kakao/**",   // 카카오 관련 경로 허용
+                                "api/v1/request/reset-password",
+                                "api/v1/reset-password",
                                 "/kakao-auth-demo.html",
                                 "/login-success.html",    // 성공 페이지
                                 "/static/**",             // 정적 리소스 경로

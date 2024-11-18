@@ -30,6 +30,21 @@ public class RedisUserService {
         redisTemplate.opsForValue().set("ACCESS_TOKEN_" + userId, newAccessToken, 60, TimeUnit.MINUTES);
     }
 
+    // 리셋 코드 저장 (5분 TTL)
+    public void saveCode(String email, String code) {
+        redisTemplate.opsForValue().set(email, code, 5, TimeUnit.MINUTES);
+    }
+
+    // 리셋 코드 조회
+    public String getCode(String email) {
+        return redisTemplate.opsForValue().get(email);
+    }
+
+    // 리셋 코드 삭제
+    public void deleteCode(String email) {
+        redisTemplate.delete(email);
+    }
+
     // 로그아웃 시 토큰 삭제
     public void deleteTokens(String userId) {
         redisTemplate.delete("ACCESS_TOKEN_" + userId);

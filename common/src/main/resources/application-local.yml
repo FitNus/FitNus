@@ -45,6 +45,19 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL}
+    password: ${APP_PASSWORD} # 앱 비밀번호 사용 권장
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
 
 
 admin:
@@ -63,6 +76,8 @@ kakao:
 
 kakaopay:
   secret: ${KAKAOPAY_SECRET}
+
+
 
 
  

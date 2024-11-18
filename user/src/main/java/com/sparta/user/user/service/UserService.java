@@ -15,6 +15,7 @@ import com.sparta.user.user.exception.*;
 import com.sparta.user.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUserService redisUserService;
+    private final EmailService emailService;
 
     @Transactional
     public UserResponse signup(@Valid UserRequest userRequest) {
@@ -106,6 +108,58 @@ public class UserService {
         userRepository.delete(user);
         // Redis에서 Refresh Token 삭제
         redisUserService.deleteTokens(authUser.getId().toString());
+    }
+
+    // 비밀번호 재설정 요청
+    @Transactional
+    public String requestPasswordReset(String email) {
+        User user = getUserFromEmail(email);
+
+        // 랜덤 코드 생성
+        String resetCode = generateResetCode();
+
+        // Redis에 저장 (5분 TTL)
+        redisUserService.saveCode(email, resetCode);
+
+        // 이메일 전송
+        String emailContent = "<p>안녕하세요,</p>"
+                + "<p>아래의 코드를 사용하여 비밀번호를 재설정하세요:</p>"
+                + "<p><b>" + resetCode + "</b></p>";
+
+        try {
+            emailService.sendEmail(user.getEmail(), "비밀번호 재설정 코드", emailContent);
+        } catch (Exception e) {
+            throw new RuntimeException("이메일 전송 실패", e);
+        }
+
+        return "비밀번호 재설정 코드가 이메일로 전송되었습니다.";
+    }
+
+    // 비밀번호 변경
+    @Transactional
+    public String resetPassword(String email, String code, String newPassword) {
+        // Redis에서 코드 검증
+        String savedCode = redisUserService.getCode(email);
+        if (savedCode == null || !savedCode.equals(code)) {
+            throw new IllegalArgumentException("유효하지 않거나 만료된 코드입니다.");
+        }
+
+        // 사용자 찾기
+        User user = getUserFromEmail(email);
+
+        // 비밀번호 변경
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // 사용된 코드 삭제
+        redisUserService.deleteCode(email);
+
+        return "비밀번호가 성공적으로 변경되었습니다.";
+    }
+
+    // 랜덤 코드 생성
+    private String generateResetCode() {
+        return RandomStringUtils.randomNumeric(6); // 6자리 숫자
     }
 
     public User checkLogin(UserRequest userRequest) {
