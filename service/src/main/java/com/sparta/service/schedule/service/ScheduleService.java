@@ -193,8 +193,7 @@ public class ScheduleService {
                 .withPageable(PageRequest.of(0, 100))
                 .withTrackTotalHits(true)
                 .build();
-
-        searchQuery.setPreference("_local");  // 로컬 샤드 우선 검색
+        
         searchQuery.setRequestCache(true);    // Request Cache 활성화
 
         SearchHits<ScheduleSearch> searchHits = elasticsearchRestTemplate.search(
