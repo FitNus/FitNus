@@ -18,10 +18,13 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -170,5 +173,42 @@ public class AuctionService {
     public Auction createAuction(LocalDateTime startTime, LocalDateTime endTime, String product) {
         Auction auction = new Auction(startTime, endTime, product);
         return auctionRepository.save(auction);
+    }
+
+    @Transactional
+    public void placeBidWithLock(Long auctionId, Long userId, int bidAmount) {
+        String lockKey = "auction:bid:" + auctionId;
+        String lockValue = UUID.randomUUID().toString(); // 소유권 확인용 값
+
+        boolean acquired = redisTemplate.opsForValue()
+                .setIfAbsent(lockKey, lockValue, Duration.ofSeconds(5));
+
+        if (!acquired) {
+            throw new IllegalStateException("입찰 중 다른 트랜잭션이 이미 진행 중입니다.");
+        }
+
+        try {
+            // placeBid 메서드가 @Transactional 환경에서 호출되어야 함
+            placeBid(auctionId, userId, bidAmount);
+
+            // 트랜잭션 종료 후 락 해제
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronizationAdapter() {
+                        @Override
+                        public void afterCompletion(int status) {
+                            String currentValue = redisTemplate.opsForValue().get(lockKey);
+                            if (lockValue.equals(currentValue)) {
+                                redisTemplate.delete(lockKey);
+                            }
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            String currentValue = redisTemplate.opsForValue().get(lockKey);
+            if (lockValue.equals(currentValue)) {
+                redisTemplate.delete(lockKey);
+            }
+            throw e;
+        }
     }
 }
