@@ -1,10 +1,10 @@
 package com.sparta.user.user.entity;
 
 import com.sparta.common.Timestamped;
-import com.sparta.user.kakao.entity.KakaoPayment;
-import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.common.enums.UserRole;
 import com.sparta.common.enums.UserStatus;
+import com.sparta.user.kakao.entity.KakaoPayment;
+import com.sparta.user.user.dto.request.UserRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -124,5 +124,9 @@ public class User extends Timestamped {
 
     public void deactivate() {
         this.status = UserStatus.BANNED;
+    }
+
+    public void setPassword(String encode) {
+        this.password = encode;
     }
 }

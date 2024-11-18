@@ -6,6 +6,7 @@ import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
 import com.sparta.user.user.dto.request.CouponUsageRequest;
+import com.sparta.user.user.dto.request.PasswordReset;
 import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.user.user.dto.response.AuthTokenResponse;
 import com.sparta.user.user.dto.response.UserResponse;
@@ -83,6 +84,16 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         }
+    }
+
+    @PostMapping("v1/request/reset-password")
+    public ApiResponse<String> resetPassword(@RequestParam String email) {
+        return ApiResponse.createSuccess(userService.requestPasswordReset(email));
+    }
+
+    @PostMapping("/v1/reset-password")
+    public ApiResponse<String> resetPassword(@RequestBody PasswordReset passwordReset) {
+        return ApiResponse.createSuccess(userService.resetPassword(passwordReset.getEmail(), passwordReset.getCode(), passwordReset.getNewPassword()));
     }
 
     @GetMapping("/v1/user/info")
