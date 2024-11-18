@@ -50,6 +50,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.3'
     implementation 'org.springframework.data:spring-data-elasticsearch:5.0.0'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+}
+
+
+ext {
+    set('springCloudVersion', "2023.0.3")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('bootJar') {

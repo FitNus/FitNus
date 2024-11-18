@@ -143,5 +143,5 @@ jobs:
             docker pull $BATCH_REPOSITORY_URI
             docker stop batch-container || true
             docker rm batch-container || true
-            docker run -d --name batch-container -p 8082:8082 $COMMON_REPOSITORY_URI:$IMAGE_TAG
+            docker run -d --name batch-container -p 8082:8082 \$COMMON_REPOSITORY_URI:$IMAGE_TAG
           EOF

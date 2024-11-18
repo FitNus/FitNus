@@ -19,7 +19,7 @@ public class SlackMessageSender {
 
     private final MethodsClient methodsClient;
 
-    @Value("${SLACK_CHANNEL}")
+    @Value("C07TQA38SG1")
     private String slackChannel;
 
     @Async
