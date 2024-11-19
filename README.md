@@ -344,7 +344,7 @@
 <details>
 <summary>지도기반 검색</summary>
 <div markdown="1">  
-- 센터 검색시 위치정보 전달
+센터 검색시 위치정보 전달
 
     
   - 해당 기능이 필요한 이유
@@ -380,7 +380,7 @@
      ---
      ### **Redis Geospatial vs MySQL Geometry를 이용한 위치 기반 검색 기능**
     
-    ### **1. Redis Geospatial**
+    ### **1. Redis Geospatial** :outbox_tray:
     
     **장점:**
     
@@ -401,7 +401,7 @@
       - **캐싱 기능 활용**: 자주 조회되는 위치 데이터를 캐싱하여 성능 향상이 필요한 경우.
 
     ---
-    ### **2. MySQL Geometry**
+    ### **2. MySQL Geometry** :station:
     
     **장점:**
     
