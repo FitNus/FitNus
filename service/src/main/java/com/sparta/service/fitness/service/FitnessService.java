@@ -41,7 +41,7 @@ public class FitnessService {
     @Transactional
     public FitnessResponse createFitness(AuthUser authUser, FitnessRequest request) {
         Center center = centerService.getCenterId(request.getCenterId());
-        if (!authUser.getId().equals(centerService.getCenterId(request.getCenterId()).getId())) {
+        if (!authUser.getId().equals(center.getOwnerId())) {
             throw new FitnessgetAllAccessDeniedException();
         }
         Fitness fitness = Fitness.of(request, center);
