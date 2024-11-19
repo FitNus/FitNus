@@ -1061,4 +1061,23 @@
 |이현중|부리더|테스트3|https://github.com/ilmechaJu|
 |홍성현|팀원|테스트3|https://github.com/pookyspooky|
 |이유진|팀원|테스트3|https://github.com/pringles1234|
-|김태현|팀원|테스트3|https://github.com/tae98|
+|김태현|팀원|▶ 유저 
+- 유저 CRUD
+- Auth User CRUD
+- 관리자 유저 계정 BAN관리
+- Spring Security 필터
+- @secured 를 이용한 권한 관리
+- Redis를 이용한 JWT Access&Refresh 토큰 관리 
+- 카카오 소셜 자동 회원가입 및 로그인
+- HttpOnly & SameSiteOnly를 이용하여 CSRF 및 XSS 공격 방지.
+-Gmail SMTP를 이용한 비밀번호 재설정.
+▶카카오페이 
+- 카카오페이 Api를 이용한 쿠폰 결제 시스템.
+- 세션을 이용한 tid 및 결제 내역 저장.
+- 결제 실패 및 예외 발생시 failed 패이지로 처리
+▶실시간 경매 시스템
+- SSE를 이용하여 실시간 최고가 유저들에게 전달.
+- Kafka를 이용한 유저 입찰 대용량 트래픽 관리 및 비동기 처리.
+▶쿠폰 
+- CouponExpireScheduler를 사용한 쿠폰 만료처리
+- 낙관적 락을 이용한 쿠폰 버전관리 및 사용처리|https://github.com/tae98|
