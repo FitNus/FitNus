@@ -1,4 +1,4 @@
-## 💻 Environment
+![image](https://github.com/user-attachments/assets/6c91fccc-8f92-47f8-86ae-38b6b83b1b09)## 💻 Environment
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![YAML](https://img.shields.io/badge/yaml-%23ffffff.svg?style=for-the-badge&logo=yaml&logoColor=151515)
@@ -15,14 +15,7 @@
 ![image](https://github.com/user-attachments/assets/31486273-4021-4a76-9fe1-70d45fd112c2)
 
 
-<details>
-<summary>토글 접기/펼치기</summary>
-<div markdown="1">
 
-안녕
-
-</div>
-</details>
 ## 🗓️FitNus : 우리에게 딱 맞는 맞춤형 운동 플래너
 
 ## 📄 서비스/프로젝트 소개
@@ -32,24 +25,40 @@
 - 일정 관리가 되면서 경제적으로 저렴한 가격으로 제휴를 맺은 각종 운동 관련 센터들을 다양하게 이용할 수 있습니다.
 - 같이 운동을 즐길 수 있는 모임을 찾기 쉬운 웹 어플리케이션입니다.
 
-- 프로젝트 선정 이유
-    - **운동 관련 키워드의 검색량이 증가 중인 상태 → 운동에 대한 관심도가 높아졌다.**
+<details>
+<summary>프로젝트 선정 이유</summary>
+<div markdown="1">
+
+- **운동 관련 키워드의 검색량이 증가 중인 상태 → 운동에 대한 관심도가 높아졌다.**
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/7d500133-faa0-450a-a80c-64999782034e/image.png)
+    ![image](https://github.com/user-attachments/assets/84b77705-bb61-41ed-8cb9-045182d03a72)
+
     
     - **이왕이면 즐겁게 경험과 재미 추구, 헬시 플레저**
         - 과거에는 쾌락을 절제하거나 포기하면서 고통스럽게 운동을 했다면 이제는 즐겁고 효율적인 방법을 택해 ‘지속가능한 운동’을 추구
     - **“오늘 같이 뛸까요?” 크루’로 함께 즐긴다 → 모임 기능의 필요성**
         - 오프라인에서는 크루(Crew)라는 이름으로 함께 모여 러닝, 등산, 골프 등을 즐긴다. 이를테면, 러닝 크루의 경우 오픈 채팅방을 통해 모임을 공지하고, 정해진 날짜와 장소에 모여 달린 후 흩어지는 식
-- 프로젝트의 필요성
-    
+
+</div>
+</details>
+
+<details>
+<summary>프로젝트의 필요성</summary>
+<div markdown="1">
+
     현재 원하는 운동을 즐기기 위해서는 월 단위로 결제하는 방식이 일반적이다. 복싱, 헬스, 클라이밍, 농구 등 다양한 운동을 하고 싶다면 각 운동에 대해 별도로 월 단위 결제를 해야 한다. 하지만 이러한 방식은 비용적인 부담을 크게 느끼게 만든다.
     
     사람들이 하고 싶은 운동은 많지만, 실제로 운동에 투자할 수 있는 시간은 제한적이다. 예를 들어, 4가지 운동을 등록했더라도 하루에 소화할 수 있는 운동은 평균적으로 2가지 정도에 불과하다. 그럼에도 불구하고, 여러 운동을 즐기고 싶다는 이유로 4개의 운동을 모두 월 단위로 등록하게 되면, 낸 비용이 아까워 억지로 모든 일정을 소화하려는 심리가 발생할 수 있다. 이는 최근 운동 트렌드인 *헬시 플레저*(Healthy Pleasure)와도 맞지 않게 된다.
     
     이러한 문제를 해결하기 위해, 원하는 날짜에 원하는 운동만 선택적으로 등록할 수 있는 프로그램이 있다면 비용 절감과 더불어 시간 관리의 부담을 줄일 수 있을 것이다. 이로 인해 더 유연하고 즐거운 운동 생활을 가능하게 할 수 있다는 점에서 해당 프로젝트의 필요성이 제기된다.
+</div>
+</details>
+
     
-- 프로젝트 간단 예시
+    
+<details>
+<summary>프로젝트 간단 예시</summary>
+<div markdown="1">    
     
     사용자가 캘린더를 이용하여 원하는 센터의 운동을 본인의 일정에 등록(예약)하는 서비스입니다.
     
@@ -59,19 +68,23 @@
     
     ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/f29ae050-e31c-4a99-95f5-2d9f0266ff6c/image.png)
 
+</div>
+</details>
 
 ## 🔑 KEY SUMMARY
 
 - 일 단위 이용내역 기록 성능 개선
     
     조건: 배치 사이즈 = 1000
+    ![image](https://github.com/user-attachments/assets/2d0febb4-3cf7-4489-ad9d-a36a8c6509d7)
 
 
   - AWS의 Iac화 (using Terraform)
     
     **<before>**
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/95ad6685-1acf-4e55-84a9-3c23d89ef0cd/image.png)
+    ![image](https://github.com/user-attachments/assets/0ec845e0-9513-4d09-ae07-bb4093b20573)
+
     
     - 셋팅
         - AWS ECS, VPC 등은 셋팅할 때, 연관된 설정들을 다 셋팅 해줘야 비로소 만들 수 있음.
@@ -83,7 +96,8 @@
     
     **<After> #Infra as a code #AWS의 Ias화 #terraform사용**
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/69f97993-9601-4475-8993-8aff2eea0400/image.png)
+    ![image](https://github.com/user-attachments/assets/07fe3841-7e69-4e5f-8418-1811fb00e8a3)
+
     
     - 셋팅
         - terraform apply 입력 한번이면, 이 모든 셋팅이 한번에 가능함.
