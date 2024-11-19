@@ -113,32 +113,14 @@ jobs:
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_COMMON_LOGIN_URI
 
-      # Docker 이미지를 빌드하고 멀티 플랫폼으로 푸시
+      # Docker 이미지를 빌드하고 푸시
       - name: Build and push image to ECR
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./common/Dockerfile
           push: true
-          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:${{secrets.IMAGE_TAG}}
-
-      - name: Start SSH Agent and Add Key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-      - name: Deploy Common to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-          COMMON_REPOSITORY_URI: ${{ secrets.COMMON_REPOSITORY_URI }}
-          IMAGE_TAG : ${{secrets.IMAGE_TAG}}
-        run: |
-          ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST"
-            docker pull $COMMON_REPOSITORY_URI:$IMAGE_TAG
-            docker stop common-container || true
-            docker rm common-container || true
-            docker run -d --name common-container -p 8082:8082 $COMMON_REPOSITORY_URI:$IMAGE_TAG
+          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:"dev"
           
           
       
