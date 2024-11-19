@@ -99,7 +99,7 @@ jobs:
 
       # Gradle 빌드 추가
       - name: Build with Gradle
-        run: ./gradlew :batch:build
+        run: ./gradlew :batch:build -x test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -163,7 +163,7 @@ jobs:
 
   build-and-deploy-notification:
     needs: changes
-    if: ${{ needs.changes.outputs.notifiation == 'true' }}
+    if: ${{ needs.changes.outputs.notification == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
