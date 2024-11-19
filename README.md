@@ -108,24 +108,30 @@
 - 스케줄 조회 성능 개선
     - 그래프
     
-    ![스케줄 조회 그래프.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/21b4b455-4a51-485a-b118-95f1931f2895/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%A6%E1%84%8C%E1%85%AE%E1%86%AF_%E1%84%8C%E1%85%A9%E1%84%92%E1%85%AC_%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%84%91%E1%85%B3.png)
+    ![image](https://github.com/user-attachments/assets/fa5dce97-02f6-4791-86c6-ef9a636e5ca4)
+
     
 - 사용자 위치 기반 센터 검색 성능 개선
     - 그래프
+      ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
+
 - 경매 입찰 동시성 제어 성능 비교
     
-    ![Screenshot 2024-11-19 at 12.51.01 am.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/694577c0-fc7f-4e94-9d33-082c06f167fb/Screenshot_2024-11-19_at_12.51.01_am.png)
-    
-    ![output (2) (1).png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/b43c341d-9e40-4b63-ad3c-5480944017b6/output_(2)_(1).png)
+    ![image](https://github.com/user-attachments/assets/c0260cf3-03bb-464f-a3f8-be43e4d10250)
+
+    ![image](https://github.com/user-attachments/assets/b365e9df-b6d6-4408-8a94-8ccc6b545c42)
+
     
 - 일정 등록(예약) 동시성 제어 성능 개선
     
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/9ef5d073-3930-40bd-8f14-a04db46e61f8/image.png)
+    ![image](https://github.com/user-attachments/assets/baad57a8-833d-4c1f-9d02-ec489b427227)
+
     
 
 ## ⚙️ 인프라 설계
 
-![11.19일 Ver6.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/639e09d3-1a49-4791-8d42-6d212545b925/11.19%E1%84%8B%E1%85%B5%E1%86%AF_Ver6.png)
+![image](https://github.com/user-attachments/assets/245733b1-cdc4-4a3d-916b-3a588e01fc0f)
+
 
 
 
