@@ -43,13 +43,13 @@ public class ScheduleMessageService {
         // 예약 시간 계산
         Date notificationDate = Date.from(notificationTime.atZone(ZoneId.systemDefault()).toInstant());
 
-        // TaskScheduler를 사용해 1시간 전에 Kafka 메시지 발행 예약
-        taskScheduler.schedule(() -> {
+        // 알림 예약 등록
+        ScheduledFuture<?> scheduledTask = taskScheduler.schedule(() -> {
             notificationProducer.sendScheduleNotification(userId, message, scheduleId, startTime);
         }, notificationDate);
 
         // 새로운 예약을 Map에 저장
-//        scheduledTasks.put(scheduleId, scheduledTask);
+        scheduledTasks.put(scheduleId, scheduledTask);
         log.info("Notification scheduled at: {}", notificationTime);
     }
 
