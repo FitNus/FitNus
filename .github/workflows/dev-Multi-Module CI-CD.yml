@@ -1,0 +1,277 @@
+name: Dev-Multi-Module Build and Deploy
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    env:
+      SPRING_PROFILES_ACTIVE: "dev"
+
+    outputs:
+      auction: ${{ steps.filter.outputs.auction }}
+      batch: ${{ steps.filter.outputs.batch }}
+      common: ${{ steps.filter.outputs.common }}
+      notification: ${{ steps.filter.outputs.notification }}
+      service: ${{ steps.filter.outputs.service }}
+      user: ${{ steps.filter.outputs.user }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            auction:
+              - 'auction/**'
+            batch:
+              - 'batch/**'
+            common:
+              - 'common/**'
+            notification:
+              - 'notification/**'
+            service:
+              - 'service/**'
+            user:
+              - 'user/**'
+
+
+  build-and-deploy-auction:
+    needs: changes
+    if: ${{ needs.changes.outputs.auction == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :auction:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI: ${{secrets.ECR_AUCTION_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./auction/Dockerfile
+          push: true
+          tags: ${{ secrets.AUCTION_REPOSITORY_URI }}:dev
+
+  build-and-deploy-batch:
+    needs: changes
+    if: ${{ needs.changes.outputs.batch == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :batch:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI : ${{secrets.ECR_COMMON_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI  
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./common/Dockerfile
+          push: true
+          tags: ${{ secrets.BATCH_REPOSITORY_URI }}:dev
+
+  build-and-deploy-common:
+    needs: changes
+    if: ${{ needs.changes.outputs.common == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :common:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI : ${{secrets.ECR_COMMON_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./common/Dockerfile
+          push: true
+          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:dev
+
+  build-and-deploy-notification:
+    needs: changes
+    if: ${{ needs.changes.outputs.notification == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :notification:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI: ${{secrets.ECR_NOTIFICATION_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./notification/Dockerfile
+          push: true
+          tags: ${{ secrets.NOTIFICATION_REPOSITORY_URI }}:dev
+
+  build-and-deploy-service:
+    needs: changes
+    if: ${{ needs.changes.outputs.service == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :service:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI: ${{secrets.ECR_SERVICE_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./service/Dockerfile
+          push: true
+          tags: ${{ secrets.SERVICE_REPOSITORY_URI }}:dev
+
+  build-and-deploy-user:
+    needs: changes
+    if: ${{ needs.changes.outputs.user == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Gradle 빌드 추가
+      - name: Build with Gradle
+        run: ./gradlew :user:build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_LOGIN_URI: ${{secrets.ECR_USER_LOGIN_URI}}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URI
+
+      # Docker 이미지를 빌드하고 푸시
+      - name: Build and push image to ECR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./user/Dockerfile
+          push: true
+          tags: ${{ secrets.USER_REPOSITORY_URI }}:dev

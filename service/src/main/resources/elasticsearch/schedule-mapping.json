@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "userId": {
+      "type": "long"
+    },
+    "year": {
+      "type": "integer"
+    },
+    "month": {
+      "type": "integer"
+    },
+    "day": {
+      "type": "integer"
+    },
+    "startTime": {
+      "type": "date",
+      "format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+      "doc_values": true
+    },
+    "endTime": {
+      "type": "date",
+      "format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+      "doc_values": true
+    },
+    "requiredCoupon": {
+      "type": "integer",
+      "doc_values": true
+    }
+  }
+}
