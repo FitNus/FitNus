@@ -29,6 +29,7 @@
 <summary>프로젝트 선정 이유</summary>
 <div markdown="1">
 
+
 - **운동 관련 키워드의 검색량이 증가 중인 상태 → 운동에 대한 관심도가 높아졌다.**
     
 ![image](https://github.com/user-attachments/assets/84b77705-bb61-41ed-8cb9-045182d03a72)
@@ -46,6 +47,7 @@
 <summary>프로젝트의 필요성</summary>
 <div markdown="1">
 
+
   -  현재 원하는 운동을 즐기기 위해서는 월 단위로 결제하는 방식이 일반적이다. 복싱, 헬스, 클라이밍, 농구 등 다양한 운동을 하고 싶다면 각 운동에 대해 별도로 월 단위 결제를 해야 한다. 하지만 이러한 방식은 비용적인 부담을 크게 느끼게 만든다.
 
   -  사람들이 하고 싶은 운동은 많지만, 실제로 운동에 투자할 수 있는 시간은 제한적이다. 예를 들어, 4가지 운동을 등록했더라도 하루에 소화할 수 있는 운동은 평균적으로 2가지 정도에 불과하다. 그럼에도 불구하고, 여러 운동을 즐기고 싶다는 이유로 4개의 운동을 모두 월 단위로 등록하게 되면, 낸 비용이 아까워 억지로 모든 일정을 소화하려는 심리가 발생할 수 있다. 이는 최근 운동 트렌드인 *헬시 플레저*(Healthy Pleasure)와도 맞지 않게 된다.
@@ -58,6 +60,7 @@
 <details>
 <summary>프로젝트 간단 예시</summary>
 <div markdown="1">    
+
     
 사용자가 캘린더를 이용하여 원하는 센터의 운동을 본인의 일정에 등록(예약)하는 서비스입니다.
 
@@ -74,13 +77,13 @@
 
 ## 🔑 KEY SUMMARY
 
-- 일 단위 이용내역 기록 성능 개선
+- ## 일 단위 이용내역 기록 성능 개선
     
     조건: 배치 사이즈 = 1000
     ![image](https://github.com/user-attachments/assets/2d0febb4-3cf7-4489-ad9d-a36a8c6509d7)
 
 
-  - AWS의 Iac화 (using Terraform)
+  ## AWS의 Iac화 (using Terraform)
     
     **[before]**
     
@@ -104,24 +107,24 @@
         * terraform apply 입력 한번이면, 이 모든 셋팅이 한번에 가능함.
     * 삭제
         * terraform destroy 입력 한번이면, 이 모든 셋팅 삭제가 가능함.
-- 스케줄 조회 성능 개선
+- ## 스케줄 조회 성능 개선
     - 그래프
     
     ![image](https://github.com/user-attachments/assets/fa5dce97-02f6-4791-86c6-ef9a636e5ca4)
 
     
-- 사용자 위치 기반 센터 검색 성능 개선
+- ## 사용자 위치 기반 센터 검색 성능 개선
     - 그래프
       ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
 
-- 경매 입찰 동시성 제어 성능 비교
+- ## 경매 입찰 동시성 제어 성능 비교
     
     ![image](https://github.com/user-attachments/assets/c0260cf3-03bb-464f-a3f8-be43e4d10250)
 
     ![image](https://github.com/user-attachments/assets/b365e9df-b6d6-4408-8a94-8ccc6b545c42)
 
     
-- 일정 등록(예약) 동시성 제어 성능 개선
+- ## 일정 등록(예약) 동시성 제어 성능 개선
     
     ![image](https://github.com/user-attachments/assets/baad57a8-833d-4c1f-9d02-ec489b427227)
 
@@ -177,6 +180,8 @@
 <details>
 <summary>경매</summary>
 <div markdown="1">  
+
+    
 ### 기술적 접근
     
 1. **Kafka를 통한 입찰 이벤트 비동기 처리**:
@@ -200,7 +205,9 @@
     
 <details>
 <summary>정산</summary>
-<div markdown="1">      
+<div markdown="1">   
+
+    
 ## 목표
     
 아주 많은 데이터인 일정 예약 기록을 효율적으로 빠르게 처리하는 것도 중요하지만 작업을 어디까지 진행했는지 계속해서 파악할 수 있게하여 데이터를 중복으로 처리하는 것도 방지하고 데이터의 일관성을 지키는 정산 기능을 구현해야 한다. 
@@ -230,6 +237,7 @@
 <details>
 <summary>정산의 트리거</summary>
 <div markdown="1">   
+
 
 ## [기능 설명]
 
@@ -344,6 +352,8 @@
 <details>
 <summary>지도기반 검색</summary>
 <div markdown="1">  
+
+    
 센터 검색시 위치정보 전달
 
     
@@ -436,6 +446,8 @@
 <details>
 <summary>CI/CD</summary>
 <div markdown="1">  
+
+    
  ### 1. CI/CD 및 인프라 구축
     
 **선택 이유:** CI/CD 구축을 통해 개발 주기를 단축하고 자동화된 테스트 및 배포를 통해 품질을 보장하며, 빠르게 피드백을 받아 수정할 수 있습니다.
@@ -506,7 +518,9 @@
     
 <details>
 <summary>모듈화의 필요성</summary>
-<div markdown="1">      
+<div markdown="1">  
+
+    
 ![image](https://github.com/user-attachments/assets/15b2e4a2-cc40-484b-b21e-f2a0af24baf1)
 
 
@@ -612,6 +626,8 @@
 <details>
 <summary>일정 등록(예약) 동시성 제어</summary>
 <div markdown="1">      
+
+    
 ## [배경]
 
 ### 이벤트성 일정이 있지 않을까? 라는 생각을 했습니다. 갑자기 김종국이 특정 체육관에서 일일 트레이너를 하는 컨텐츠를 기획해서 사람들을 모집하는 상황이 발생했다고 가정했습니다.
