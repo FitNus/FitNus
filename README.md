@@ -29,6 +29,7 @@
 <summary>프로젝트 선정 이유</summary>
 <div markdown="1">
 
+
 - **운동 관련 키워드의 검색량이 증가 중인 상태 → 운동에 대한 관심도가 높아졌다.**
     
 ![image](https://github.com/user-attachments/assets/84b77705-bb61-41ed-8cb9-045182d03a72)
@@ -46,6 +47,7 @@
 <summary>프로젝트의 필요성</summary>
 <div markdown="1">
 
+
   -  현재 원하는 운동을 즐기기 위해서는 월 단위로 결제하는 방식이 일반적이다. 복싱, 헬스, 클라이밍, 농구 등 다양한 운동을 하고 싶다면 각 운동에 대해 별도로 월 단위 결제를 해야 한다. 하지만 이러한 방식은 비용적인 부담을 크게 느끼게 만든다.
 
   -  사람들이 하고 싶은 운동은 많지만, 실제로 운동에 투자할 수 있는 시간은 제한적이다. 예를 들어, 4가지 운동을 등록했더라도 하루에 소화할 수 있는 운동은 평균적으로 2가지 정도에 불과하다. 그럼에도 불구하고, 여러 운동을 즐기고 싶다는 이유로 4개의 운동을 모두 월 단위로 등록하게 되면, 낸 비용이 아까워 억지로 모든 일정을 소화하려는 심리가 발생할 수 있다. 이는 최근 운동 트렌드인 *헬시 플레저*(Healthy Pleasure)와도 맞지 않게 된다.
@@ -58,6 +60,7 @@
 <details>
 <summary>프로젝트 간단 예시</summary>
 <div markdown="1">    
+
     
 사용자가 캘린더를 이용하여 원하는 센터의 운동을 본인의 일정에 등록(예약)하는 서비스입니다.
 
@@ -74,13 +77,13 @@
 
 ## 🔑 KEY SUMMARY
 
-- 일 단위 이용내역 기록 성능 개선
+- ## 일 단위 이용내역 기록 성능 개선
     
     조건: 배치 사이즈 = 1000
     ![image](https://github.com/user-attachments/assets/2d0febb4-3cf7-4489-ad9d-a36a8c6509d7)
 
 
-  - AWS의 Iac화 (using Terraform)
+  ## AWS의 Iac화 (using Terraform)
     
     **[before]**
     
@@ -104,24 +107,25 @@
         * terraform apply 입력 한번이면, 이 모든 셋팅이 한번에 가능함.
     * 삭제
         * terraform destroy 입력 한번이면, 이 모든 셋팅 삭제가 가능함.
-- 스케줄 조회 성능 개선
+- ## 스케줄 조회 성능 개선
     - 그래프
     
     ![image](https://github.com/user-attachments/assets/fa5dce97-02f6-4791-86c6-ef9a636e5ca4)
 
     
-- 사용자 위치 기반 센터 검색 성능 개선
+- ## 사용자 위치 기반 센터 검색 성능 개선
     - 그래프
-      ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
+ 
+    ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
 
-- 경매 입찰 동시성 제어 성능 비교
+- ## 경매 입찰 동시성 제어 성능 비교
     
     ![image](https://github.com/user-attachments/assets/c0260cf3-03bb-464f-a3f8-be43e4d10250)
 
     ![image](https://github.com/user-attachments/assets/b365e9df-b6d6-4408-8a94-8ccc6b545c42)
 
     
-- 일정 등록(예약) 동시성 제어 성능 개선
+- ## 일정 등록(예약) 동시성 제어 성능 개선
     
     ![image](https://github.com/user-attachments/assets/baad57a8-833d-4c1f-9d02-ec489b427227)
 
@@ -177,6 +181,8 @@
 <details>
 <summary>경매</summary>
 <div markdown="1">  
+
+    
 ### 기술적 접근
     
 1. **Kafka를 통한 입찰 이벤트 비동기 처리**:
@@ -200,7 +206,9 @@
     
 <details>
 <summary>정산</summary>
-<div markdown="1">      
+<div markdown="1">   
+
+    
 ## 목표
     
 아주 많은 데이터인 일정 예약 기록을 효율적으로 빠르게 처리하는 것도 중요하지만 작업을 어디까지 진행했는지 계속해서 파악할 수 있게하여 데이터를 중복으로 처리하는 것도 방지하고 데이터의 일관성을 지키는 정산 기능을 구현해야 한다. 
@@ -230,6 +238,7 @@
 <details>
 <summary>정산의 트리거</summary>
 <div markdown="1">   
+
 
 ## [기능 설명]
 
@@ -344,6 +353,8 @@
 <details>
 <summary>지도기반 검색</summary>
 <div markdown="1">  
+
+    
 센터 검색시 위치정보 전달
 
     
@@ -436,6 +447,8 @@
 <details>
 <summary>CI/CD</summary>
 <div markdown="1">  
+
+    
  ### 1. CI/CD 및 인프라 구축
     
 **선택 이유:** CI/CD 구축을 통해 개발 주기를 단축하고 자동화된 테스트 및 배포를 통해 품질을 보장하며, 빠르게 피드백을 받아 수정할 수 있습니다.
@@ -506,7 +519,9 @@
     
 <details>
 <summary>모듈화의 필요성</summary>
-<div markdown="1">      
+<div markdown="1">  
+
+    
 ![image](https://github.com/user-attachments/assets/15b2e4a2-cc40-484b-b21e-f2a0af24baf1)
 
 
@@ -612,6 +627,8 @@
 <details>
 <summary>일정 등록(예약) 동시성 제어</summary>
 <div markdown="1">      
+
+    
 ## [배경]
 
 ### 이벤트성 일정이 있지 않을까? 라는 생각을 했습니다. 갑자기 김종국이 특정 체육관에서 일일 트레이너를 하는 컨텐츠를 기획해서 사람들을 모집하는 상황이 발생했다고 가정했습니다.
@@ -756,6 +773,8 @@
 <details>
 <summary>사용자 위치 기반 센터 검색</summary>
 <div markdown="1">  
+
+    
 ### 💡문제인식
 
 - 사용자 중심의 위치 기반 검색 기능이 필요해짐
@@ -813,6 +832,8 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 <details>
 <summary>config-server 설정</summary>
 <div markdown="1">  
+
+    
 ### 💡문제인식
 
 - Config-Server
@@ -849,7 +870,9 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 <details>
 <summary>모듈화에 따른 CI/CD 설정</summary>
 <div markdown="1"> 
--아래는 모듈화에 따른 CI/CD 설계를 진행하면서 만난 문제들입니다.
+
+    
+- 아래는 모듈화에 따른 CI/CD 설계를 진행하면서 만난 문제들입니다.
 
 - **문제1: Gradlew 설정 문제**
 - **문제2: Dockerfile에서의 문제 #절망의 서막 #no such file or directory**
@@ -935,6 +958,8 @@ https://ilmechaju.tistory.com/130
 <details>
 <summary>경매 입찰 동시성 제어 성능</summary>
 <div markdown="1">
+
+    
 ### 💡문제인식
 
 - **동시성 문제**: 
@@ -983,6 +1008,8 @@ https://ilmechaju.tistory.com/130
 <details>
 <summary>일정 등록 동시성 제어</summary>
 <div markdown="1">
+
+    
 ### [성능 개선 / 코드 개선 요약]
 
  일정 등록 요청을 처리할 때 동시성 제어를 위해 Redis 분산락을 사용했지만 동시성 제어에 실패하여 이를 수정하는 작업을 했습니다.
@@ -1166,7 +1193,7 @@ REQUIRES_NEW를 통해서 별도의 트랜잭션으로 분리하려 했지만 �
 |--------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 | 이건   | 리더   | ▶ 모임<br>- 모임 CRUD<br>▶ 멤버<br>- 멤버 목록 조회, 멤버 탈퇴, 멤버 추방<br>▶ 멤버 신청<br>- 멤버 가입신청, 수락, 거절, 신청목록 조회<br>▶ 일정<br>- 일정 CRUD<br>- 일정 복사<br>- 분산락을 활용한 일정과 timeslot, 알림 동시성 제어<br>- 예약 기능 대용량 트래픽에 대비한 성능 개선<br>▶ 정산<br>- 일 단위 이용내역 기록<br>- 월 단위 정산<br>- 월 단위 사용자 결제내역 정산<br>- 스프링 배치 예외처리 전략 구현<br>▶ 프로젝트 모듈화<br>▶ 개발자 슬랙알림<br>- 런타임 예외 발생시 슬랙 알림 발송                                                                                                                                                                                                                                                          | https://github.com/doolchong    |
 | 이현중 | 부리더 | ▶ 센터<br>- 센터 CRUD<br>▶ 타임슬롯<br>- 타임슬롯 CRUD<br>▶ 운동종류(fitness)<br>- 운동종류 CRUD<br>▶ 멀티모듈 CICD<br>- 모듈화된 프로젝트에 맞게 CI/CD 설계<br>- 개발 파이프라인/배포 파이프라인 구축<br>▶ AWS <br>- IAM 정책분리, ECS, ECR, EC2, VPC(privat, public), RDS, S3, ELB, Autoscaling, Cloudwatch<br>▶  Gradlew<br>- 멀티 스테이지 빌드(빌더 패턴)<br>▶  도커컨테이너, 도커컴포즈, ECS<br>- Spring, Redis, config-server, kafka 등 로컬에서 docker-compose로 테스트 후에, 배포환경에서 ECS로 관리<br>▶ Config-server<br>- 운영/개발 환경의 환경변수 통합관리용 서버<br>▶ Terraform <br>- aws의 IaC도입                                                                                                                                           | https://github.com/ilmechaJu    |
-| 홍성현 | 팀원   | ▶ 프로필<br>- S3 이미지 업로드 및 수정, 삭제<br>- nickname, Bio 등록 및 수정, 삭제<br>- 프로필 조회<br>▶ 검색<br>- QueryDSL을 이용한 모임 검색<br>- Elasticsearch를 이용한 스케줄 조회<br>- Elasticsearch geo-distance query를 이용한 사용자 위치 기반 지정된 반경이내 센터 검색<br>- Nori 분석기 및 N-gram 토크나이저 활용하여 검색 성능 개선<br>- 소문자 변활 필터 적용으로 대소문자 구분 없이 검색어를 처리하여 검색 정확도 및 일관성 개선<br>- Indexing & Caching                                                                                                                                                                                                                                                                                        | https://github.com/pookyspooky  |
+| 홍성현 | 팀원   | ▶ 프로필<br>- S3 이미지 업로드 및 수정, 삭제<br>- nickname, Bio 등록 및 수정, 삭제<br>- 프로필 조회<br>▶ 검색<br>- QueryDSL을 이용한 모임 검색<br>- Elasticsearch를 이용한 스케줄 조회<br>- Elasticsearch geo-distance query를 이용한 사용자 위치 기반 지정된 반경이내 센터 검색<br>- Nori 분석기 및 N-gram 토크나이저 활용하여 검색 성능 개선<br>- 소문자 변환 필터 적용으로 대소문자 구분 없이 검색어를 처리하여 검색 정확도 및 일관성 개선<br>- Indexing & Caching                                                                                                                                                                                                                                                                                        | https://github.com/pookyspooky  |
 | 이유진 | 팀원   | ▶ 알림<br>- SSE를 활용한 실시간 알림 전송<br>- Kafka를 통해 대용량 트래픽에서 안정적으로 비동기 메시지 처리 <br>- 알림 테스트용 프론트엔드 구현<br>- TaskScheduler를 활용한 동적 알림 구현<br>- Security Context 전파 문제를 해결하여 비동기 환경에서도 사용자 인증 정보 유지<br>▶주변 센터 지도 <br>- Kakao 지도 API를 활용해 주소 기반 위,경도 반환<br>-Redis Geospatial를 사용해 빠른 주변 센터 검색 구현                                                                                                                                                                                                                                                                                                                                                 | https://github.com/pringles1234 |
 | 김태현 | 팀원   | ▶ 유저 <br>- 유저 CRUD<br>- Auth User CRUD<br>- 관리자 유저 계정 BAN관리<br>- Spring Security 필터<br>- @secured 를 이용한 권한 관리<br>- Redis를 이용한 JWT Access&Refresh 토큰 관리 <br>- 카카오 소셜 자동 회원가입 및 로그인<br>- HttpOnly & SameSiteOnly를 이용하여 CSRF 및 XSS 공격 방지.<br>-Gmail SMTP를 이용한 비밀번호 재설정.<br>▶카카오페이 <br>- 카카오페이 Api를 이용한 쿠폰 결제 시스템.<br>- 세션을 이용한 tid 및 결제 내역 저장.<br>- 결제 실패 및 예외 발생시 failed 패이지로 처리<br>▶실시간 경매 시스템<br>- SSE를 이용하여 실시간 최고가 유저들에게 전달.<br>- Kafka를 이용한 유저 입찰 대용량 트래픽 관리 및 비동기 처리.<br>▶쿠폰 <br>- CouponExpireScheduler를 사용한 쿠폰 만료처리<br>- 낙관적 락을 이용한 쿠폰 버전관리 및 사용처리 | https://github.com/tae98        |
 
