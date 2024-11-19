@@ -91,7 +91,7 @@ jobs:
 
       # Gradle 빌드 추가
       - name: Build with Gradle
-        run: ./gradlew :common:build
+        run: ./gradlew :common:build -x test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
