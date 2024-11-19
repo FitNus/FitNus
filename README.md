@@ -756,6 +756,8 @@
 <details>
 <summary>사용자 위치 기반 센터 검색</summary>
 <div markdown="1">  
+
+    
 ### 💡문제인식
 
 - 사용자 중심의 위치 기반 검색 기능이 필요해짐
@@ -813,6 +815,8 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 <details>
 <summary>config-server 설정</summary>
 <div markdown="1">  
+
+    
 ### 💡문제인식
 
 - Config-Server
@@ -849,7 +853,9 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 <details>
 <summary>모듈화에 따른 CI/CD 설정</summary>
 <div markdown="1"> 
--아래는 모듈화에 따른 CI/CD 설계를 진행하면서 만난 문제들입니다.
+
+    
+- 아래는 모듈화에 따른 CI/CD 설계를 진행하면서 만난 문제들입니다.
 
 - **문제1: Gradlew 설정 문제**
 - **문제2: Dockerfile에서의 문제 #절망의 서막 #no such file or directory**
@@ -935,6 +941,8 @@ https://ilmechaju.tistory.com/130
 <details>
 <summary>경매 입찰 동시성 제어 성능</summary>
 <div markdown="1">
+
+    
 ### 💡문제인식
 
 - **동시성 문제**: 
