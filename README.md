@@ -342,9 +342,9 @@
 
 
 <details>
-<summary>검색</summary>
+<summary>지도기반 검색</summary>
 <div markdown="1">  
-- **센터 검색시 위치정보 전달**
+- 센터 검색시 위치정보 전달
 
     
   - 해당 기능이 필요한 이유
@@ -374,15 +374,11 @@
     - **복합 쿼리 지원**: **위치**와 **다양한 필터**를 결합한 복잡한 쿼리도 효율적으로 처리할 수 있습니다.
 
 
-      - Elasticsearch를 사용한다면 다른 쿼리와 결합하여 보다 나은 검색 결과를 처리할 수 있는 경험을 해볼 수 있습니다.    
-</div>
-</details>       
-        
+      - Elasticsearch를 사용한다면 다른 쿼리와 결합하여 보다 나은 검색 결과를 처리할 수 있는 경험을 해볼 수 있습니다.
 
-   
-- 지도
-    
-    ### **Redis Geospatial vs MySQL Geometry를 이용한 위치 기반 검색 기능**
+
+
+     ### **Redis Geospatial vs MySQL Geometry를 이용한 위치 기반 검색 기능**
     
     ### **1. Redis Geospatial**
     
@@ -429,6 +425,21 @@
     - **빠른 실시간 검색 성능**과 **간단한 반경 검색 기능**, 그리고 **캐싱을 통한 서버 부하 감소** 때문
         - 저희 프로젝트의 현재 위치 기반 검색 기능에서는 단순한 반경 검색이 주된 요구사항. MySQL Geometry는 복잡한 위치 기반 쿼리(다각형 검색 등)에 강점이 있지만, 이 프로젝트에서는 필요하지 않으므로 Redis의 간단한 반경 검색 기능이 적합.
     - 또한, Redis의 확장성은 대량의 위치 데이터를 안정적으로 처리할 수 있어 요구사항에 적합
+</div>
+</details>       
+
+
+<details>
+<summary>지도</summary>
+<div markdown="1">  
+    
+</div>
+</details>       
+        
+   
+
+    
+    
 - CI/CD
     
     ### 1. CI/CD 및 인프라 구축
