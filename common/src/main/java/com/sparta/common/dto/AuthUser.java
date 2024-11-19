@@ -22,3 +22,4 @@ public class AuthUser {
         this.nickname = nickname;
     }
 }
+
