@@ -120,6 +120,10 @@ public class ScheduleService {
         // Elasticsearch 업데이트
         saveSearch(new ScheduleSearch(schedule));
 
+        // 기존 알림 취소 및 새로운 알림 등록
+        scheduleMessageService.cancelScheduledNotification(scheduleId);
+        scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(), scheduleId);
+
         return new ScheduleResponse(schedule);
     }
 
@@ -137,6 +141,11 @@ public class ScheduleService {
         // Elasticsearch 업데이트
         saveSearch(new ScheduleSearch(schedule));
 
+        // 기존 알림 취소 및 새로운 알림 등록
+        scheduleMessageService.cancelScheduledNotification(scheduleId);
+        scheduleMessageService.scheduleNotification(authUser.getId(), club.getDate(), scheduleId);
+
+
         return new ScheduleResponse(schedule);
     }
 
@@ -153,6 +162,9 @@ public class ScheduleService {
 
         // Elasticsearch에서 삭제
         deleteScheduleSearch(scheduleId);
+
+        // 기존 알림 취소
+        scheduleMessageService.cancelScheduledNotification(scheduleId);
 
         scheduleRepository.delete(schedule);
     }

@@ -1,6 +1,7 @@
 package com.sparta.service.center.repository;
 
 import com.sparta.service.center.service.LocationService.LatLng;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.geo.Circle;
@@ -25,6 +26,7 @@ public class CenterCacheRepositoryImpl implements CenterCacheRepository {
     @Override
     public void saveGeoLocation(String key, Double longitude, Double latitude, Long id) {
         geoOperations.add(key, new Point(longitude, latitude), id.toString());
+        redisTemplate.expire(key, Duration.ofHours(1)); // 1시간 TTL 설정
     }
 
     @Override
