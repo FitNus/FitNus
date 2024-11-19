@@ -125,7 +125,7 @@
     ![image](https://github.com/user-attachments/assets/b365e9df-b6d6-4408-8a94-8ccc6b545c42)
 
     
- ## 일정 등록(예약) 동시성 제어 성능 개선
+- ## 일정 등록(예약) 동시성 제어 성능 개선
     
     ![image](https://github.com/user-attachments/assets/baad57a8-833d-4c1f-9d02-ec489b427227)
 
