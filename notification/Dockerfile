@@ -2,15 +2,12 @@
 FROM gradle:7.6.0-jdk17 AS builder
 WORKDIR /app
 COPY . .
-RUN ./gradlew :batch:bootJar --no-daemon
-
+RUN ./gradlew :notification:bootJar --no-daemon
 
 # 2단계: 최종 실행 이미지 생성
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-COPY --from=builder /app/*.jar batch.jar
+COPY --from=builder /app/*.jar common.jar
 
 # 실행 명령어
-ENTRYPOINT ["java", "-jar", "batch.jar"]
-
-
+ENTRYPOINT ["java", "-jar", "common.jar"]
