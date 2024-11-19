@@ -115,7 +115,8 @@
     
 - ## 사용자 위치 기반 센터 검색 성능 개선
     - 그래프
-      ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
+ 
+    ![image](https://github.com/user-attachments/assets/d8b163d6-e042-4406-9794-e7bbec0e3488)
 
 - ## 경매 입찰 동시성 제어 성능 비교
     
@@ -124,7 +125,7 @@
     ![image](https://github.com/user-attachments/assets/b365e9df-b6d6-4408-8a94-8ccc6b545c42)
 
     
-- ## 일정 등록(예약) 동시성 제어 성능 개선
+ ## 일정 등록(예약) 동시성 제어 성능 개선
     
     ![image](https://github.com/user-attachments/assets/baad57a8-833d-4c1f-9d02-ec489b427227)
 
