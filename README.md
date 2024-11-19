@@ -1054,3 +1054,11 @@
 
 
   🧑‍💻 CONTRIBUTORS
+
+  |팀원명|포지션|담당(개인별 기여점)|깃허브 링크|
+|------|---|---------------|---------|
+|이건|리더|테스트3|https://github.com/doolchong|
+|이현중|부리더|테스트3|https://github.com/ilmechaJu|
+|홍성현|팀원|테스트3|https://github.com/pookyspooky|
+|이유진|팀원|테스트3|https://github.com/pringles1234|
+|김태현|팀원|테스트3|https://github.com/tae98|
