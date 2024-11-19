@@ -172,7 +172,7 @@
 - **고가용성**: Redis Sentinel
 
 
-## 기술적 의사 결정
+## :eyes: 기술적 의사 결정
 
 <details>
 <summary>경매</summary>
