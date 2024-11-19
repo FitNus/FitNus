@@ -47,7 +47,7 @@ jobs:
 
       # Gradle 빌드 추가
       - name: Build with Gradle
-        run: ./gradlew :module-batch:build #바꿔야됨
+        run: ./gradlew :batch:build #바꿔야됨
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -67,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./module-common/Dockerfile #바꿔야됨
+          file: ./common/Dockerfile #바꿔야됨
           push: true
           tags: ${{ secrets.BATCH_REPOSITORY_URI }}:${{secrets.IMAGE_TAG}} #바꿔야됨
 
@@ -91,7 +91,7 @@ jobs:
 
       # Gradle 빌드 추가
       - name: Build with Gradle
-        run: ./gradlew :module-batch:build
+        run: ./gradlew :common:build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -110,7 +110,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./module-common/Dockerfile
+          file: ./common/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.COMMON_REPOSITORY_URI }}:${{secrets.IMAGE_TAG}}
