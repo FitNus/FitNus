@@ -120,7 +120,7 @@ jobs:
           context: .
           file: ./common/Dockerfile
           push: true
-          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:"dev"
+          tags: ${{ secrets.COMMON_REPOSITORY_URI }}:dev
           
           
       
