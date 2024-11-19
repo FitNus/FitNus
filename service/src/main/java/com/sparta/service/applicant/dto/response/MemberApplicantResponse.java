@@ -1,7 +1,7 @@
 package com.sparta.service.applicant.dto.response;
 
+import com.sparta.common.user.dto.ProfileResponse;
 import com.sparta.service.applicant.entity.MemberApplicant;
-import com.sparta.user.user.dto.response.ProfileResponse;
 import lombok.Getter;
 
 @Getter

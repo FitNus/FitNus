@@ -1,7 +1,7 @@
 package com.sparta.service.center.entity;
 
 import com.sparta.common.Timestamped;
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.center.dto.request.CenterSaveRequest;
 import com.sparta.service.center.dto.request.CenterUpdateRequest;
 import com.sparta.service.fitness.entity.Fitness;

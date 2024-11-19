@@ -1,7 +1,7 @@
 package com.sparta.service.center.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.center.dto.request.CenterSaveRequest;
 import com.sparta.service.center.dto.request.CenterUpdateRequest;
 import com.sparta.service.center.dto.response.CenterResponse;
@@ -12,8 +12,6 @@ import com.sparta.service.center.exception.CenterNotFoundException;
 import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterRepository;
 import com.sparta.service.search.service.ElasticsearchService;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.geo.GeoResult;
@@ -22,6 +20,9 @@ import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -93,7 +94,7 @@ public class CenterService {
     @Secured(UserRole.Authority.OWNER)
     @Transactional
     public CenterResponse updateCenter(AuthUser authUser, Long centerId,
-            CenterUpdateRequest updateRequest) {
+                                       CenterUpdateRequest updateRequest) {
         Long ownerId = isValidOwnerInCenter(centerId);
         Long currentUserId = authUser.getId(); // 현재 사용자 ID 가져오기
 
@@ -140,7 +141,7 @@ public class CenterService {
      */
     @Transactional
     public List<CenterResponse> findNearbyCenters(Double userLongitude, Double userLatitude,
-            Double radius) {
+                                                  Double radius) {
         //사용자의 위치에서 지정된 반경 내의 센터를 검색
         GeoResults<GeoLocation<String>> results = cacheRepository.findCentersWithinRadius(
                 userLongitude, userLatitude, radius);

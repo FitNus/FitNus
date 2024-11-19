@@ -1,7 +1,7 @@
 package com.sparta.service.fitness.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.service.CenterService;
 import com.sparta.service.fitness.dto.request.FitnessDeleteRequest;

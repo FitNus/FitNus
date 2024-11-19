@@ -1,24 +1,25 @@
 package com.sparta.service.schedule.service;
 
-import com.sparta.notification.kafka.NotificationProducer;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleMessageService {
 
-    private final TaskScheduler taskScheduler;
+
     private final NotificationProducer notificationProducer;
+    private final TaskScheduler taskScheduler;
     private static final String NOTIFICATION_TOPIC = "notification";
 
     // 예약된 알림을 관리하기 위한 Map (scheduleId를 키로 사용)
@@ -27,8 +28,8 @@ public class ScheduleMessageService {
     /**
      * 일정 알림을 시작 1시간 전에 예약하는 메서드.
      *
-     * @param userId    사용자 ID
-     * @param startTime 일정 시작 시간
+     * @param userId     사용자 ID
+     * @param startTime  일정 시작 시간
      * @param scheduleId 일정 ID
      */
     public void scheduleNotification(Long userId, LocalDateTime startTime, Long scheduleId) {
