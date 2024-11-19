@@ -1,6 +1,6 @@
 package com.sparta.user.user.dto.response;
 
-import com.sparta.user.user.entity.User;
+import com.sparta.common.user.entity.User;
 import lombok.Getter;
 
 @Getter

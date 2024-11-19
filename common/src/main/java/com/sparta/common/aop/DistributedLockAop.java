@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 
 import static com.sparta.common.distributedlock.SpELParser.getDynamicValue;
 
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -49,7 +50,12 @@ public class DistributedLockAop {
             }
 
             log.debug("Acquired lock - key: {}", lockKey);
-            return aopForTransaction.proceed(joinPoint);
+
+            // 트랜잭션을 시작하고, 비즈니스 로직을 수행
+            Object result = aopForTransaction.proceed(joinPoint);
+
+            // 트랜잭션이 성공적으로 완료된 후에 락을 해제
+            return result;
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

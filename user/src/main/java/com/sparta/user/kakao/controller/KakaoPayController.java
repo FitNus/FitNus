@@ -1,6 +1,6 @@
 package com.sparta.user.kakao.controller;
 
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.user.kakao.SessionUtils;
 import com.sparta.user.kakao.dto.OrderCreateForm;
 import com.sparta.user.kakao.dto.response.KakaoPayReadyResponse;

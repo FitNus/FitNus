@@ -1,16 +1,16 @@
 package com.sparta.user.user.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserStatus;
 import com.sparta.common.exception.NotFoundException;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.ProfileResponse;
+import com.sparta.common.user.entity.User;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.user.user.dto.request.ProfileUpdateRequest;
 import com.sparta.user.user.dto.response.ProfileAttachFileResponse;
-import com.sparta.user.user.dto.response.ProfileResponse;
 import com.sparta.user.user.dto.response.ProfileUpdateResponse;
-import com.sparta.user.user.entity.User;
 import com.sparta.user.user.exception.ProfileUploadException;
 import com.sparta.user.user.exception.UserBannedException;
-import com.sparta.user.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

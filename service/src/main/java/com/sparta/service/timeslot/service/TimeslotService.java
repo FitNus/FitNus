@@ -1,7 +1,7 @@
 package com.sparta.service.timeslot.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.service.CenterService;
 import com.sparta.service.fitness.entity.Fitness;
@@ -14,6 +14,7 @@ import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.exception.TimeslotNotFoundException;
 import com.sparta.service.timeslot.repository.TimeslotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,11 +91,9 @@ public class TimeslotService {
         timeslotRepository.deleteById(timeslotId);
     }
 
+    @Cacheable(value = "timeslotCache:", key = "#timeslotId")
     public Timeslot isValidTimeslot(long timeslotId) {
-        Timeslot timeslot = timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
-
-
-        return timeslot;
+        return timeslotRepository.findById(timeslotId).orElseThrow(TimeslotNotFoundException::new);
     }
 }
 

@@ -1,15 +1,15 @@
 package com.sparta.user.kakao.service;
 
+import com.sparta.common.config.CouponService;
+import com.sparta.common.kakao.entity.KakaoPayment;
+import com.sparta.common.user.entity.User;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.user.kakao.SessionUtils;
 import com.sparta.user.kakao.dto.request.KakaoPayApproveRequest;
 import com.sparta.user.kakao.dto.request.KakaoPayReadyRequest;
 import com.sparta.user.kakao.dto.response.KakaoPayApproveResponse;
 import com.sparta.user.kakao.dto.response.KakaoPayReadyResponse;
-import com.sparta.user.kakao.entity.KakaoPayment;
 import com.sparta.user.kakao.repository.KakaoPaymentRepository;
-import com.sparta.user.user.entity.User;
-import com.sparta.user.user.repository.UserRepository;
-import com.sparta.user.user.service.CouponService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

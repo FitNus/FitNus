@@ -1,8 +1,8 @@
 package com.sparta.service.applicant.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.service.applicant.service.MemberApplicantService;
 import com.sparta.service.member.dto.request.MemberAcceptRequest;

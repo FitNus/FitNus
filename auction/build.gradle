@@ -4,7 +4,6 @@ repositories {
 
 dependencies {
     api project(':common')
-    api project(':user')
 
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
