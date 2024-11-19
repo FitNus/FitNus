@@ -30,6 +30,14 @@ jobs:
               - 'common/**'
             batch:
               - 'batch/**'
+            auction:
+              - 'auction/**'
+            notification:
+              - 'notification/**'
+            service:
+              - 'service/**'
+            user:
+              - 'user/**'
 
   build-and-deploy-batch:
     needs: changes
