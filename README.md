@@ -15,7 +15,14 @@
 ![image](https://github.com/user-attachments/assets/31486273-4021-4a76-9fe1-70d45fd112c2)
 
 
+<details>
+<summary>토글 접기/펼치기</summary>
+<div markdown="1">
 
+안녕
+
+</div>
+</details>
 ## 🗓️FitNus : 우리에게 딱 맞는 맞춤형 운동 플래너
 
 ## 📄 서비스/프로젝트 소개
