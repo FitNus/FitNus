@@ -27,6 +27,9 @@ public class Timeslot {
     @Column(name = "max_people")
     private Integer maxPeople;
 
+    @Column(name = "current_people")
+    private Integer currentPeople = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fitness_id", nullable = false)
     private Fitness fitness;
@@ -40,5 +43,13 @@ public class Timeslot {
 
     public static Timeslot of(TimeslotRequest request, Fitness fitness) {
         return new Timeslot(request, fitness);
+    }
+
+    public void increaseMaxPeople() {
+        maxPeople++;
+    }
+
+    public void decreaseMaxPeople() {
+        maxPeople--;
     }
 }

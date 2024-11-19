@@ -1,7 +1,7 @@
 package com.sparta.notification.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.notification.dto.EventPayload;
 import com.sparta.notification.service.NotificationService;
 import com.sparta.notification.service.SseNotificationServiceImpl;

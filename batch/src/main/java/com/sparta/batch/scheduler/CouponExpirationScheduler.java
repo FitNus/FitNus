@@ -1,6 +1,6 @@
 package com.sparta.batch.scheduler;
 
-import com.sparta.user.user.service.CouponService;
+import com.sparta.common.config.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

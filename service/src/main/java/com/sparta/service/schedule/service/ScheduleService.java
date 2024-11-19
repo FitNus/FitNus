@@ -1,6 +1,6 @@
 package com.sparta.service.schedule.service;
 
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.club.entity.Club;
 import com.sparta.service.club.service.ClubService;
 import com.sparta.service.schedule.dto.request.ClubScheduleRequest;
@@ -17,6 +17,15 @@ import com.sparta.service.search.service.ElasticsearchService;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.service.TimeslotService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -27,18 +36,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
-import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -82,7 +79,7 @@ public class ScheduleService {
      */
     @Transactional
     public ScheduleResponse createFitnessSchedule(AuthUser authUser,
-            FitnessScheduleRequest fitnessScheduleRequest) {
+                                                  FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 
@@ -115,7 +112,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse createClubSchedule(AuthUser authUser,
-            ClubScheduleRequest clubScheduleRequest) {
+                                               ClubScheduleRequest clubScheduleRequest) {
         Club club = clubService.isValidClub(clubScheduleRequest.getClubId());
         isExistsSchedule(authUser.getId(), club.getDate());
 
@@ -142,7 +139,7 @@ public class ScheduleService {
      */
     @Transactional
     public ScheduleResponse updateFitnessSchedule(AuthUser authUser, long scheduleId,
-            FitnessScheduleRequest fitnessScheduleRequest) {
+                                                  FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
 //        isFullTimeslot(timeslot);
@@ -164,7 +161,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse updateClubSchedule(AuthUser authUser, long scheduleId,
-            ClubScheduleRequest clubScheduleRequest) {
+                                               ClubScheduleRequest clubScheduleRequest) {
         Club club = clubService.isValidClub(clubScheduleRequest.getClubId());
         isExistsSchedule(authUser.getId(), club.getDate());
 
@@ -214,7 +211,7 @@ public class ScheduleService {
      * @return List<ScheduleResponse> : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO의 리스트
      */
     public ScheduleListResponse getScheduleList(AuthUser authUser, Integer year, Integer month,
-            Integer day) {
+                                                Integer day) {
         log.info("Fetching schedules for user: {}, year: {}, month: {}, day: {}",
                 authUser.getId(), year, month, day);
 

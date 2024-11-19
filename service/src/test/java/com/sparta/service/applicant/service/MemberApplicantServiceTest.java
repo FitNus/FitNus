@@ -1,8 +1,7 @@
 package com.sparta.service.applicant.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
-import com.sparta.notification.kafka.NotificationProducer;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.notification.service.SseNotificationServiceImpl;
 import com.sparta.service.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.service.applicant.entity.MemberApplicant;
@@ -17,6 +16,7 @@ import com.sparta.service.member.dto.request.MemberRequest;
 import com.sparta.service.member.entity.Member;
 import com.sparta.service.member.repository.MemberRepository;
 import com.sparta.service.member.service.MemberService;
+import com.sparta.service.schedule.service.NotificationProducer;
 import com.sparta.user.user.entity.User;
 import com.sparta.user.user.service.UserService;
 import org.junit.jupiter.api.Nested;
