@@ -1,10 +1,10 @@
 package com.sparta.user.user.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.ProfileResponse;
 import com.sparta.user.user.dto.request.ProfileUpdateRequest;
 import com.sparta.user.user.dto.response.ProfileAttachFileResponse;
-import com.sparta.user.user.dto.response.ProfileResponse;
 import com.sparta.user.user.dto.response.ProfileUpdateResponse;
 import com.sparta.user.user.service.ProfileService;
 import lombok.RequiredArgsConstructor;

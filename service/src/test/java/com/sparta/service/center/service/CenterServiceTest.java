@@ -1,7 +1,7 @@
 package com.sparta.service.center.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.center.dto.request.CenterSaveRequest;
 import com.sparta.service.center.dto.request.CenterUpdateRequest;
 import com.sparta.service.center.dto.response.CenterResponse;

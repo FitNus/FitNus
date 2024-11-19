@@ -1,6 +1,8 @@
 package com.sparta.service.member.service;
 
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.ProfileResponse;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.service.club.entity.Club;
 import com.sparta.service.club.service.ClubService;
 import com.sparta.service.member.dto.request.MemberDeportRequest;
@@ -12,8 +14,6 @@ import com.sparta.service.member.exception.CanNotDeportLeaderException;
 import com.sparta.service.member.exception.MemberNotFound;
 import com.sparta.service.member.exception.NotLeaderException;
 import com.sparta.service.member.repository.MemberRepository;
-import com.sparta.user.user.dto.response.ProfileResponse;
-import com.sparta.user.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +28,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ClubService clubService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     /**
      * @param page    : 기본값이 1인 page 번호
@@ -43,7 +43,7 @@ public class MemberService {
         Page<Member> memberPage = memberRepository.findAllByClub(club, pageable);
 
         return memberPage.map(member -> new MemberResponse(
-                member, new ProfileResponse(userService.getUser(member.getUserId()))));
+                member, new ProfileResponse(userRepository.findUserById(member.getUserId()))));
     }
 
     /**

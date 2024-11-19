@@ -1,7 +1,7 @@
 package com.sparta.service.club.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.club.dto.request.ClubRequest;
 import com.sparta.service.club.dto.response.ClubResponse;
 import com.sparta.service.club.entity.Club;

@@ -1,6 +1,6 @@
 package com.sparta.common.config;
 
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {

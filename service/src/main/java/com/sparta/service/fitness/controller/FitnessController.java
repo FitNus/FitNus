@@ -1,7 +1,7 @@
 package com.sparta.service.fitness.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.fitness.dto.request.FitnessDeleteRequest;
 import com.sparta.service.fitness.dto.request.FitnessGetAllRequest;
 import com.sparta.service.fitness.dto.request.FitnessRequest;

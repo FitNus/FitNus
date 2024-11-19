@@ -1,17 +1,17 @@
 package com.sparta.user.user.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
+import com.sparta.common.config.CouponService;
 import com.sparta.common.config.JwtUtil;
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.UserRequest;
+import com.sparta.common.user.entity.User;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
 import com.sparta.user.user.dto.request.CouponUsageRequest;
 import com.sparta.user.user.dto.request.PasswordReset;
-import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.user.user.dto.response.AuthTokenResponse;
 import com.sparta.user.user.dto.response.UserResponse;
-import com.sparta.user.user.entity.User;
-import com.sparta.user.user.service.CouponService;
 import com.sparta.user.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

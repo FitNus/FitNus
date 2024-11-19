@@ -1,16 +1,16 @@
 package com.sparta.user.user.service;
 
 import com.sparta.common.config.RedisUserService;
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
 import com.sparta.common.enums.UserStatus;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.UserRequest;
+import com.sparta.common.user.entity.User;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.user.user.dto.request.ChangePasswordRequest;
-import com.sparta.user.user.dto.request.UserRequest;
 import com.sparta.user.user.dto.response.UserResponse;
-import com.sparta.user.user.entity.User;
 import com.sparta.user.user.exception.DuplicateEmailException;
 import com.sparta.user.user.exception.WrongPasswordException;
-import com.sparta.user.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

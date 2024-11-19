@@ -1,8 +1,8 @@
 package com.sparta.service.applicant.service;
 
-import com.sparta.common.dto.AuthUser;
-import com.sparta.notification.kafka.NotificationProducer;
-import com.sparta.notification.service.SseNotificationServiceImpl;
+import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.dto.ProfileResponse;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.service.applicant.dto.response.MemberApplicantResponse;
 import com.sparta.service.applicant.entity.MemberApplicant;
 import com.sparta.service.applicant.exception.AlreadyApplyException;
@@ -15,8 +15,7 @@ import com.sparta.service.member.dto.request.MemberRejectRequest;
 import com.sparta.service.member.dto.request.MemberRequest;
 import com.sparta.service.member.entity.Member;
 import com.sparta.service.member.service.MemberService;
-import com.sparta.user.user.dto.response.ProfileResponse;
-import com.sparta.user.user.service.UserService;
+import com.sparta.service.schedule.service.NotificationProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,9 +31,8 @@ public class MemberApplicantService {
     private final MemberApplicantsRepository memberApplicantsRepository;
     private final ClubService clubService;
     private final MemberService memberService;
-    private final UserService userService;
-    private final SseNotificationServiceImpl sseNotificationServiceImpl;
     private final NotificationProducer notificationProducer;
+    private final UserRepository userRepository;
 
     /**
      * 멤버 가입신청
@@ -112,7 +110,8 @@ public class MemberApplicantService {
         Page<MemberApplicant> memberApplicantPage = memberApplicantsRepository.findAllByClub(club, pageable);
 
         return memberApplicantPage.map(memberApplicant -> new MemberApplicantResponse(
-                memberApplicant, new ProfileResponse(userService.getUser(memberApplicant.getUserId()))));
+                memberApplicant, new ProfileResponse(
+                userRepository.findUserById(memberApplicant.getUserId()))));
     }
 
     /**

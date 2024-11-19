@@ -1,7 +1,7 @@
 package com.sparta.service.schedule.service;
 
-import com.sparta.common.dto.AuthUser;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.club.entity.Club;
 import com.sparta.service.club.service.ClubService;
 import com.sparta.service.fitness.entity.Fitness;

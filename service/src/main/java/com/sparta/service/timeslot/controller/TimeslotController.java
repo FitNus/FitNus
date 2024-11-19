@@ -1,7 +1,7 @@
 package com.sparta.service.timeslot.controller;
 
 import com.sparta.common.apipayload.ApiResponse;
-import com.sparta.common.dto.AuthUser;
+import com.sparta.common.user.dto.AuthUser;
 import com.sparta.service.timeslot.dto.request.TimeslotDeleteRequest;
 import com.sparta.service.timeslot.dto.request.TimeslotRequest;
 import com.sparta.service.timeslot.dto.response.TimeslotResponse;
