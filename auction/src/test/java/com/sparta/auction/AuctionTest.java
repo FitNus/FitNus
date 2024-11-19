@@ -36,22 +36,22 @@ public class AuctionTest {
         try {
             FileWriter writer = new FileWriter("bid_data.txt");
             long bid = 1;
-            for (int i = 1; i <= 30; i++) {
-                for (int j = 1; j <= 1000; j++, bid++) {
-                    Long userId = (long) j;  // 사용자 id
-                    String role = UserRole.USER.name();  // 역할
-                    String nickname = "헬창" + j;
-                    String email = "test" + "i" + "@test.com";
-                    String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
-                    String refreshToken = jwtUtil.createRefreshToken(userId);
-                    redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
-                    String aToken = jwtUtil.substringToken(accessToken);
-                    String rToken = jwtUtil.substringToken(refreshToken);
-                    String data = String.format("%s,%s,%s,%s\n", 1, bid, "Bearer%20" + aToken, "Bearer%20" + rToken);
 
-                    writer.write(data);
-                }
+            for (int j = 1; j <= 1000; j++, bid++) {
+                Long userId = (long) j;  // 사용자 id
+                String role = UserRole.USER.name();  // 역할
+                String nickname = "헬창" + j;
+                String email = "test" + "i" + "@test.com";
+                String accessToken = jwtUtil.createAccessToken(userId, email, role, nickname);
+                String refreshToken = jwtUtil.createRefreshToken(userId);
+                redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
+                String aToken = jwtUtil.substringToken(accessToken);
+                String rToken = jwtUtil.substringToken(refreshToken);
+                String data = String.format("%s,%s,%s,%s\n", 1, bid, "Bearer%20" + aToken, "Bearer%20" + rToken);
+
+                writer.write(data);
             }
+
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class AuctionTest {
         for (int i = 1; i <= 2; i++) {
             List<User> userList = new ArrayList<>();
 
-            for (int j = 1; j <= 5000; j++, id++) {
+            for (int j = 1; j <= 1000; j++, id++) {
                 User user = new User();
                 ReflectionTestUtils.setField(user, "nickname", "헬창" + id);
                 ReflectionTestUtils.setField(user, "email", "test" + id + "@test.com");
@@ -77,7 +77,7 @@ public class AuctionTest {
 
             List<UserCoupon> userCouponList = new ArrayList<>();
             long userId = 1;
-            for (int j = 1; j <= 5000; j++, userId++) {
+            for (int j = 1; j <= 1000; j++, userId++) {
                 User user = new User();
                 ReflectionTestUtils.setField(user, "id", (Long) userId);
                 UserCoupon userCoupon = new UserCoupon();

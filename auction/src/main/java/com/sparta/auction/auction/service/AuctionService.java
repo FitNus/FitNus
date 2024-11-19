@@ -84,7 +84,7 @@ public class AuctionService {
         return auction.getHighestBid();
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 3600000) //한시간마다
     @Transactional
     public void checkAndUpdateAuctions() {
         LocalDateTime now = LocalDateTime.now();
