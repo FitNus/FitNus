@@ -128,26 +128,11 @@ public class HistoryBatch {
         return executor;
     }
 
-//    @Bean
-//    @StepScope
-//    public RepositoryItemReader<HistoryInfo> historyReader(
-//            @Value("#{stepExecutionContext[startTime]}") LocalDateTime startTime,
-//            @Value("#{stepExecutionContext[endTime]}") LocalDateTime endTime) {
-//        return new RepositoryItemReaderBuilder<HistoryInfo>()
-//                .name("historyReader")
-//                .pageSize(1000)
-//                .methodName("findAllByStartDateBetween")
-//                .repository(scheduleRepository)
-//                .arguments(startTime, endTime)
-//                .sorts(Map.of("s.startTime", Sort.Direction.ASC))
-//                .build();
-//    }
-
     @Bean
     @StepScope
     public JdbcPagingItemReader<HistoryInfo> historyReader(
             @Value("#{stepExecutionContext[startTime]}") LocalDateTime startTime,
-            @Value("#{stepExecutionContext[endTime]}") LocalDateTime endTime) throws Exception {
+            @Value("#{stepExecutionContext[endTime]}") LocalDateTime endTime) {
 
         return new JdbcPagingItemReaderBuilder<HistoryInfo>()
                 .name("historyReader")
@@ -166,12 +151,12 @@ public class HistoryBatch {
 
         queryProvider.setSelectClause("""
                 c.id as center_id,
-                s.user_id,
-                u.nickname,
-                s.schedule_name,
-                s.start_time,
-                s.end_time,
-                s.required_coupon
+                s.user_id as user_id,
+                u.nickname as nickname,
+                s.schedule_name as schedule_name,
+                s.start_time as start_time,
+                s.end_time as end_time,
+                s.required_coupon as required_coupon
                 """);
 
         queryProvider.setFromClause("""
