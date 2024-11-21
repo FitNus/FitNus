@@ -1332,10 +1332,14 @@ REQUIRES_NEW를 통해서 별도의 트랜잭션으로 분리하려 했지만 �
     - 의존성이 분리됨으로써 `service` 모듈에서 `notification` 모듈의 컨슈머 그룹 ID를 참조하는 문제가 해결됨.
     
     - 👉 **변경 전 의존 관계(Common 외에도 서로 의존하는 경우가 있었음)**
-![image](https://github.com/user-attachments/assets/4dc8a6d0-3939-461a-840d-29c5834e4bd6)
+    
+
+       ![image](https://github.com/user-attachments/assets/4dc8a6d0-3939-461a-840d-29c5834e4bd6)
 
     - 👉 변경 후 의존 관계 (Common만 의존)
-![image](https://github.com/user-attachments/assets/9bcc8490-3391-4413-90fc-25f929d5589c)
+  
+
+        ![image](https://github.com/user-attachments/assets/9bcc8490-3391-4413-90fc-25f929d5589c)
 ---
 ### **[결과]**
 
@@ -1354,9 +1358,13 @@ REQUIRES_NEW를 통해서 별도의 트랜잭션으로 분리하려 했지만 �
 |*확장성과 유지보수성*|모듈 의존 관계 복잡, 코드 변경시 리스크 높음|의존성 단순화로 인해 코드 수정 및 확장 용이|
 
   - 전 데이터
+
+    
     ![image](https://github.com/user-attachments/assets/a1265639-a37d-4cba-8e4b-24101d93b6aa)
     
   - 후 데이터
+
+
     ![image](https://github.com/user-attachments/assets/019df98c-ced1-488b-87cd-791dfc0078e9)
 
 </div>
