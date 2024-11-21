@@ -15,19 +15,20 @@ import java.time.ZonedDateTime;
 @Getter
 @NoArgsConstructor
 @Slf4j
+@Table(name = "auction")
 public class Auction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
+    @Column(name = "highest_bid", nullable = false)
     private int highestBid = 0;
 
     @Column(nullable = false)

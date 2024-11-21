@@ -9,6 +9,7 @@ import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.exception.CenterNotFoundException;
 import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterRepository;
+import com.sparta.service.search.service.ElasticsearchService;
 import com.sparta.service.search.service.SearchService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,9 @@ class CenterServiceTest {
 
     @Mock
     private SearchService searchService;
+
+    @Mock
+    private ElasticsearchService elasticsearchService;
 
     @Mock
     private CenterCacheRepository cacheRepository;
@@ -72,6 +76,8 @@ class CenterServiceTest {
         // given
         Center center = new Center(request, authUser);
         ReflectionTestUtils.setField(center, "id", 1L);
+        ReflectionTestUtils.setField(center, "latitude", 23.222);
+        ReflectionTestUtils.setField(center, "longitude", 23.111);
         LocationService.LatLng latLng = new LocationService.LatLng(23.222, 23.111);
 //        CenterResponse response = new CenterResponse(centerRepository.save(center));
         given(centerRepository.save(any(Center.class))).willReturn(center);

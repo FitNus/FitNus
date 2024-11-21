@@ -38,7 +38,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_PORT}
     consumer:
-      group-id: notification-group
+      group-id: service-group
       auto-offset-reset: earliest
       enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
