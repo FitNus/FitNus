@@ -26,6 +26,9 @@ public class Timeslot {
 
     private Integer capacity;
 
+    @Column(name = "current_people")
+    private Integer currentPeople = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fitness_id", nullable = false)
     private Fitness fitness;

@@ -55,8 +55,8 @@ public class ScheduleService {
     private static final String CHECK_AND_INCREMENT_SCRIPT = """
             local countKey = KEYS[1]
             local capacity = tonumber(ARGV[1])
-            
             local currentCount = redis.call('get', countKey)
+      
             if currentCount then
                 currentCount = tonumber(currentCount)
             else
@@ -99,7 +99,7 @@ public class ScheduleService {
             Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
             // Elasticsearch에 저장
-//            saveSearch(new ScheduleSearch(savedSchedule));
+            saveSearch(new ScheduleSearch(savedSchedule));
 
             // 알림 예약 (시작 시간 1시간 전)
             scheduleMessageService.scheduleNotification(authUser.getId(), timeslot.getStartTime(),
@@ -121,7 +121,7 @@ public class ScheduleService {
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
         // Elasticsearch에 저장
-//        saveSearch(new ScheduleSearch(savedSchedule));
+        saveSearch(new ScheduleSearch(savedSchedule));
 
         // 알림 예약 (시작 시간 1시간 전)
         scheduleMessageService.scheduleNotification(authUser.getId(), club.getDate(),
@@ -143,7 +143,6 @@ public class ScheduleService {
                                                   FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
-//        isFullTimeslot(timeslot);
 
         Schedule schedule = isValidSchedule(scheduleId);
         isScheduleOwner(authUser.getId(), schedule);
