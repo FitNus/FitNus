@@ -3,9 +3,11 @@ package com.sparta.service.testdata;
 import com.sparta.common.config.JwtUtil;
 import com.sparta.common.config.RedisUserService;
 import com.sparta.common.enums.UserRole;
+import com.sparta.common.user.entity.User;
+import com.sparta.common.user.repository.UserBulkRepository;
+import com.sparta.common.user.repository.UserCouponBulkRepository;
 import com.sparta.service.center.entity.Center;
 import com.sparta.service.center.repository.CenterBulkRepository;
-import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterCacheRepository;
 import com.sparta.service.center.repository.CenterRepository;
 import com.sparta.service.fitness.entity.Fitness;
@@ -14,11 +16,6 @@ import com.sparta.service.schedule.entity.Schedule;
 import com.sparta.service.schedule.repository.ScheduleBulkRepository;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.repository.TimeslotBulkRepository;
-import com.sparta.user.user.entity.User;
-import com.sparta.user.user.entity.UserCoupon;
-import com.sparta.user.user.entity.User;
-import com.sparta.user.user.repository.UserBulkRepository;
-import com.sparta.user.user.repository.UserCouponBulkRepository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,14 +25,6 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Point;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import org.springframework.data.geo.Point;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -114,7 +103,8 @@ public class DummyDataTest {
                     redisUserService.saveTokens(String.valueOf(userId), accessToken, refreshToken);
                     String aToken = jwtUtil.substringToken(accessToken);
                     String rToken = jwtUtil.substringToken(refreshToken);
-                    String data = String.format("%s,%s,%s\n", timeslotId, "Bearer%20" + aToken, "Bearer%20" + rToken);
+                    String data = String.format("%s,%s,%s\n", timeslotId, "Bearer%20" + aToken,
+                            "Bearer%20" + rToken);
 
                     writer.write(data);
                 }
@@ -133,15 +123,16 @@ public class DummyDataTest {
         double minLongitude = 124.39;
         double maxLongitude = 131.52;
 
-
         int id = 1;
 
         for (int i = 0; i < 200; i++) {
             List<Center> centerList = new ArrayList<>();
             for (int j = 0; j < 5000; j++, id++) {
                 Center center = new Center();
-                double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-                double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+                double randomLatitude =
+                        minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
+                double randomLongitude =
+                        minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
                 ReflectionTestUtils.setField(center, "centerName", "헬스장" + (id + 1));
                 ReflectionTestUtils.setField(center, "ownerId", (long) id + 1);
                 ReflectionTestUtils.setField(center, "latitude", randomLatitude);
@@ -154,7 +145,8 @@ public class DummyDataTest {
         }
 
     }
-//
+
+    //
     @Test
     public void createAllData() {
         Random random = new Random();
@@ -167,7 +159,8 @@ public class DummyDataTest {
         for (int i = 0; i < 5000; i++) {
             Center center = new Center();
             double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-            double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+            double randomLongitude =
+                    minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
             ReflectionTestUtils.setField(center, "centerName", "헬스장" + (i + 1));
             ReflectionTestUtils.setField(center, "ownerId", (long) i + 1);
             ReflectionTestUtils.setField(center, "latitude", randomLatitude);
@@ -241,9 +234,11 @@ public class DummyDataTest {
                 Timeslot timeslot = timeslots.get((int) timeslotId);
                 Schedule schedule = new Schedule();
                 ReflectionTestUtils.setField(schedule, "userId", (long) i);
-                ReflectionTestUtils.setField(schedule, "scheduleName", timeslot.getFitness().getFitnessName());
+                ReflectionTestUtils.setField(schedule, "scheduleName",
+                        timeslot.getFitness().getFitnessName());
                 ReflectionTestUtils.setField(schedule, "startTime", timeslot.getStartTime());
-                ReflectionTestUtils.setField(schedule, "requiredCoupon", timeslot.getFitness().getRequiredCoupon());
+                ReflectionTestUtils.setField(schedule, "requiredCoupon",
+                        timeslot.getFitness().getRequiredCoupon());
                 ReflectionTestUtils.setField(schedule, "timeslotId", timeslotId);
 
                 scheduleList.add(schedule);
@@ -264,9 +259,11 @@ public class DummyDataTest {
 
         for (int id = 1; id <= totalCenters; id++) {
             double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-            double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+            double randomLongitude =
+                    minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
 
-            centerCacheRepository.saveGeoLocation("centers", randomLongitude, randomLatitude, (long) id);
+            centerCacheRepository.saveGeoLocation("centers", randomLongitude, randomLatitude,
+                    (long) id);
         }
 
         System.out.println("더미 데이터 생성 완료: 총 " + totalCenters + "개의 센터 (GeoSpatial 데이터만 저장)");
@@ -318,15 +315,18 @@ public class DummyDataTest {
             List<Center> centerList = new ArrayList<>();
             for (int j = 0; j < 5000; j++, id++) {
                 Center center = new Center();
-                double randomLatitude = minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
-                double randomLongitude = minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
+                double randomLatitude =
+                        minLatitude + random.nextDouble() * (maxLatitude - minLatitude);
+                double randomLongitude =
+                        minLongitude + random.nextDouble() * (maxLongitude - minLongitude);
                 ReflectionTestUtils.setField(center, "centerName", "헬스장" + (id + 1));
                 ReflectionTestUtils.setField(center, "ownerId", (long) id + 1);
                 ReflectionTestUtils.setField(center, "latitude", randomLatitude);
                 ReflectionTestUtils.setField(center, "longitude", randomLongitude);
-                ReflectionTestUtils.setField(center, "location", new Point(randomLatitude, randomLongitude));
+                ReflectionTestUtils.setField(center, "location",
+                        new Point(randomLatitude, randomLongitude));
                 centerCacheRepository.saveGeoLocation("centers", randomLongitude, randomLatitude,
-                    (long) id + 1);
+                        (long) id + 1);
 
                 centerList.add(center);
             }
