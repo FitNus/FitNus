@@ -8,7 +8,7 @@
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka) ![ElasticSearch](https://img.shields.io/badge/-ElasticSearch-005571?style=for-the-badge&logo=elasticsearch) ![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white) ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white)
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka) ![ElasticSearch](https://img.shields.io/badge/-ElasticSearch-005571?style=for-the-badge&logo=elasticsearch) 
 
 
 
@@ -741,8 +741,103 @@ Elasticsearch는 대규모 데이터를 처리하면서 빠른 검색 성능과 
 → 사용자 경험 측면에서도 딜레이를 최소화하는 것이 중요하고 특히 많은 사용자가 같은 상품에 일정에 접근할 때는 재시도가 필요할 수 있다. 이때 Redisson의 pub-sub 방식은 락 해제를 기다리는 스레드들에게 알림을 줘 spin lock보다 부하가 적고 빠르게 처리할 수 있다.
 
 ### 따라서 Redisson을 사용하기로 결정!
+
+
 </div>
-</details>     
+</details>  
+
+<details>
+<summary>경매 & 알림 시스템 도입 기술</summary>
+<div markdown="1">  
+## **[배경]**
+
+**경매 시스템**
+
+- 경매는 실시간으로 다수의 입찰이 들어오는 상황에서도 빠르고 정확하게 대량의 입찰 트래픽을 처리해야 합니다.
+- 데이터의 무결성을 유지하며, 사용자 경험을 최적화해야 하는 중요한 요구사항이 있습니다.
+
+**알림 시스템**
+
+- 대규모 사용자에게 실시간 알림을 전달해야 하며, 서버 부하를 최소화하고 효율성을 고려해야 합니다.
+- 기존 시스템에서는 SSE 연결 시 데이터베이스 트랜잭션이 유지되면서 커넥션 풀이 고갈되는 문제가 있었습니다.
+- 또한, 서버 장애 발생 시 알림 손실 가능성도 해결이 필요했습니다.
+
+## **[요구사항]**
+
+1. **경매**
+    - 동시성 제어를 통해 데이터 무결성을 보장하면서도 사용자 경험을 저하시키지 않는 입찰 처리 구조가 필요합니다.
+    - 대규모 입찰 트래픽 처리와 낮은 응답 시간 확보.
+2. **알림**
+    - 대량의 알림 트래픽을 실시간으로 효율적으로 처리해야 합니다.
+    - 서버 부하를 줄이고 안정성을 확보해야 하며, 데이터 손실 방지가 필요합니다.
+3. **공통 요구사항**
+    - 실시간 데이터 전송에 적합한 기술을 도입.
+    - 대규모 트래픽 환경에서도 높은 처리량과 확장성을 제공.
+
+## **[선택지]**
+
+### **💡대용량 트래픽 처리 선택지**
+
+1. **Kafka**
+    - 장점
+        - 높은 처리량으로 대용량 트래픽 처리에 적합.
+        - 분산 환경에서의 확장성과 장애 복구 기능이 뛰어남.
+        - 메시지 순서 보장 및 여러 소비자가 독립적으로 처리 가능.
+    - 단점
+        - 초기 설정 및 운영 복잡.
+        - 하드웨어 리소스와 관리 비용이 큼.
+2. **RabbitMQ**
+    - 장점
+        - 설정이 간단하며 기본적인 메시지 처리에 적합.
+        - 안정성과 신뢰성이 높은 큐 기반 메시징 제공.
+    - 단점
+        - 대량의 데이터 처리량 대비 성능 부족.
+        - Kafka에 비해 확장성과 대규모 처리 환경에 적합하지 않음.
+3. **Redis Streams**
+    - 장점
+        - Redis 기반으로 빠르고 간단하게 구현 가능.
+        - 메시지 소비 상태 추적 및 데이터 재처리 가능.
+    - 단점
+        - 분산 환경에서 성능 제한.
+        - 대규모 트래픽 처리 시 성능 최적화 필요.
+
+### **💡실시간 데이터 전송 선택지**
+
+1. **SSE (Server-Sent Events)**
+    - 장점
+        - 클라이언트가 서버로부터 실시간 데이터 푸시 가능 (단방향).
+        - HTTP 프로토콜 기반으로 간단히 구현 가능.
+    - 단점
+        - 하드웨어 리소스와 관리 비용이 큼.
+        - 연결 유지 상태에서 데이터베이스 커넥션 고갈 문제 가능성.
+2. **WebSocket**
+    - 장점
+        - 양방향 통신 지원 가능.
+        - 대규모 실시간 연결에 적합.
+    - 단점
+        - 구현이 복잡하고 연결 관리를 별도로 해야 함.
+        - 유지비용이 높아질 수 있음.
+3. **Polling (HTTP Polling)**
+    - 장점
+        - HTTP 요청만으로 간단히 해결 가능.
+        - 서버 부담이 비교적 적음.
+    - 단점
+        - 실시간성 제공에 어려움.
+        - 클라이언트가 짧은 주기로 요청 시 네트워크 비용 증가.
+
+## **[의사결정/사유]**
+
+- 먼저, **대용량 트래픽**이 발생하는 알림 및 경매 시스템에서는 실시간으로 대량의 메시지를 다수의 사용자에게 전달해야 하는 요구사항이 있었습니다.
+- 이러한 환경에서는 높은 처리량과 확장성이 필수적이었으며, 이를 충족시키기 위해 다양한 메시지 브로커를 검토한 결과, **Kafka**가 가장 적합하다고 평가되었습니다. Kafka는 분산 환경에서의 **뛰어난 확장성**과 **내장된 장애 복구 기능**을 제공하며, 대규모 트래픽에서도 안정적인 성능을 발휘할 수 있습니다. 특히, 메시지의 중복 소비 방지와 데이터 유실 방지 기능을 통해 알림과 경매 시스템의 신뢰성을 높일 수 있었습니다. 이를 기반으로, 알림과 경매 시스템의 **효율적인 비동기 처리**와 **서버 리소스 최적화**를 위해 Kafka를 최종적으로 선택하게 되었습니다.
+- 또한, **실시간 데이터 전송**을 위한 기술 선택에 있어서는 **양방향 통신**이 반드시 필요하지 않으며, 클라이언트가 실시간 데이터를 지속적으로 받을 수 있는 효율적인 방식이 요구되었습니다. 이에 따라, HTTP 기반의 **SSE(Server-Sent Events)**를 도입하게 되었습니다. SSE는 클라이언트 요청 없이도 서버에서 실시간 데이터를 **단방향 스트리밍**으로 전송할 수 있는 기술로, 구현이 간단하고 운영 비용이 낮다는 장점이 있습니다. 특히 알림과 같은 실시간 업데이트가 중요한 서비스에서는 SSE가 가장 적합한 기술로 판단되었습니다.
+
+### **👉결론**
+
+- Kafka는 **대용량 트래픽 처리**와 **분산 환경에서의 확장성** 요구를 충족시키며, 알림과 경매 시스템에서 높은 성능과 안정성을 제공했습니다.
+- SSE는 **실시간 데이터 전송**이 필요한 알림 서비스에서 클라이언트와 서버 간의 간결한 통신을 가능하게 하여 최적의 사용자 경험을 제공했습니다.
+    
+</div>
+</details> 
     
     
 ## 👨🏻‍🔧 트러블슈팅
