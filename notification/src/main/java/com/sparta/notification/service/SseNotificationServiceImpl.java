@@ -31,11 +31,12 @@ public class SseNotificationServiceImpl implements SseNotificationService {
         // Emitter 유효 시간이 만료되면 emitter 삭제
         sseEmitter.onTimeout(() -> emitterRepository.deleteById(userId));
 
-        //개수 sse로 전송
+        // sse로 전송
         sendToClient(SseMessageName.FIRST_MESSAGE,userId, "첫 연결입니다.");
 
         return sseEmitter;
     }
+
 
     /**
      * 구독된 사용자에게 알림을 전송하는 메서드
