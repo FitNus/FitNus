@@ -1119,7 +1119,7 @@ https://ilmechaju.tistory.com/130
 결국 두 사용자가 동시에 접근하여 남은 인원을 차감했지만 실제 DB에 차감된 남은 인원은 2명이 아닌 1명이다. 이러한 시나리오라면 일정이 50개만 등록이 된 것이 아닌 거의 일정하게 100개의 일정이 등록된 것이 그럴듯 한 상황이라는 생각이 들었습니다.
 
 
-![제목 없음.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/fb312a38-4b72-4f0c-b8f4-2b1c5f06e396/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C.png)
+![image](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/fb312a38-4b72-4f0c-b8f4-2b1c5f06e396/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C.png)
 
 ### 3. Transactional 어노테이션 문제
 
