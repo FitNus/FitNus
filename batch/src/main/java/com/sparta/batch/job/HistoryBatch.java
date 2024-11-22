@@ -3,6 +3,7 @@ package com.sparta.batch.job;
 import com.sparta.batch.dto.HistoryInfo;
 import com.sparta.batch.entity.History;
 import com.sparta.batch.repository.HistoryRepository;
+import com.sparta.batch.repository.ScheduleRepository;
 import com.sparta.batch.util.HistoryChunkListener;
 import com.sparta.batch.util.HistoryPartitioner;
 import com.sparta.batch.util.HistoryStepExecutionListener;
@@ -21,29 +22,21 @@ import org.springframework.batch.integration.async.AsyncItemProcessor;
 import org.springframework.batch.integration.async.AsyncItemWriter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.Order;
-import org.springframework.batch.item.database.PagingQueryProvider;
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
-import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
+import org.springframework.batch.item.data.RepositoryItemReader;
+import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.TransientDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -54,7 +47,7 @@ public class HistoryBatch {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource;
+    private final ScheduleRepository scheduleRepository;
     private final HistoryRepository historyRepository;
 
     @Bean
@@ -130,79 +123,17 @@ public class HistoryBatch {
 
     @Bean
     @StepScope
-    public JdbcPagingItemReader<HistoryInfo> historyReader(
+    public RepositoryItemReader<HistoryInfo> historyReader(
             @Value("#{stepExecutionContext[startTime]}") LocalDateTime startTime,
             @Value("#{stepExecutionContext[endTime]}") LocalDateTime endTime) {
-
-        return new JdbcPagingItemReaderBuilder<HistoryInfo>()
+        return new RepositoryItemReaderBuilder<HistoryInfo>()
                 .name("historyReader")
-                .dataSource(dataSource)
-                .queryProvider(createQueryProvider())
-                .parameterValues(createParameters(startTime, endTime))
                 .pageSize(1000)
-                .rowMapper(new HistoryInfoRowMapper())
+                .methodName("findAllByStartDateBetween")
+                .repository(scheduleRepository)
+                .arguments(startTime, endTime)
+                .sorts(Map.of("s.startTime", Sort.Direction.ASC))
                 .build();
-    }
-
-    @Bean
-    @StepScope
-    public PagingQueryProvider createQueryProvider() {
-        MySqlPagingQueryProvider queryProvider = new MySqlPagingQueryProvider();
-
-        queryProvider.setSelectClause("""
-                c.id as center_id,
-                s.user_id as user_id,
-                u.nickname as nickname,
-                s.schedule_name as schedule_name,
-                s.start_time as start_time,
-                s.end_time as end_time,
-                s.required_coupon as required_coupon
-                """);
-
-        queryProvider.setFromClause("""
-                from schedule s
-                join timeslot t on s.timeslot_id = t.id
-                join fitness f on t.fitness_id = f.id
-                join center c on f.center_id = c.id
-                join user u on s.user_id = u.id
-                """);
-
-        queryProvider.setWhereClause("""
-                where s.start_time >= :startTime
-                and s.start_time <= :endTime
-                and s.club_id is null
-                """);
-
-        // 정렬 키 설정 (필수)
-        Map<String, Order> sortKeys = new HashMap<>();
-        sortKeys.put("start_time", Order.ASCENDING);
-        queryProvider.setSortKeys(sortKeys);
-
-        return queryProvider;
-    }
-
-    private Map<String, Object> createParameters(LocalDateTime startTime, LocalDateTime endTime) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("startTime", startTime);
-        parameters.put("endTime", endTime);
-        return parameters;
-    }
-
-    @Component
-    public static class HistoryInfoRowMapper implements RowMapper<HistoryInfo> {
-        @Override
-        public HistoryInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new HistoryInfo(
-                    rs.getLong("center_id"),
-                    rs.getLong("user_id"),
-                    rs.getString("centerName"),
-                    rs.getString("nickname"),
-                    rs.getString("schedule_name"),
-                    rs.getTimestamp("start_time").toLocalDateTime(),
-                    rs.getTimestamp("end_time").toLocalDateTime(),
-                    rs.getInt("required_coupon")
-            );
-        }
     }
 
     @Bean
