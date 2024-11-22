@@ -12,6 +12,7 @@ import com.sparta.service.fitness.exception.AccessDeniedException;
 import com.sparta.service.fitness.exception.FitnessNotFoundException;
 import com.sparta.service.fitness.exception.FitnessgetAllAccessDeniedException;
 import com.sparta.service.fitness.repository.FitnessRepository;
+import com.sparta.service.search.service.ElasticsearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +36,9 @@ class FitnessServiceTest {
     @Mock
     private CenterService centerService;
 
+    @Mock
+    private ElasticsearchService elasticsearchService;
+
     @InjectMocks
     private FitnessService fitnessService;
 
@@ -50,6 +54,8 @@ class FitnessServiceTest {
         center = new Center();
         ReflectionTestUtils.setField(center, "id", centerId);
         ReflectionTestUtils.setField(center, "ownerId", ownerId);
+        ReflectionTestUtils.setField(center, "latitude", 23.222);
+        ReflectionTestUtils.setField(center, "longitude", 23.111);
     }
 
 

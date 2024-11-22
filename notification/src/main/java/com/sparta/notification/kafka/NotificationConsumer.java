@@ -23,7 +23,6 @@ public class NotificationConsumer {
     )
     public void consumeNotification(Map<String, Object> message) {
         log.info("Received message: {}", message);
-//        log.debug("Received message: {}", message);
 
         String type = (String) message.get("type");
         Long userId = Long.parseLong(message.get("userId").toString());
@@ -36,19 +35,17 @@ public class NotificationConsumer {
         }
     }
 
-    private void handleClubNotification(Long userId, String message) {
-        sseNotificationService.broadcast(SseMessageName.MESSAGE, userId, "모임 신청 알림", message, LocalDateTime.now());
-    }
-
     private void handleScheduleNotification(Long userId, String message) {
         // 동일한 메시지의 알림이 이미 존재하는지 확인
         boolean exists = notificationRepository.existsByUserIdAndMessage(userId, message);
-
         if (exists) {
             log.warn("Duplicate notification detected: {}", message);
             return;
         }
-
         sseNotificationService.broadcast(SseMessageName.MESSAGE, userId, "스케줄 알림", message, LocalDateTime.now());
+    }
+
+    private void handleClubNotification(Long userId, String message) {
+        sseNotificationService.broadcast(SseMessageName.MESSAGE, userId, "모임 신청 알림", message, LocalDateTime.now());
     }
 }

@@ -10,23 +10,37 @@ import com.sparta.service.schedule.dto.request.FitnessScheduleRequest;
 import com.sparta.service.schedule.dto.response.ScheduleListResponse;
 import com.sparta.service.schedule.dto.response.ScheduleResponse;
 import com.sparta.service.schedule.entity.Schedule;
+import com.sparta.service.schedule.entity.ScheduleSearch;
 import com.sparta.service.schedule.exception.InValidDateException;
 import com.sparta.service.schedule.exception.NotScheduleOwnerException;
 import com.sparta.service.schedule.exception.ScheduleAlreadyExistsException;
 import com.sparta.service.schedule.exception.ScheduleNotFoundException;
 import com.sparta.service.schedule.repository.ScheduleRepository;
+import com.sparta.service.search.service.ElasticsearchService;
 import com.sparta.service.timeslot.entity.Timeslot;
 import com.sparta.service.timeslot.service.TimeslotService;
 import org.assertj.core.api.Assertions;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.AggregationsContainer;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.TotalHitsRelation;
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
@@ -54,8 +67,80 @@ class ScheduleServiceTest {
     @Mock
     private ScheduleMessageService scheduleMessageService;
 
+    @Mock
+    private ElasticsearchService elasticsearchService;
+
+    @Mock
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    private BoolQueryBuilder queryBuilder;
+
+    private NativeSearchQuery searchQuery;
+
+    private SearchHits<ScheduleSearch> searchHits;
+
     @InjectMocks
     private ScheduleService scheduleService;
+
+    @BeforeEach
+    void setUp() {
+        // 쿼리 생성
+        queryBuilder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.termQuery("userId", 1L))
+                .must(QueryBuilders.termQuery("year", 2023))
+                .must(QueryBuilders.termQuery("month", 10))
+                .must(QueryBuilders.termQuery("day", 15));
+
+        // Request Cache를 활용하는 검색 쿼리
+        searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(queryBuilder)
+                .withSort(Sort.by(Sort.Direction.ASC, "startTime"))
+                .withPageable(PageRequest.of(0, 100))
+                .withTrackTotalHits(true)
+                .build();
+
+        searchHits = new SearchHits<ScheduleSearch>() {
+            @Override
+            public AggregationsContainer<?> getAggregations() {
+                return null;
+            }
+
+            @Override
+            public float getMaxScore() {
+                return 0;
+            }
+
+            @Override
+            public SearchHit<ScheduleSearch> getSearchHit(int index) {
+                return null;
+            }
+
+            @Override
+            public List<SearchHit<ScheduleSearch>> getSearchHits() {
+                return List.of();
+            }
+
+            @Override
+            public long getTotalHits() {
+                return 0;
+            }
+
+            @Override
+            public TotalHitsRelation getTotalHitsRelation() {
+                return null;
+            }
+
+            @Override
+            public Suggest getSuggest() {
+                return null;
+            }
+
+            @Override
+            public String getPointInTimeId() {
+                return "";
+            }
+        };
+    }
 
     @Nested
     class createFitnessSchedule {
@@ -67,7 +152,7 @@ class ScheduleServiceTest {
             FitnessScheduleRequest scheduleRequest = new FitnessScheduleRequest(1L);
             Timeslot timeslot = new Timeslot();
             ReflectionTestUtils.setField(timeslot, "id", 1L);
-            ReflectionTestUtils.setField(timeslot, "maxPeople", 50);
+            ReflectionTestUtils.setField(timeslot, "capacity", 50);
 
             given(timeslotService.isValidTimeslot(scheduleRequest.getTimeslotId())).willReturn(timeslot);
             given(scheduleRepository.existsByUserIdAndStartTime(anyLong(), any())).willReturn(true);
@@ -377,10 +462,9 @@ class ScheduleServiceTest {
             Integer day = 15;
             Schedule schedule = new Schedule();
             ReflectionTestUtils.setField(schedule, "requiredCoupon", 3);
-            List<Schedule> scheduleList = List.of(schedule);
 
-            given(scheduleRepository.findAllByUserIdYearAndMonthAndDay(authUser.getId(), year, month, day))
-                    .willReturn(scheduleList);
+            when(elasticsearchRestTemplate.search(any(NativeSearchQuery.class), eq(ScheduleSearch.class)))
+                    .thenReturn(searchHits);
 
             // when
             ScheduleListResponse response = scheduleService.getScheduleList(authUser, year, month, day);
@@ -398,12 +482,9 @@ class ScheduleServiceTest {
             Integer day = 15;
             Schedule schedule = new Schedule();
             ReflectionTestUtils.setField(schedule, "requiredCoupon", 3);
-            List<Schedule> scheduleList = List.of(schedule);
 
-            given(scheduleRepository.findAllByUserIdYearAndMonthAndDay(authUser.getId(),
-                    LocalDateTime.now().getYear(),
-                    LocalDateTime.now().getMonthValue(),
-                    day)).willReturn(scheduleList);
+            when(elasticsearchRestTemplate.search(any(NativeSearchQuery.class), eq(ScheduleSearch.class)))
+                    .thenReturn(searchHits);
 
             // when
             ScheduleListResponse response = scheduleService.getScheduleList(authUser, year, month, day);
@@ -473,6 +554,8 @@ class ScheduleServiceTest {
             Integer day = 15;
 
             // when
+            when(elasticsearchRestTemplate.search(any(NativeSearchQuery.class), eq(ScheduleSearch.class)))
+                    .thenReturn(searchHits);
             ScheduleListResponse response = scheduleService.getScheduleList(authUser, year, month, day);
 
             // then
@@ -501,6 +584,8 @@ class ScheduleServiceTest {
             Integer day = null;
 
             // when
+            when(elasticsearchRestTemplate.search(any(NativeSearchQuery.class), eq(ScheduleSearch.class)))
+                    .thenReturn(searchHits);
             ScheduleListResponse response = scheduleService.getScheduleList(authUser, year, month, day);
 
             // then

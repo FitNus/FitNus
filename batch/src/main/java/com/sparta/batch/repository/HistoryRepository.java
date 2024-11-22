@@ -17,7 +17,7 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
             "FROM History h " +
             "WHERE h.startTime >= :settlementStartDateTime " +
             "AND h.startTime <= :settlementEndDateTime " +
-            "GROUP BY h.centerId")
+            "GROUP BY h.centerId, h.centerName")
     Page<SettlementResult> findAllCalculated(
             @Param("settlementStartDateTime") LocalDateTime start,
             @Param("settlementEndDateTime") LocalDateTime end,

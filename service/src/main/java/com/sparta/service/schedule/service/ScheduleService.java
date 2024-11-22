@@ -9,6 +9,7 @@ import com.sparta.service.schedule.dto.response.ScheduleListResponse;
 import com.sparta.service.schedule.dto.response.ScheduleResponse;
 import com.sparta.service.schedule.entity.Schedule;
 import com.sparta.service.schedule.entity.ScheduleSearch;
+import com.sparta.service.schedule.exception.InValidDateException;
 import com.sparta.service.schedule.exception.NotScheduleOwnerException;
 import com.sparta.service.schedule.exception.ScheduleAlreadyExistsException;
 import com.sparta.service.schedule.exception.ScheduleNotFoundException;
@@ -53,16 +54,16 @@ public class ScheduleService {
 
     private static final String CHECK_AND_INCREMENT_SCRIPT = """
             local countKey = KEYS[1]
-            local maxPeople = tonumber(ARGV[1])
-            
+            local capacity = tonumber(ARGV[1])
             local currentCount = redis.call('get', countKey)
+      
             if currentCount then
                 currentCount = tonumber(currentCount)
             else
                 currentCount = 0
             end
             
-            if currentCount < maxPeople then
+            if currentCount < capacity then
                 redis.call('incr', countKey)
                 return 1
             else
@@ -90,7 +91,7 @@ public class ScheduleService {
         Long result = redisTemplate.execute(
                 redisScript,
                 Collections.singletonList(countKey),
-                String.valueOf(timeslot.getMaxPeople())
+                String.valueOf(timeslot.getCapacity())
         );
 
         if (result == 1) {
@@ -142,7 +143,6 @@ public class ScheduleService {
                                                   FitnessScheduleRequest fitnessScheduleRequest) {
         Timeslot timeslot = timeslotService.isValidTimeslot(fitnessScheduleRequest.getTimeslotId());
         isExistsSchedule(authUser.getId(), timeslot.getStartTime());
-//        isFullTimeslot(timeslot);
 
         Schedule schedule = isValidSchedule(scheduleId);
         isScheduleOwner(authUser.getId(), schedule);
@@ -210,6 +210,7 @@ public class ScheduleService {
      * @param day      : 조회할 일
      * @return List<ScheduleResponse> : 일정 ID, 운동 종목, 시작 시간, 끝나는 시간, 가격을 담고 있는 DTO의 리스트
      */
+    @Transactional(readOnly = true)
     public ScheduleListResponse getScheduleList(AuthUser authUser, Integer year, Integer month,
                                                 Integer day) {
         log.info("Fetching schedules for user: {}, year: {}, month: {}, day: {}",
@@ -343,10 +344,10 @@ public class ScheduleService {
 
     private void validateDate(Integer month, Integer day) {
         if (!(month >= 1 && month <= 12)) {
-            throw new IllegalArgumentException("잘못된 월 값입니다.");
+            throw new InValidDateException();
         }
         if (day != null && !(day >= 1 && day <= 31)) {
-            throw new IllegalArgumentException("잘못된 일 값입니다.");
+            throw new InValidDateException();
         }
     }
 

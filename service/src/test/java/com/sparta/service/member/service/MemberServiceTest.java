@@ -2,6 +2,8 @@ package com.sparta.service.member.service;
 
 import com.sparta.common.enums.UserRole;
 import com.sparta.common.user.dto.AuthUser;
+import com.sparta.common.user.entity.User;
+import com.sparta.common.user.repository.UserRepository;
 import com.sparta.service.club.entity.Club;
 import com.sparta.service.club.service.ClubService;
 import com.sparta.service.member.dto.request.MemberDeportRequest;
@@ -13,8 +15,6 @@ import com.sparta.service.member.exception.CanNotDeportLeaderException;
 import com.sparta.service.member.exception.MemberNotFound;
 import com.sparta.service.member.exception.NotLeaderException;
 import com.sparta.service.member.repository.MemberRepository;
-import com.sparta.user.user.entity.User;
-import com.sparta.user.user.service.UserService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +46,7 @@ class MemberServiceTest {
     private ClubService clubService;
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @InjectMocks
     private MemberService memberService;
@@ -70,7 +70,7 @@ class MemberServiceTest {
 
             given(clubService.isValidClub(anyLong())).willReturn(club);
             given(memberRepository.findAllByClub(any(), any())).willReturn(memberPage);
-            given(userService.getUser(anyLong())).willReturn(user);
+            given(userRepository.findUserById(anyLong())).willReturn(user);
 
             //when
             Page<MemberResponse> responses = memberService.getMemberList(1, 10, memberRequest);
