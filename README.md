@@ -612,15 +612,15 @@ Elasticsearch는 대규모 데이터를 처리하면서 빠른 검색 성능과 
 
 ## [요구사항]
 
-### 1. 김종국은 구독자가 309만 명을 보유할 정도로 인기가 많다. 따라서 위의 배경과 같은 이벤트가 발생했을 때 수 많은 사람들이 하나의 센터 하나의 운동 시간대에 일정 등록을 신청하는 상황이 발생
+  ### 1. 김종국은 구독자가 309만 명을 보유할 정도로 인기가 많다. 따라서 위의 배경과 같은 이벤트가 발생했을 때 수 많은 사람들이 하나의 센터 하나의 운동 시간대에 일정 등록을 신청하는 상황이 발생
 
-### 2. 김종국이 이벤트를 주최한 해당 일정은 최대 수용인원이 50명이다. 이 인원을 초과하지 않도록 동시성 제어가 필요
+  ### 2. 김종국이 이벤트를 주최한 해당 일정은 최대 수용인원이 50명이다. 이 인원을 초과하지 않도록 동시성 제어가 필요
 
-### 3. 테스트 시나리오: 1000명이 20초 동안 같은 일정을 등록하려는 상황
+  ### 3. 테스트 시나리오: 1000명이 20초 동안 같은 일정을 등록하려는 상황
 
-### 4. 일정 등록은 Service 모듈에 있다. Service 모듈은 오토스케일링이 가능한 분산 서버 환경이다.
+  ### 4. 일정 등록은 Service 모듈에 있다. Service 모듈은 오토스케일링이 가능한 분산 서버 환경이다.
 
-### 5. 이 테스트 시나리오는 이벤트성 시나리오이기 때문에 항상 이런 경우가 있는 것은 아니다.
+  ### 5. 이 테스트 시나리오는 이벤트성 시나리오이기 때문에 항상 이런 경우가 있는 것은 아니다.
 
 [선택지]
 
@@ -965,7 +965,8 @@ No such file or directory
 굳이 모듈안에 gradlew넣을 필요 없이, 루트에 있는 gradlew쓰는 명령어를 사용하여 해결하였다.
 
 
-!https://blog.kakaocdn.net/dn/bMrH3F/btsKBj8nY9N/VARg5HHPtRey3MOQHhSN3k/img.png
+![image](https://github.com/user-attachments/assets/4a01f532-9170-4427-8ee8-29258362c1d7)
+
 
 ```bash
 ./gradlew :module-batch:build -x test
@@ -980,16 +981,19 @@ No such file or directory
 - **접근 1)** 절대경로 사용
 
 
-!https://blog.kakaocdn.net/dn/cLUAE8/btsKBMoHDFe/1X7d4Km7krQTl6K4i95VBk/img.png
+![image](https://github.com/user-attachments/assets/a910edaa-2f0d-465b-b658-66fcdff266d1)
 
 
-!https://blog.kakaocdn.net/dn/vnGIG/btsKzMw63is/1KlATGHlo7OAayFuiiYuX0/img.png
+
+![image](https://github.com/user-attachments/assets/7a9c4a79-75a1-4ed6-8d54-5a3ce8fb814a)
+
 
 ㄴ해결되지 않았다.
 
 - **접근 2-해결책)** 'no such file or directory' 이 에러를 20번쯤 나자, 빌드 방법을 바꾸는 걸로 결정했다.
 
-!https://blog.kakaocdn.net/dn/cIfnoD/btsKz4dm7yt/WWr0sH0g5BS6wVNedbYBsK/img.png
+![image](https://github.com/user-attachments/assets/45afa787-df2a-4b33-a42e-4c625f8671cb)
+
 
 ㄴDockerfile 문제가 해결되었다.
 
@@ -1011,19 +1015,22 @@ https://ilmechaju.tistory.com/130
 ## **문제 3 : 경로설정 문제**
 
 
-!https://blog.kakaocdn.net/dn/cAs9wC/btsKCfjKTbi/6yT3T6m3X9M4KaKCxHWeM1/img.png
+![image](https://github.com/user-attachments/assets/c3771cf3-18dc-410f-b214-fb82be26c93d)
+
 
 발생한 지점 : Build and Push
 
 
-!https://blog.kakaocdn.net/dn/ewy6mw/btsKA7mAQq5/V0KKstj9BXV3jDIykKUuf0/img.png
+![image](https://github.com/user-attachments/assets/f3d8fbb5-b0c7-4c43-806d-40776d7ef492)
+
 
 접근 1) githubAction 서버에서는 gradle이 없는가? → 아니다. 지원된다.
 
 접근 2)
 
 
-!https://blog.kakaocdn.net/dn/ctSGx8/btsKBJMnpw6/csLVbaNdyA4n7c0gVs8Wbk/img.png
+![image](https://github.com/user-attachments/assets/e666a726-66cf-4510-82cc-42148c90c469)
+
 
 14번줄에 echo로 해당 경로에 파일이 잘 들어있는지 출력해보며 확인한다.
 
@@ -1032,7 +1039,8 @@ https://ilmechaju.tistory.com/130
 **결론-해결책)**
 
 
-!https://blog.kakaocdn.net/dn/ddNRGU/btsKCONslGz/GZqGYpMPe28bgSRkTOYOM1/img.png
+![image](https://github.com/user-attachments/assets/36c4e99b-a9ef-401a-9f7d-e5bd0a8d4488)
+
 
 도커컴포즈에서 context: 를 없애는 방법으로 해결했다.
     
