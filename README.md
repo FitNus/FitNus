@@ -955,6 +955,7 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 ## **문제1 : Gradlew 설정 문제** (멀티모듈 패키지구조)
 
 
+
 !https://blog.kakaocdn.net/dn/y4SpJ/btsKBiBwOPx/TNhKXnt50ptuscR7Dp0Bo1/img.png
 
 No such file or directory
