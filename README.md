@@ -954,6 +954,7 @@ Redis와 Elasticsearch 두 가지 솔루션을 모두 구현하고 성능을 비
 
 ## **문제1 : Gradlew 설정 문제** (멀티모듈 패키지구조)
 
+
 !https://blog.kakaocdn.net/dn/y4SpJ/btsKBiBwOPx/TNhKXnt50ptuscR7Dp0Bo1/img.png
 
 No such file or directory
@@ -961,6 +962,7 @@ No such file or directory
 이건 모듈안에 gradlew이 없어서 생긴문제인데,
 
 굳이 모듈안에 gradlew넣을 필요 없이, 루트에 있는 gradlew쓰는 명령어를 사용하여 해결하였다.
+
 
 !https://blog.kakaocdn.net/dn/bMrH3F/btsKBj8nY9N/VARg5HHPtRey3MOQHhSN3k/img.png
 
@@ -976,7 +978,9 @@ No such file or directory
 
 - **접근 1)** 절대경로 사용
 
+
 !https://blog.kakaocdn.net/dn/cLUAE8/btsKBMoHDFe/1X7d4Km7krQTl6K4i95VBk/img.png
+
 
 !https://blog.kakaocdn.net/dn/vnGIG/btsKzMw63is/1KlATGHlo7OAayFuiiYuX0/img.png
 
@@ -1000,19 +1004,23 @@ No such file or directory
 
 트리형태로 보고싶다면 아래의 글을 참고해주세요.
 
+
 https://ilmechaju.tistory.com/130
 
 ## **문제 3 : 경로설정 문제**
 
+
 !https://blog.kakaocdn.net/dn/cAs9wC/btsKCfjKTbi/6yT3T6m3X9M4KaKCxHWeM1/img.png
 
 발생한 지점 : Build and Push
+
 
 !https://blog.kakaocdn.net/dn/ewy6mw/btsKA7mAQq5/V0KKstj9BXV3jDIykKUuf0/img.png
 
 접근 1) githubAction 서버에서는 gradle이 없는가? → 아니다. 지원된다.
 
 접근 2)
+
 
 !https://blog.kakaocdn.net/dn/ctSGx8/btsKBJMnpw6/csLVbaNdyA4n7c0gVs8Wbk/img.png
 
@@ -1021,6 +1029,7 @@ https://ilmechaju.tistory.com/130
 → .jar파일을 찾을 수 없다고 한다. 경로설정 문제가 있다고 판단했다.
 
 **결론-해결책)**
+
 
 !https://blog.kakaocdn.net/dn/ddNRGU/btsKCONslGz/GZqGYpMPe28bgSRkTOYOM1/img.png
 
@@ -1109,6 +1118,7 @@ https://ilmechaju.tistory.com/130
 
 결국 두 사용자가 동시에 접근하여 남은 인원을 차감했지만 실제 DB에 차감된 남은 인원은 2명이 아닌 1명이다. 이러한 시나리오라면 일정이 50개만 등록이 된 것이 아닌 거의 일정하게 100개의 일정이 등록된 것이 그럴듯 한 상황이라는 생각이 들었습니다.
 
+
 ![제목 없음.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/fb312a38-4b72-4f0c-b8f4-2b1c5f06e396/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C.png)
 
 ### 3. Transactional 어노테이션 문제
@@ -1122,6 +1132,7 @@ https://ilmechaju.tistory.com/130
 ### 1. 분산 락 로직 검증
 
 커스텀 어노테이션을 활용하여 AOP로 구현한 분산 락 코드 자체에 문제가 있을 것이라는 생각에 별도의 프로젝트를 따로 만들어서 분산 락 로직을 검증하였습니다. 별도의 프로젝트에서 실행했을 때는 정상적으로 동시성제어가 잘 되어있는 결과를 확인할 수 있었습니다.
+
 
 ![image](https://github.com/user-attachments/assets/1baed763-2d5f-44e2-9b15-fddcc448a2e8)
 
@@ -1210,9 +1221,11 @@ REQUIRES_NEW를 통해서 별도의 트랜잭션으로 분리하려 했지만 �
 
 **before**
 
+
 ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/fdaf9741-bea6-4340-894d-fc4ed39cd201/image.png)
 
 **after**
+
 
 ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/9c3bf42f-1574-4d3b-8795-bc411d5e680b/image.png)
 
@@ -1267,6 +1280,7 @@ REQUIRES_NEW를 통해서 별도의 트랜잭션으로 분리하려 했지만 �
 ### [문제 정의]
 
 클라이언트가 SSE 알림을 구독하는 `subscribe` 메서드를 호출할 때, 읽지 않은 알림 개수를 조회하는 과정에서 트랜잭션이 유지된 상태로 SSE 연결이 지속되어 데이터베이스 커넥션이 반환되지 않는 문제가 발생했습니다. 이로 인해 커넥션 풀이 고갈되어 서버에 부하가 발생했습니다.
+
 
 ![image](https://github.com/user-attachments/assets/ea05f01e-7aa7-4fcf-89c1-60212ba9fc82)
 
